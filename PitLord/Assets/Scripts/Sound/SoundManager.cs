@@ -5,13 +5,16 @@ using System.Collections.Generic;
 
 public class SoundManager : MonoBehaviour {
 
-    private static SoundManager instance = new SoundManager();
-   
     public AudioMixerSnapshot lowlevel;
     public AudioMixerSnapshot combat;
 
-    private float transitionIn = 100;
-    private float transitionOut = 500;
+    public AudioSource AudioPlayer = new AudioSource();
+
+    [HideInInspector]
+    public AudioClip current;
+
+    private float transitionIn = 1;
+    private float transitionOut = 5;
 
     float timer;
 
@@ -40,8 +43,13 @@ public class SoundManager : MonoBehaviour {
         }
     }
 
-    public static SoundManager Get()
+    public void PlayNext(AudioClip clip)
     {
-        return instance;
+        //Cuts current audio
+        AudioPlayer.Pause();
+
+        //Assigns & plays new audio
+        AudioPlayer.clip = clip;
+        AudioPlayer.Play();
     }
 }
