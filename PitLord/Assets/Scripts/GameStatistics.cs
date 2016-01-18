@@ -1,5 +1,9 @@
 ﻿using UnityEngine;
+using System;
+using System.IO;
+using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameStatistics
 {
@@ -28,6 +32,28 @@ public class GameStatistics
     public bool ToTextFile()
     {
         bool export = false;
+
+        StringBuilder log = new StringBuilder();
+
+        int minutes = (int)time / 60;
+        int hours = minutes / 60;
+
+        log.Append("play time " + minutes.ToString() + ":" + hours.ToString());
+        log.Append("deaths " + deaths.ToString());
+        log.Append("enemies killed " + kills.ToString());
+        log.Append("upgrades taken " + upgrades.ToString());
+
+
+        if (File.Exists(Application.dataPath + "stats.txt"))
+        {
+            File.AppendAllText(Application.dataPath + "stats.txt", log.ToString());
+            export = true;
+        }
+        else
+        {
+            File.WriteAllText(Application.dataPath + "stats.txt", log.ToString());
+            export = true;
+        }
 
         return export;
     }
