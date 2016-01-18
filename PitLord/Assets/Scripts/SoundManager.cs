@@ -5,15 +5,43 @@ using System.Collections.Generic;
 
 public class SoundManager : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () 
-    {
+    private static SoundManager instance = new SoundManager();
+   
+    public AudioMixerSnapshot lowlevel;
+    public AudioMixerSnapshot combat;
 
-	}
-	
-	// Update is called once per frame
-	void Update () 
-    {
+    private float transitionIn = 100;
+    private float transitionOut = 500;
 
-	}
+    float timer;
+
+    public void EnterCombat()
+    {
+        combat.TransitionTo(transitionIn);
+    }
+    public void ExitCombat()
+    {
+        lowlevel.TransitionTo(transitionOut);
+    }
+
+    //For testing stuff
+    public void Update()
+    {
+        timer += Time.deltaTime;
+
+        if (timer >= 10)
+        {
+            EnterCombat();
+        }
+        if (timer >= 20)
+        {
+            ExitCombat();
+            timer = 0;
+        }
+    }
+
+    public static SoundManager Get()
+    {
+        return instance;
+    }
 }

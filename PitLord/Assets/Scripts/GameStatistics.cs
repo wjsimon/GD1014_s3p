@@ -21,7 +21,7 @@ public class GameStatistics
 
     public void Init()
     {
-
+        time = 0;
     }
 
     public void Update()
@@ -42,7 +42,6 @@ public class GameStatistics
         log.Append("deaths " + deaths.ToString());
         log.Append("enemies killed " + kills.ToString());
         log.Append("upgrades taken " + upgrades.ToString());
-
 
         if (File.Exists(Application.dataPath + "stats.txt"))
         {
