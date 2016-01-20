@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Attributes
 {
 
     //combat
@@ -96,7 +96,6 @@ public class PlayerController : MonoBehaviour
             {
                 ani.SetTrigger("Attack");
             }
-
         }
 
         if (inAttack)

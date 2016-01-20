@@ -3,9 +3,16 @@ using System.Collections;
 
 public class TestEnemyBehaviour : Enemy {
 
-	// Use this for initialization
-	void Start () {
+    float attack1Start;
+    float attack1End;
+
+    // Use this for initialization
+    void Start () {
         Init();
+
+        attack1Start = AnimationLibrary.Get().SearchByName("LightAttack1").start;
+        attack1End = AnimationLibrary.Get().SearchByName("LightAttack1").end;
+
         state = 0;
 	}
 	
@@ -38,10 +45,34 @@ public class TestEnemyBehaviour : Enemy {
         {
             Attack();
         }
+
+        animStateLayer1 = animator.GetCurrentAnimatorStateInfo(0);
+        animTransition1 = animator.GetAnimatorTransitionInfo(0);
+        isAttacking = animStateLayer1.IsTag("Attack");
 	}
 
     void Attack()
     {
+        //animationLock = true;
+        if (!isAttacking)
+        {
+            animator.SetTrigger("Attack");
+        }
 
+        if (isAttacking)
+        {
+            agent.Stop();
+            if (animStateLayer1.IsName("LightAttack1") == true)
+            {
+                if (animStateLayer1.normalizedTime >= attack1Start && animStateLayer1.normalizedTime <= attack1End)
+                {
+                    weapon.GetComponent<BoxCollider>().enabled = true;
+                }
+                else
+                {
+                    weapon.GetComponent<BoxCollider>().enabled = false;
+                }
+            }
+        }
     }
 }

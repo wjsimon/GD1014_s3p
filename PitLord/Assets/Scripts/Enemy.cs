@@ -7,17 +7,25 @@ public class Enemy : Attributes {
     public GameObject spawnPoint;
 
     public Animator animator;
+    protected AnimatorStateInfo animStateLayer1;
+    protected AnimatorStateInfo animStateLayer2;
+    protected AnimatorTransitionInfo animTransition1;
+    protected AnimatorTransitionInfo animTransition2;
+    
     bool blending = true;
     float animationBlend;
 
     [HideInInspector]
     protected NavMeshAgent agent;
     public Transform target;
+    public GameObject weapon;
 
 
     //TIMER IS FOR TESTING ONLY, USE SEPERATE TIMERS FOR NON-TEMPORARY STUFF
     float timer = 0;
-    public int state = 1;
+    protected int state = 1;
+
+    protected bool isAttacking;
 
 	// Use this for initialization
     void Start()
@@ -75,7 +83,6 @@ public class Enemy : Attributes {
 
     public float Approach()//1
     {
-        Debug.LogWarning("ENTERED APPROACH");
         agent.SetDestination(target.position);
 
         return ForwardMovement();        
@@ -163,6 +170,10 @@ public class Enemy : Attributes {
 
     public int ChangeState(int newState)
     {
+        if (isAttacking) return -1;
+
+        agent.Resume();
+
         if (state == 2)
         {
             return state;

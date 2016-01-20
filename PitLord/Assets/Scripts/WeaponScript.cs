@@ -18,13 +18,14 @@ public class WeaponScript : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Enemy")
+        if ((gameObject.tag == "Player" && other.gameObject.tag == "Enemy") || (gameObject.tag == "Enemy" && other.gameObject.tag == "Player"))
         {
             /*
             Vector3 dir = (pos-transform.position).normalized;  
 		    hitDir = Mathf.Sign (Vector3.Dot (transform.forward, dir));
             /**/
 
+            Debug.LogWarning("Player hit");
             other.GetComponent<Attributes>().ApplyDamage(damage, owner);
         }
     }
