@@ -10,7 +10,6 @@ using System.Collections.Generic;
 public class AnimationLibrary
 {
     private static AnimationLibrary instance;
-
     public List<AnimationWrapper> animations;
 
     private AnimationLibrary()

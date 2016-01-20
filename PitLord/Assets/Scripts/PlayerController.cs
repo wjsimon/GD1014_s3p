@@ -31,9 +31,6 @@ public class PlayerController : MonoBehaviour
 
     public bool lockOn = false;
 
-
-
-
     //movement
     bool collisionAHead;
     Vector3 movement;
@@ -63,8 +60,10 @@ public class PlayerController : MonoBehaviour
     AnimatorStateInfo animInfoL1;
     AnimatorTransitionInfo animInfoTrans;
 
-
     public Transform handPos;
+
+
+    bool potionRefill;
 
     // Use this for initialization
     void Start()
@@ -82,10 +81,10 @@ public class PlayerController : MonoBehaviour
 
         inAttack = animStateLayer1.IsTag("Attack");
 
-
         CameraUpdate();
         MovementUpdate();
         CombatUpdate();
+        InterActionUpdate();
     }
 
     void CombatUpdate()
@@ -225,7 +224,42 @@ public class PlayerController : MonoBehaviour
 
         moveDir.y -= gravity * Time.deltaTime;
         cc.Move(moveDir * Time.deltaTime);
+    }
+
+    void InterActionUpdate()
+    {
+        if (Input.GetButtonDown("placeholder"))
+        {
+            if (potionRefill)
+            {
+                RefillPotion();
+            }
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.name == "PotionRefill")
+        {
+            //RefillPotion();
+            potionRefill = true;
+            //Show Screen Prompt for Potion Refilling, enable key (bool?)
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.name == "PotionRefill")
+        {
+            //Hide Prompt, disable key
+            potionRefill = false;
+        }
+    }
 
 
+    public void RefillPotion()
+    {
+        //stuff here
+        Debug.LogWarning("Potions refilled");
     }
 }
