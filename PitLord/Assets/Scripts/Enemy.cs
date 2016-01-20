@@ -78,16 +78,14 @@ public class Enemy : Attributes {
 
         animator.SetFloat("X", 0);
         animator.SetFloat("Y", 0);
-
-        Attack();
     }
 
-    public void Approach()
+    public float Approach()
     {
         Debug.LogWarning("ENTERED APPROACH");
         agent.SetDestination(target.position);
 
-        Movement();        
+        return Movement();        
     }
 
     public void BackOff()
@@ -98,13 +96,13 @@ public class Enemy : Attributes {
     {
 
     }
-    public void Retreat()
+    public float Retreat()
     {
         agent.speed = 6;
         target = spawnPoint.transform;
         agent.SetDestination(spawnPoint.transform.position);
 
-        Movement();
+        return Movement();
     }
 
     public float Movement()
