@@ -10,13 +10,14 @@ public class Enemy : Attributes {
     bool blending = true;
     float animationBlend;
 
-    NavMeshAgent agent;
+    [HideInInspector]
+    protected NavMeshAgent agent;
     public Transform target;
 
 
     //TIMER IS FOR TESTING ONLY, USE SEPERATE TIMERS FOR NON-TEMPORARY STUFF
     float timer = 0;
-    int state = 1;
+    public int state = 1;
 
 	// Use this for initialization
     void Start()
@@ -43,14 +44,6 @@ public class Enemy : Attributes {
 	// Update is called once per frame
 	void Update () 
     {
-        Debug.LogWarning(state);
-
-        timer += Time.deltaTime;
-
-        if (timer > 5)
-        {
-            state = 2;
-        }
         //Basically a state machine, gotta do all the randomizing and checking for which "state" the enemy should be in here <-- This is pretty much where enemies get coded, all the other stuff is the same
         Behaviour(state);
         /**/
@@ -72,7 +65,7 @@ public class Enemy : Attributes {
         }
     }
 
-    public void Idle()
+    public void Idle() //0
     {
         agent.Stop();
 
@@ -80,32 +73,32 @@ public class Enemy : Attributes {
         animator.SetFloat("Y", 0);
     }
 
-    public float Approach()
+    public float Approach()//1
     {
         Debug.LogWarning("ENTERED APPROACH");
         agent.SetDestination(target.position);
 
-        return Movement();        
+        return ForwardMovement();        
     }
 
-    public void BackOff()
+    public void BackOff() //3
     {
 
     }
-    public void Strafe()
+    public void Strafe() //4
     {
 
     }
-    public float Retreat()
+    public float Retreat() //2
     {
         agent.speed = 6;
         target = spawnPoint.transform;
         agent.SetDestination(spawnPoint.transform.position);
 
-        return Movement();
+        return ForwardMovement();
     }
 
-    public float Movement()
+    public float ForwardMovement()
     {
         if (Vector3.Angle((target.position - transform.position), transform.forward) > 30)
         {
@@ -149,6 +142,11 @@ public class Enemy : Attributes {
         return agent.remainingDistance;
     }
 
+    public float BackwardsMovement()
+    {
+        return agent.remainingDistance;
+    } 
+
     //BETA TESTING----------------DONT USE FOR BLENDING MORE THAN ONE VALUE----------------------
     public void ResetAnimationBlend( float value, float from, float to)
     {
@@ -161,5 +159,16 @@ public class Enemy : Attributes {
         {
             blending = true;
         }
+    }
+
+    public int ChangeState(int newState)
+    {
+        if (state == 2)
+        {
+            return state;
+        }
+
+        state = newState;
+        return newState;
     }
 }
