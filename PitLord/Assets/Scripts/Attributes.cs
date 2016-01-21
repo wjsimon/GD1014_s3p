@@ -16,6 +16,10 @@ public class Attributes : MonoBehaviour {
     public List<AudioClip> onHit;
     public List<AudioClip> onDeath;
 
+    public float leashingRange;
+    public float detectionRange;
+    public float combatRange;
+
     //[HideInInspector]
     public bool block;
     

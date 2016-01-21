@@ -13,46 +13,99 @@ public class TestEnemyBehaviour : Enemy {
         attack1Start = AnimationLibrary.Get().SearchByName("LightAttack1").start;
         attack1End = AnimationLibrary.Get().SearchByName("LightAttack1").end;
 
-        state = 0;
+        ChangeState(0);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        if (Vector3.Distance(target.position, transform.position) > 10)
+        Debug.Log("Current State" + state);
+
+        animStateLayer1 = animator.GetCurrentAnimatorStateInfo(0);
+        animTransition1 = animator.GetAnimatorTransitionInfo(0);
+        isAttacking = animStateLayer1.IsTag("Attack") || animTransition1.IsUserName("Attack");
+
+        behavCooldown -= Time.deltaTime;
+        BehaviourSwitch();
+	}
+
+    void BehaviourSwitch()
+    {
+        //ChangeState(4);
+        Debug.Log("behavCooldown" + (int)behavCooldown);
+        
+        //Idle until Detection of Player
+        //*
+        if (Vector3.Distance(target.position, transform.position) > detectionRange)
         {
             ChangeState(0); //Idle
         }
-        if (Vector3.Distance(spawnPoint.transform.position, transform.position) > 20 && state != 0)
+
+        //Retreats rapidly to spawnPoint when player is out of leashing Range
+        if (Vector3.Distance(spawnPoint.transform.position, transform.position) > leashingRange && state != 0)
         {
             ChangeState(2); //Retreat
         }
-        if (Vector3.Distance(target.position, transform.position) < 10)
+
+        //Within detection Range, enemy approaches the player
+        if ((Vector3.Distance(target.position, transform.position) < detectionRange || alerted) && Vector3.Distance(target.position, transform.position) > combatRange)
         {
-            ChangeState(1); //Approach or BackOff, or Strafe. <- Need to implement random here
-        }
-        if (Vector3.Distance(target.position, transform.position) <= agent.stoppingDistance)
-        {
-            ChangeState(5); //Attack
+            BehaviourRandomize = Random.Range(0, 3);
+
+            Debug.LogWarning("RANDOM MOVEMENT INT " + BehaviourRandomize);
+
+            switch (BehaviourRandomize)
+            {
+                case 0:          
+                    ChangeState(1);
+                    break;
+                case 1:
+                    ChangeState(3);
+                    break;
+                case 2:
+                    ChangeState(4);
+                    break;
+            }
         }
 
+        //Within Combat Range, the enemy decides to attack, backoff or strafe around player
+        if (Vector3.Distance(target.position, transform.position) < combatRange && !isAttacking)
+        {
+            BehaviourRandomize = Random.Range(0,2);
+            Debug.LogWarning("RANDOM MOVEMENT INT " + BehaviourRandomize);
+
+            switch (BehaviourRandomize)
+            {
+                case 0:
+                    ChangeState(5);
+                    break;
+                case 1:
+                    ChangeState(3);
+                    break;
+            }
+
+            //Approach or BackOff, or Strafe. <- Need to implement random here
+        }
+
+        /**/
         //Im a pro.
         if (state != 5)
         {
             Behaviour(state);
         }
-        else if (state == 5)
+        if (state == 5)
         {
             Attack();
         }
-
-        animStateLayer1 = animator.GetCurrentAnimatorStateInfo(0);
-        animTransition1 = animator.GetAnimatorTransitionInfo(0);
-        isAttacking = animStateLayer1.IsTag("Attack");
-	}
+        /**/
+    }
 
     void Attack()
     {
+        if (state != 5)
+        {
+            return;
+        }
         //animationLock = true;
         if (!isAttacking)
         {
