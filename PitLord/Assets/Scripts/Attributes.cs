@@ -44,6 +44,7 @@ public class Attributes : MonoBehaviour {
         
         if (currentHealth <= 0)
         {
+            Kill();
             //Destroy(gameObject);
         }
 
@@ -55,8 +56,16 @@ public class Attributes : MonoBehaviour {
 
     public void SetAnimTrigger(string anim)
     {
-        Animator ani = GetComponent<Animator>();
+        Animator ani = gameObject.transform.FindChild("Model").GetComponent<Animator>();
 
         ani.SetTrigger(anim);
+    }
+
+    public void Kill()
+    {
+        GetComponent<CharacterController>().enabled = false;
+        GetComponent<Attributes>().enabled = false;
+
+        SetAnimTrigger("Death");
     }
 }
