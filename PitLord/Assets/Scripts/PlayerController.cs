@@ -227,11 +227,21 @@ public class PlayerController : Attributes
 
     void InterActionUpdate()
     {
-        if (Input.GetButtonDown("placeholder"))
+        if (Input.GetButtonDown("interact"))
         {
             if (potionRefill)
             {
                 RefillPotion();
+            }
+
+            //Item, Doors,
+        }
+
+        if(Input.GetButtonDown("heal"))
+        {
+            if(heals > 0 && !(inAttack || inRoll))
+            {
+                UseHeal();
             }
         }
     }
@@ -260,5 +270,13 @@ public class PlayerController : Attributes
     {
         //stuff here
         Debug.LogWarning("Potions refilled");
+    }
+
+    public void UseHeal()
+    {
+        heals -= 1;
+        currentHealth += healAmount;
+
+        ani.SetTrigger("Heal");
     }
 }

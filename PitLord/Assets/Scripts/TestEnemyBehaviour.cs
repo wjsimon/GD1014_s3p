@@ -52,7 +52,7 @@ public class TestEnemyBehaviour : Enemy {
         {
             BehaviourRandomize = Random.Range(0, 3);
 
-            Debug.LogWarning("RANDOM MOVEMENT INT " + BehaviourRandomize);
+            //Debug.LogWarning("RANDOM MOVEMENT INT " + BehaviourRandomize);
 
             switch (BehaviourRandomize)
             {
@@ -72,7 +72,7 @@ public class TestEnemyBehaviour : Enemy {
         if (Vector3.Distance(target.position, transform.position) < combatRange && !isAttacking)
         {
             BehaviourRandomize = Random.Range(0,2);
-            Debug.LogWarning("RANDOM MOVEMENT INT " + BehaviourRandomize);
+            //Debug.LogWarning("RANDOM MOVEMENT INT " + BehaviourRandomize);
 
             switch (BehaviourRandomize)
             {

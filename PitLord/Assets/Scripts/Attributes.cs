@@ -20,11 +20,15 @@ public class Attributes : MonoBehaviour {
     public float detectionRange;
     public float combatRange;
 
+    public int heals;
+    public int healAmount;
+
     //[HideInInspector]
     public bool block;
     
     public void ApplyDamage(int damage, GameObject source)
     {
+        //Debug.LogWarning(damage);
         Vector3 dir = (source.transform.position - transform.position).normalized;
         int facing = (int)Mathf.Clamp01(Mathf.Sign(Vector3.Dot(transform.forward, dir)));
 
@@ -40,12 +44,19 @@ public class Attributes : MonoBehaviour {
         
         if (currentHealth <= 0)
         {
-            Destroy(gameObject);
+            //Destroy(gameObject);
         }
 
         if (currentStamina <= 0)
         {
             block = false;
         }
+    }
+
+    public void SetAnimTrigger(string anim)
+    {
+        Animator ani = GetComponent<Animator>();
+
+        ani.SetTrigger(anim);
     }
 }

@@ -18,6 +18,7 @@ public class WeaponScript : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
+        //Debug.LogError("COLLISION");
         if ((gameObject.tag == "Player" && other.gameObject.tag == "Enemy") || (gameObject.tag == "Enemy" && other.gameObject.tag == "Player"))
         {
             /*
@@ -27,6 +28,7 @@ public class WeaponScript : MonoBehaviour {
 
             Debug.LogWarning("Player hit");
             other.GetComponent<Attributes>().ApplyDamage(damage, owner);
+            //other.GetComponent<PlayerController>().SetAnimTrigger("Hit");
         }
     }
 }

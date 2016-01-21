@@ -128,7 +128,7 @@ public class Enemy : Attributes
             return;
         }
 
-        Debug.LogWarning("strafing");
+        //Debug.LogWarning("strafing");
 
         animator.SetFloat("X", -direction);
         animator.SetFloat("Y", 0);
@@ -197,7 +197,7 @@ public class Enemy : Attributes
     public float BackwardsMovement()
     {
         agent.Stop();
-        Debug.LogWarning("backwalking");
+        //Debug.LogWarning("backwalking");
 
         animator.SetFloat("X", 0);
         animator.SetFloat("Y", -1);
