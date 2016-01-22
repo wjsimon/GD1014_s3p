@@ -39,10 +39,13 @@ public class PlayerController : Attributes
     public Transform inputDir;
     public Transform inputDirTarget;
     Vector3 animDir;
+
     bool inRoll;
     public float rollDuration;
     public float rollCancel;
     float rollStorage;
+    public float rollDelay;
+
     bool inAttack;
     Vector3 rollDir;
     float gravity = 20;
@@ -74,7 +77,7 @@ public class PlayerController : Attributes
         cc = GetComponent<CharacterController>();
 
         rollStorage = rollDuration;
-
+        rollDuration = -rollDelay;
     }
 
     // Update is called once per frame
@@ -130,28 +133,26 @@ public class PlayerController : Attributes
 
             if (Input.GetButtonDown("Roll"))
             {
-                if (!inRoll && !inAttack)
+                if ((rollDuration <= rollDelay) && !inAttack)
                 {
                     inRoll = true;
+                    rollDuration = rollStorage;
                 }
                 //.Move((Mathf.Sign(animator.GetFloat("X")) * transform.right) * Time.deltaTime * agent.speed / 3);
             }
         }
 
-
-
         //Rolling animation stuff - Decoupled
         if (inRoll)
         {
             GetComponent<CharacterController>().Move(transform.forward * Time.deltaTime * speed * 4);
-            rollDuration -= Time.deltaTime;
-
             if (rollDuration <= 0)
             {
                 inRoll = false;
-                rollDuration = rollStorage;
             }
         }
+
+        rollDuration -= Time.deltaTime;
     }
 
     void CameraUpdate()
@@ -225,6 +226,7 @@ public class PlayerController : Attributes
     {
         if (inAttack || inRoll)
             return;
+
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
