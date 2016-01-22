@@ -25,6 +25,8 @@ public class Attributes : MonoBehaviour {
 
     //[HideInInspector]
     public bool block;
+
+    public bool deactivate;
     
     public void ApplyDamage(int damage, GameObject source)
     {
@@ -46,6 +48,10 @@ public class Attributes : MonoBehaviour {
         {
             Kill();
             //Destroy(gameObject);
+        }
+        else
+        {
+            SetAnimTrigger("Hit");
         }
 
         if (currentStamina <= 0)

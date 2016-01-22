@@ -12,12 +12,22 @@ public class TestEnemyBehaviour : Enemy {
 
         attack1Start = AnimationLibrary.Get().SearchByName("LightAttack1").start;
         attack1End = AnimationLibrary.Get().SearchByName("LightAttack1").end;
+        
+        if (deactivate)
+        {
+            agent.Stop();
+            return;
+        }
 
         ChangeState(0);
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        if (deactivate)
+        {
+            return;
+        }
 
         Debug.Log("Current State" + state);
 
