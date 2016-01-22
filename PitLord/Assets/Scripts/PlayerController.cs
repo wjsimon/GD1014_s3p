@@ -40,6 +40,9 @@ public class PlayerController : Attributes
     public Transform inputDirTarget;
     Vector3 animDir;
     bool inRoll;
+    public float rollDuration;
+    public float rollCancel;
+    float rollStorage;
     bool inAttack;
     Vector3 rollDir;
     float gravity = 20;
@@ -70,6 +73,8 @@ public class PlayerController : Attributes
     {
         cc = GetComponent<CharacterController>();
 
+        rollStorage = rollDuration;
+
     }
 
     // Update is called once per frame
@@ -89,30 +94,62 @@ public class PlayerController : Attributes
 
     void CombatUpdate()
     {
-        if (Input.GetButtonDown("Attack"))
+        if (!inRoll || inRoll && rollDuration >= (rollCancel * rollStorage))
         {
-
-            if (inAttack == false)
+            if (Input.GetButtonDown("Attack"))
             {
-                ani.SetTrigger("Attack");
+
+                if (!inAttack)
+                {
+                    ani.SetTrigger("Attack");
+                    if(inRoll)
+                    {
+                        inRoll = false;
+                        rollDuration = rollStorage;
+                    }
+                }
+            }
+
+            if (inAttack)
+            {
+                if (animStateLayer1.IsName("LightAttack1") == true)
+                {
+                    float start = AnimationLibrary.Get().SearchByName("LightAttack1").start;
+                    float end = AnimationLibrary.Get().SearchByName("LightAttack1").end;
+
+                    if (animStateLayer1.normalizedTime >= start && animStateLayer1.normalizedTime <= end)
+                    {
+                        meleeWeapon.GetComponent<BoxCollider>().enabled = true;
+                    }
+                    else
+                    {
+                        meleeWeapon.GetComponent<BoxCollider>().enabled = false;
+                    }
+                }
+            }
+
+            if (Input.GetButtonDown("Roll"))
+            {
+                if (!inRoll && !inAttack)
+                {
+                    inRoll = true;
+                }
+                //.Move((Mathf.Sign(animator.GetFloat("X")) * transform.right) * Time.deltaTime * agent.speed / 3);
             }
         }
 
-        if (inAttack)
-        {
-            if (animStateLayer1.IsName("LightAttack1") == true)
-            {
-                float start = AnimationLibrary.Get().SearchByName("LightAttack1").start;
-                float end = AnimationLibrary.Get().SearchByName("LightAttack1").end;
 
-                if (animStateLayer1.normalizedTime >= start && animStateLayer1.normalizedTime <= end)
-                {
-                    meleeWeapon.GetComponent<BoxCollider>().enabled = true;
-                }
-                else
-                {
-                    meleeWeapon.GetComponent<BoxCollider>().enabled = false;
-                }
+
+        //Rolling animation stuff - Decoupled
+        if (inRoll)
+        {
+            GetComponent<CharacterController>().Move(transform.forward * Time.deltaTime * speed * 4);
+            rollDuration -= Time.deltaTime;
+
+            if (rollDuration <= 0)
+            {
+                inRoll = false;
+                rollDuration = rollStorage;
             }
         }
     }
@@ -186,7 +223,7 @@ public class PlayerController : Attributes
     }
     void MovementUpdate()
     {
-        if (inAttack == true)
+        if (inAttack || inRoll)
             return;
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
