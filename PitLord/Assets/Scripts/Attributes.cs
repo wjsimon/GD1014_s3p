@@ -50,7 +50,7 @@ public class Attributes : MonoBehaviour {
         
         if (currentHealth <= 0)
         {
-            Kill();
+            Kill(source);
             //Destroy(gameObject);
         }
         else
@@ -72,11 +72,17 @@ public class Attributes : MonoBehaviour {
         ani.SetTrigger(anim);
     }
 
-    public void Kill()
+    public void Kill(GameObject source)
     {
         DisableHitbox();
         GetComponent<CharacterController>().enabled = false;
         GetComponent<Attributes>().enabled = false;
+        block = false;
+
+        if (source.tag == "Player")
+        {
+            source.GetComponent<PlayerController>().lockOn = false;
+        }
 
         SetAnimTrigger("Death");
     }

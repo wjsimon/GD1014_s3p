@@ -52,6 +52,8 @@ public class PlayerController : Attributes
     public float speed = 4;
     Vector3 moveDir;
 
+    bool inBlock;
+
     //reference
     CharacterController cc;
     public GameObject playerModel;
@@ -74,23 +76,32 @@ public class PlayerController : Attributes
     // Use this for initialization
     void Start()
     {
+        Init();
+    }
+
+    void Init()
+    {
         cc = GetComponent<CharacterController>();
 
-        RefillPotion();
+        currentHealth = maxHealth;
+        currentStamina = maxStamina;
 
         rollDelay = -rollDelay;
         rollStorage = rollDuration;
         rollDuration = rollDelay;
-    }
 
+        RefillPotion();
+    }
     // Update is called once per frame
     void Update()
     {
         animStateLayer1 = ani.GetCurrentAnimatorStateInfo(0);
+        animStateLayer2 = ani.GetCurrentAnimatorStateInfo(1);
         animTransition1 = ani.GetAnimatorTransitionInfo(0);
+        animTransition2 = ani.GetAnimatorTransitionInfo(1);
 
-
-        inAttack = animStateLayer1.IsTag("Attack");
+        inAttack = animStateLayer1.IsTag("Attack") || animTransition1.IsUserName("Attack"); // || necessary?
+        inBlock = animStateLayer2.IsTag("Block") || animTransition2.IsUserName("Block");
 
         CameraUpdate();
         MovementUpdate();
@@ -113,6 +124,15 @@ public class PlayerController : Attributes
                         rollDuration = rollStorage;
                     }
                 }
+            }
+
+            if (Input.GetButtonDown("Block"))
+            {
+                ani.SetBool("Block", true);
+            }
+            if (Input.GetButtonUp("Block"))
+            {
+                ani.SetBool("Block", false);
             }
 
             if (inAttack)
@@ -154,6 +174,7 @@ public class PlayerController : Attributes
             }
         }
 
+        block = inBlock;
         rollDuration -= Time.deltaTime;
     }
 
@@ -306,12 +327,11 @@ public class PlayerController : Attributes
         }
     }
 
-
     public void RefillPotion()
     {
         //stuff here
         heals = maxHeals;
-        Debug.LogWarning("Potions refilled");
+        //Debug.LogWarning("Potions refilled");
     }
 
     public void UseHeal()

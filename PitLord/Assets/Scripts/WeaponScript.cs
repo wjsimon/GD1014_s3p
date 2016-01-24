@@ -19,7 +19,7 @@ public class WeaponScript : MonoBehaviour {
     void OnTriggerEnter(Collider other)
     {
         //Debug.LogError("COLLISION");
-        if ((gameObject.tag == "Player" && other.gameObject.tag == "Enemy") || (gameObject.tag == "Enemy" && other.gameObject.tag == "Player"))
+        if ((owner.gameObject.tag == "Player" && other.gameObject.tag == "Enemy") || (owner.gameObject.tag == "Enemy" && other.gameObject.tag == "Player"))
         {
             /*
             Vector3 dir = (pos-transform.position).normalized;  

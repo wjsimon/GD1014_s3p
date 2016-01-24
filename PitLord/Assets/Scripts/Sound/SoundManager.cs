@@ -30,6 +30,7 @@ public class SoundManager : MonoBehaviour {
     //For testing stuff
     public void Update()
     {
+        /*
         timer += Time.deltaTime;
 
         if (timer >= 10)
@@ -41,9 +42,10 @@ public class SoundManager : MonoBehaviour {
             ExitCombat();
             timer = 0;
         }
+        /**/
     }
 
-    public void PlayNext(AudioClip clip)
+    public void PlayNextNew(AudioClip clip)
     {
         //Cuts current audio
         AudioPlayer.Pause();
@@ -51,5 +53,13 @@ public class SoundManager : MonoBehaviour {
         //Assigns & plays new audio
         AudioPlayer.clip = clip;
         AudioPlayer.Play();
+    }
+
+    public void PlayNextOver(AudioClip clip)
+    {
+        AudioSource newPlayer = new AudioSource();
+        newPlayer.clip = clip;
+
+        newPlayer.Play();
     }
 }
