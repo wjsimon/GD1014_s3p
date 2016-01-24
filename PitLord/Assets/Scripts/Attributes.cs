@@ -4,8 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Attributes : MonoBehaviour {
-    
+
     //[HideInInspector]
+    public GameObject spawnPoint;
+
     public int currentHealth;
     public int maxHealth;
 
@@ -20,14 +22,16 @@ public class Attributes : MonoBehaviour {
     public float detectionRange;
     public float combatRange;
 
+    [HideInInspector]
     public int heals;
+    public int maxHeals;
     public int healAmount;
 
     //[HideInInspector]
     public bool block;
 
     public bool deactivate;
-    
+
     public void ApplyDamage(int damage, GameObject source)
     {
         //Debug.LogWarning(damage);
@@ -52,6 +56,7 @@ public class Attributes : MonoBehaviour {
         else
         {
             SetAnimTrigger("Hit");
+            DisableHitbox();
         }
 
         if (currentStamina <= 0)
@@ -69,9 +74,41 @@ public class Attributes : MonoBehaviour {
 
     public void Kill()
     {
+        DisableHitbox();
         GetComponent<CharacterController>().enabled = false;
         GetComponent<Attributes>().enabled = false;
 
         SetAnimTrigger("Death");
+    }
+
+    public void DisableHitbox()
+    {
+        if (tag == "Player")
+        {
+            GetComponent<PlayerController>().meleeWeapon.GetComponent<BoxCollider>().enabled = false;
+        }
+        else if (tag == "Enemy")
+        {
+            GetComponent<Enemy>().weapon.GetComponent<BoxCollider>().enabled = false;
+        }
+    }
+
+    public void SoftReset()
+    {
+        currentHealth = maxHealth;
+        currentStamina = maxStamina;
+
+        transform.position = spawnPoint.transform.position;
+
+        Animator ani = gameObject.transform.FindChild("Model").GetComponent<Animator>();
+        ani.SetTrigger("Reset");
+    }
+
+    public void RegisterObject()
+    {
+        if (tag == "Enemy")
+        {
+            GameObject.Find("GameManager").GetComponent<GameManager>().AddEnemy(gameObject);
+        }
     }
 }

@@ -5,8 +5,6 @@ public class Enemy : Attributes
 {
 
     //[HideInInspector]
-    public GameObject spawnPoint;
-
     public Animator animator;
     protected AnimatorStateInfo animStateLayer1;
     protected AnimatorStateInfo animStateLayer2;
@@ -61,6 +59,8 @@ public class Enemy : Attributes
 
         agent = gameObject.GetComponent<NavMeshAgent>();
         agent.destination = target.position;
+
+        RegisterObject();
     }
 
     // Update is called once per frame

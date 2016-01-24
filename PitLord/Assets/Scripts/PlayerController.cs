@@ -76,8 +76,11 @@ public class PlayerController : Attributes
     {
         cc = GetComponent<CharacterController>();
 
+        RefillPotion();
+
+        rollDelay = -rollDelay;
         rollStorage = rollDuration;
-        rollDuration = -rollDelay;
+        rollDuration = rollDelay;
     }
 
     // Update is called once per frame
@@ -97,11 +100,10 @@ public class PlayerController : Attributes
 
     void CombatUpdate()
     {
-        if (!inRoll || inRoll && rollDuration >= (rollCancel * rollStorage))
+        if (!inRoll || inRoll && rollDuration >= (Mathf.Clamp01(rollCancel) * rollStorage))
         {
             if (Input.GetButtonDown("Attack"))
             {
-
                 if (!inAttack)
                 {
                     ani.SetTrigger("Attack");
@@ -308,6 +310,7 @@ public class PlayerController : Attributes
     public void RefillPotion()
     {
         //stuff here
+        heals = maxHeals;
         Debug.LogWarning("Potions refilled");
     }
 
