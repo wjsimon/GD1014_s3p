@@ -78,7 +78,8 @@ public class TestEnemyBehaviour : Enemy {
             }
         }
 
-        if ((Vector3.Distance(target.position, transform.position) > detectionRange  && Vector3.Distance(target.position, transform.position) < leashingRange))
+        //If you move outside detection range while in combat, always approaches after finishing current action
+        if (((Vector3.Distance(target.position, transform.position) > detectionRange && alerted) && Vector3.Distance(target.position, transform.position) < leashingRange))
         {
             ChangeState(1);
         }
