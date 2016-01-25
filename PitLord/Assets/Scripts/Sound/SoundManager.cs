@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class SoundManager : MonoBehaviour {
 
     public AudioMixerSnapshot lowlevel;
-    public AudioMixerSnapshot combat;
+    public AudioMixerSnapshot cozy;
 
     public AudioSource AudioPlayer = new AudioSource();
 
@@ -20,7 +20,7 @@ public class SoundManager : MonoBehaviour {
 
     public void EnterCombat()
     {
-        combat.TransitionTo(transitionIn);
+        cozy.TransitionTo(transitionIn);
     }
     public void ExitCombat()
     {
@@ -30,7 +30,7 @@ public class SoundManager : MonoBehaviour {
     //For testing stuff
     public void Update()
     {
-        /*
+        
         timer += Time.deltaTime;
 
         if (timer >= 10)
