@@ -78,6 +78,11 @@ public class TestEnemyBehaviour : Enemy {
             }
         }
 
+        if ((Vector3.Distance(target.position, transform.position) > detectionRange  && Vector3.Distance(target.position, transform.position) < leashingRange))
+        {
+            ChangeState(1);
+        }
+
         //Within Combat Range, the enemy decides to attack, backoff or strafe around player
         if (Vector3.Distance(target.position, transform.position) < combatRange && !isAttacking)
         {

@@ -45,6 +45,7 @@ public class PlayerController : Attributes
     public float rollCancel;
     float rollStorage;
     public float rollDelay;
+    public float rollAccel;
 
     bool inAttack;
     Vector3 rollDir;
@@ -129,10 +130,12 @@ public class PlayerController : Attributes
             if (Input.GetButtonDown("Block"))
             {
                 ani.SetBool("Block", true);
+                rollDuration = rollDuration / 2;
             }
             if (Input.GetButtonUp("Block"))
             {
                 ani.SetBool("Block", false);
+                rollDuration = rollDuration * 2;
             }
 
             if (inAttack)
@@ -167,7 +170,7 @@ public class PlayerController : Attributes
         //Rolling animation stuff - Decoupled
         if (inRoll)
         {
-            GetComponent<CharacterController>().Move(transform.forward * Time.deltaTime * speed * 4);
+            GetComponent<CharacterController>().Move(moveDir * Time.deltaTime * speed * rollAccel);
             if (rollDuration <= 0)
             {
                 inRoll = false;
@@ -270,6 +273,7 @@ public class PlayerController : Attributes
                 ani.SetFloat("X", Input.GetAxis("Horizontal"));
                 ani.SetFloat("Y", Input.GetAxis("Vertical"));
             }
+
             else
             {
                 moveDir = transform.forward * Vector3.Distance(Vector3.zero, new Vector3(h, 0, v));

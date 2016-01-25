@@ -101,10 +101,14 @@ public class Attributes : MonoBehaviour {
 
     public void SoftReset()
     {
+        //Alternative; Spawn prefab of enemy instead of reusing same - can't forget resetting values that way, may prevent bugs ?
         currentHealth = maxHealth;
         currentStamina = maxStamina;
 
         transform.position = spawnPoint.transform.position;
+
+        GetComponent<CharacterController>().enabled = true;
+        GetComponent<Attributes>().enabled = true;
 
         Animator ani = gameObject.transform.FindChild("Model").GetComponent<Animator>();
         ani.SetTrigger("Reset");
