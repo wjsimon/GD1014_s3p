@@ -29,6 +29,7 @@ public class Attributes : MonoBehaviour {
 
     //[HideInInspector]
     public bool block;
+    public bool targettable;
 
     public bool deactivate;
 
@@ -51,7 +52,6 @@ public class Attributes : MonoBehaviour {
         if (currentHealth <= 0)
         {
             Kill(source);
-            //Destroy(gameObject);
         }
         else
         {
@@ -78,10 +78,12 @@ public class Attributes : MonoBehaviour {
         GetComponent<CharacterController>().enabled = false;
         GetComponent<Attributes>().enabled = false;
         block = false;
+        targettable = false;
 
         if (source.tag == "Player")
         {
             source.GetComponent<PlayerController>().lockOn = false;
+            //GameOver();
         }
 
         SetAnimTrigger("Death");
@@ -104,6 +106,8 @@ public class Attributes : MonoBehaviour {
         //Alternative; Spawn prefab of enemy instead of reusing same - can't forget resetting values that way, may prevent bugs ?
         currentHealth = maxHealth;
         currentStamina = maxStamina;
+        block = false;
+        targettable = false;
 
         transform.position = spawnPoint.transform.position;
 

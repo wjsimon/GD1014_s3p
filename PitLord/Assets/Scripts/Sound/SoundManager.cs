@@ -55,7 +55,7 @@ public class SoundManager : MonoBehaviour {
         AudioPlayer.Play();
     }
 
-    public void PlayNextOver(AudioClip clip)
+    public void PlayNextOverride(AudioClip clip)
     {
         AudioSource newPlayer = new AudioSource();
         newPlayer.clip = clip;

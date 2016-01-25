@@ -24,6 +24,9 @@ public class PlayerController : Attributes
     public float InverseCameraX = 1;
     public float InverseCameraY = 1;
 
+    float h;
+    float v;
+
     Quaternion targetRotation;
     public Transform cameraTarget;
     public Transform cameraPos;
@@ -48,6 +51,9 @@ public class PlayerController : Attributes
     public float rollAccel;
 
     bool inAttack;
+    bool triggerPressed;
+    //bool animTriggerBlock;
+
     Vector3 rollDir;
     float gravity = 20;
     public float speed = 4;
@@ -112,14 +118,34 @@ public class PlayerController : Attributes
 
     void CombatUpdate()
     {
+        //Debug.LogWarning(triggerPressed);
+
+        ani.SetBool("Roll", inRoll);
+
         if (!inRoll || inRoll && rollDuration >= (Mathf.Clamp01(rollCancel) * rollStorage))
         {
-            if (Input.GetButtonDown("Attack"))
+            if (Input.GetButtonDown("LightAttack"))
             {
                 if (!inAttack)
                 {
                     ani.SetTrigger("Attack");
+
                     if(inRoll)
+                    {
+                        inRoll = false;
+                        rollDuration = rollStorage;
+                    }
+                }
+            }
+
+            if (Input.GetAxis("HeavyAttack") > 0 && triggerPressed == false)
+            {
+                triggerPressed = true;
+                if (!inAttack)
+                {
+                    ani.SetTrigger("HeavyAttack");
+
+                    if (inRoll)
                     {
                         inRoll = false;
                         rollDuration = rollStorage;
@@ -129,13 +155,14 @@ public class PlayerController : Attributes
 
             if (Input.GetButtonDown("Block"))
             {
-                ani.SetBool("Block", true);
-                rollDuration = rollDuration / 2;
+                if(!inAttack && !inRoll)
+                {
+                    ani.SetBool("Block", true);
+                }
             }
             if (Input.GetButtonUp("Block"))
             {
                 ani.SetBool("Block", false);
-                rollDuration = rollDuration * 2;
             }
 
             if (inAttack)
@@ -158,10 +185,12 @@ public class PlayerController : Attributes
 
             if (Input.GetButtonDown("Roll"))
             {
-                if ((rollDuration <= rollDelay) && !inAttack)
+                if ((rollDuration <= rollDelay) && (!inAttack || inAttack && animStateLayer1.normalizedTime <= AnimationLibrary.Get().SearchByName("LightAttack1").cancel))
                 {
                     inRoll = true;
                     rollDuration = rollStorage;
+                    h = Input.GetAxisRaw("Horizontal");
+                    v = Input.GetAxisRaw("Vertical");
                 }
                 //.Move((Mathf.Sign(animator.GetFloat("X")) * transform.right) * Time.deltaTime * agent.speed / 3);
             }
@@ -170,11 +199,25 @@ public class PlayerController : Attributes
         //Rolling animation stuff - Decoupled
         if (inRoll)
         {
-            GetComponent<CharacterController>().Move(moveDir * Time.deltaTime * speed * rollAccel);
+            Debug.LogWarning((transform.TransformDirection(new Vector3(h, 0, v)) * speed));
+            if(lockOn)
+            {
+                GetComponent<CharacterController>().Move((transform.TransformDirection(new Vector3(h, 0, v)) * speed) * Time.deltaTime * speed * rollAccel);
+            }
+            else
+            {
+                GetComponent<CharacterController>().Move(moveDir * Time.deltaTime * speed * rollAccel);
+            }
+
             if (rollDuration <= 0)
             {
                 inRoll = false;
             }
+        }
+
+        if(Input.GetAxis("HeavyAttack") <= 0 && !inAttack)
+        {
+            triggerPressed = false;
         }
 
         block = inBlock;
@@ -198,12 +241,11 @@ public class PlayerController : Attributes
         }
 
         //Debug.DrawRay(cameraTarget.position, cameraPos.position-cameraTarget.position);
-        //float ch = Input.GetAxis ("CameraH");
-        //float cV = Input.GetAxis ("CameraV");
+        float ch = Input.GetAxis ("CameraH");
+        float cV = Input.GetAxis ("CameraV");
 
-
-        float ch = Input.GetAxis("Mouse X");
-        float cV = Input.GetAxis("Mouse Y");
+        //float ch = Input.GetAxis("Mouse X");
+        //float cV = Input.GetAxis("Mouse Y");
         /**/
 
         if (lockOn == true && target != null)
@@ -217,8 +259,9 @@ public class PlayerController : Attributes
             cameraPos.localPosition = new Vector3(0, 1, -currentCameraDis * 1.4f);
             cameraPos.LookAt(cameraTarget.position);
             Camera.main.transform.position = cameraPos.position;
-            Camera.main.transform.rotation = Quaternion.RotateTowards(Camera.main.transform.rotation, Quaternion.LookRotation((target.transform.position + Vector3.up) - Camera.main.transform.position), 150 * Time.deltaTime);
+            //Camera.main.transform.rotation = Quaternion.RotateTowards(Camera.main.transform.rotation, Quaternion.LookRotation((target.transform.position + Vector3.up) - Camera.main.transform.position), 150 * Time.deltaTime);
             //Camera.main.transform.LookAt(target.position+Vector3.up);
+            Camera.main.transform.rotation = Quaternion.LookRotation((target.transform.position + Vector3.up) - Camera.main.transform.position);
         }
         else
         {
@@ -270,6 +313,8 @@ public class PlayerController : Attributes
                 moveDir = new Vector3(h, 0, v);
                 moveDir = transform.TransformDirection(moveDir);
                 moveDir *= speed;
+
+                //transform.TransformDirection(new Vector3(h, 0, v))*speed
                 ani.SetFloat("X", Input.GetAxis("Horizontal"));
                 ani.SetFloat("Y", Input.GetAxis("Vertical"));
             }
@@ -293,7 +338,7 @@ public class PlayerController : Attributes
 
     void InterActionUpdate()
     {
-        if (Input.GetButtonDown("interact"))
+        if (Input.GetButtonDown("Interact"))
         {
             if (potionRefill)
             {
@@ -303,7 +348,7 @@ public class PlayerController : Attributes
             //Item, Doors,
         }
 
-        if(Input.GetButtonDown("heal"))
+        if(Input.GetButtonDown("Heal"))
         {
             if(heals > 0 && !(inAttack || inRoll))
             {

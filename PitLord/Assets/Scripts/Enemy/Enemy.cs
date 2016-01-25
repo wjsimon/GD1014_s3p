@@ -73,7 +73,7 @@ public class Enemy : Attributes
 
     public void Behaviour(int state)
     {
-        Debug.Log("behaviour state " + state);
+        //Debug.Log("behaviour state " + state);
 
         switch (state)
         {
@@ -147,6 +147,11 @@ public class Enemy : Attributes
         target = spawnPoint.transform;
         agent.SetDestination(spawnPoint.transform.position);
 
+        if(transform.position == spawnPoint.transform.position)
+        {
+            ChangeState(0);
+        }
+
         return ForwardMovement();
     }
 
@@ -172,6 +177,7 @@ public class Enemy : Attributes
         if (Vector3.Distance(Vector3.zero, agent.velocity) >= 1)
         {
             float tempBlend = 2;
+            
             if (blending)
             {
                 animationBlend += Time.deltaTime;
@@ -224,7 +230,7 @@ public class Enemy : Attributes
 
     public int ChangeState(int newState)
     {
-        Debug.Log("change state to " + newState);
+        //Debug.Log("change state to " + newState);
 
         if (behavCooldown >= 0 && (state == 3 || state == 4 || state == 5))
         {

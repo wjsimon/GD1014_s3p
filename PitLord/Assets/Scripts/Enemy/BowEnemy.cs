@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TestEnemyBehaviour : Enemy {
+public class BowEnemy : Enemy {
 
     float attack1Start;
     float attack1End;
@@ -24,6 +24,7 @@ public class TestEnemyBehaviour : Enemy {
 	
 	// Update is called once per frame
 	void Update () {
+
         if (deactivate)
         {
             return;
@@ -99,8 +100,6 @@ public class TestEnemyBehaviour : Enemy {
                     ChangeState(3);
                     break;
             }
-
-            //Approach or BackOff, or Strafe. <- Need to implement random here
         }
 
         /**/
@@ -131,6 +130,7 @@ public class TestEnemyBehaviour : Enemy {
         if (isAttacking)
         {
             agent.Stop();
+
             if (animStateLayer1.IsName("LightAttack1") == true)
             {
                 if (animStateLayer1.normalizedTime >= attack1Start && animStateLayer1.normalizedTime <= attack1End)
