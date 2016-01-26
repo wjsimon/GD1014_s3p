@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 public class Attributes : MonoBehaviour
 {
-
     //[HideInInspector]
     public GameObject spawnPoint;
 
@@ -82,6 +81,12 @@ public class Attributes : MonoBehaviour
 
     public void Kill( GameObject source )
     {
+        if(gameObject.tag == "DesObj")
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         DisableHitbox();
         GetComponent<CharacterController>().enabled = false;
         GetComponent<Attributes>().enabled = false;
@@ -91,7 +96,7 @@ public class Attributes : MonoBehaviour
         if (source.tag == "Player")
         {
             source.GetComponent<PlayerController>().lockOn = false;
-            //GameOver();
+            GameObject.Find("GameManager").GetComponent<GameManager>().GameOver();
         }
 
         SetAnimTrigger("Death");
@@ -114,11 +119,10 @@ public class Attributes : MonoBehaviour
         //Alternative; Spawn prefab of enemy instead of reusing same - can't forget resetting values that way, may prevent bugs ?
         currentHealth = maxHealth;
         currentStamina = maxStamina;
-        block = false;
-        targettable = false;
-
         transform.position = spawnPoint.transform.position;
 
+        block = false;
+        targettable = true;
         GetComponent<CharacterController>().enabled = true;
         GetComponent<Attributes>().enabled = true;
 
@@ -131,6 +135,10 @@ public class Attributes : MonoBehaviour
         if (tag == "Enemy")
         {
             GameObject.Find("GameManager").GetComponent<GameManager>().AddEnemy(gameObject);
+        }
+        if(tag == "DesObj")
+        {
+            GameObject.Find("GameManager").GetComponent<GameManager>().AddObject(gameObject);
         }
     }
 

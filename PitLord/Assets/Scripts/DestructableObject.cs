@@ -8,11 +8,25 @@ public class DestructableObject : Attributes {
     {
         currentHealth = 1;
         block = false;
-	}
+
+        StoreTransform temp = new StoreTransform(transform.position, transform.rotation, transform.localScale);
+        spawnPoint = new GameObject(gameObject.name + "_Spawn");
+        spawnPoint.transform.parent = gameObject.transform;
+        spawnPoint.transform.position = temp.position;
+        spawnPoint.transform.rotation = temp.rotation;
+        spawnPoint.transform.localScale = temp.localScale;
+
+        RegisterObject();
+    }
 	
 	// Update is called once per frame
 	void Update () 
     {
 	
 	}
+
+    void OnDestroy()
+    {
+
+    }
 }

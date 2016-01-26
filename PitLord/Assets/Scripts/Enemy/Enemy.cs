@@ -53,6 +53,7 @@ public class Enemy : Attributes
         //Sets the spawnpoint by creating a new GameObject a playerpos
         StoreTransform temp = new StoreTransform(transform.position, transform.rotation, transform.localScale);
         spawnPoint = new GameObject(gameObject.name + "_Spawn");
+        spawnPoint.transform.parent = gameObject.transform;
         spawnPoint.transform.position = temp.position;
         spawnPoint.transform.rotation = temp.rotation;
         spawnPoint.transform.localScale = temp.localScale;

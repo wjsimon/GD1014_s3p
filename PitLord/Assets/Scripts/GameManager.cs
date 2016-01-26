@@ -8,11 +8,13 @@ public class GameManager : MonoBehaviour {
     public Transform playerSpawn;
     List<GameObject> enemyList = new List<GameObject>();
     List<GameObject> objectsList = new List<GameObject>();
+    List<GameObject> alpacaList = new List<GameObject>();
+
     //ITEM LIST List<PickUp> pickUpList= new List<PickUp>();
     //COMBAT List<CombatZone> combatZones = new List<CombatZone>();
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         
         /*
         GameObject[] collector;
@@ -61,7 +63,12 @@ public class GameManager : MonoBehaviour {
         //Debug.LogWarning(enemyList.Count);
     }
 
-    public void AddObject()
+    public void AddObject(GameObject obj)
+    {
+        objectsList.Add(obj);
+    }
+
+    public void GameOver()
     {
 
     }
