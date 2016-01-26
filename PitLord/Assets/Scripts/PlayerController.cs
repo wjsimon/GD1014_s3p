@@ -293,11 +293,15 @@ public class PlayerController : Attributes
     }
     void MovementUpdate()
     {
-        if (inAttack || inRoll)
-            return;
-
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
+
+        moveDir = new Vector3(h, 0, v);
+        moveDir = transform.TransformDirection(moveDir);
+        moveDir *= speed;
+
+        if (inAttack || inRoll)
+            return;
 
         if (h != 0 || v != 0)
             inputDirTarget.localPosition = new Vector3(h, 0, v);
@@ -310,9 +314,6 @@ public class PlayerController : Attributes
             {
                 transform.LookAt(target.transform);
                 transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
-                moveDir = new Vector3(h, 0, v);
-                moveDir = transform.TransformDirection(moveDir);
-                moveDir *= speed;
 
                 //transform.TransformDirection(new Vector3(h, 0, v))*speed
                 ani.SetFloat("X", Input.GetAxis("Horizontal"));
@@ -322,7 +323,6 @@ public class PlayerController : Attributes
             else
             {
                 moveDir = transform.forward * Vector3.Distance(Vector3.zero, new Vector3(h, 0, v));
-
                 moveDir *= speed;
                 ani.SetFloat("X", 0);
                 ani.SetFloat("Y", Vector3.Distance(Vector3.zero, new Vector3(h, 0, v)) * 2);

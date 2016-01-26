@@ -58,7 +58,7 @@ public class AnimationLibrary
         //Returns the Animation going by name specified
         if(count == 1)
         {
-            Debug.Log("Animations found; data returned");
+            //Debug.Log("Animations found; data returned");
             return wrapper;
         }
 
