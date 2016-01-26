@@ -22,11 +22,12 @@ public class DestructableObject : Attributes {
 	// Update is called once per frame
 	void Update () 
     {
-	
 	}
 
     void OnDestroy()
     {
+        AudioSource player = new AudioSource();
 
+        player.clip = onDeath[Random.Range(0, onDeath.Count)];
     }
 }

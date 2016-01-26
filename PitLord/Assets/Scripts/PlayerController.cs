@@ -128,6 +128,16 @@ public class PlayerController : Attributes
 
         ani.SetBool("Roll", inRoll);
 
+        if (inAttack || inRoll || inBlock)
+        {
+            if(inRun)
+            {
+                inRun = false;
+                //Find better solution maybe? Can probably bug this big time
+                staminaTick *= -1;
+            }
+        }
+
         if (!inRoll || inRoll && rollDuration >= (Mathf.Clamp01(rollCancel) * rollStorage))
         {
             if (Input.GetButtonDown("LightAttack"))
@@ -186,6 +196,20 @@ public class PlayerController : Attributes
                 {
                     float start = AnimationLibrary.Get().SearchByName("LightAttack1").start;
                     float end = AnimationLibrary.Get().SearchByName("LightAttack1").end;
+
+                    if (animStateLayer1.normalizedTime >= start && animStateLayer1.normalizedTime <= end)
+                    {
+                        meleeWeapon.GetComponent<BoxCollider>().enabled = true;
+                    }
+                    else
+                    {
+                        meleeWeapon.GetComponent<BoxCollider>().enabled = false;
+                    }
+                }
+                if (animStateLayer1.IsName("HeavyAttack1") == true)
+                {
+                    float start = AnimationLibrary.Get().SearchByName("HeavyAttack1").start;
+                    float end = AnimationLibrary.Get().SearchByName("HeavyAttack1").end;
 
                     if (animStateLayer1.normalizedTime >= start && animStateLayer1.normalizedTime <= end)
                     {
@@ -397,7 +421,7 @@ public class PlayerController : Attributes
         {
             if (heals > 0 && !(inAttack || inRoll))
             {
-                UseHeal();
+                ani.SetTrigger("Heal");
             }
         }
     }
@@ -432,7 +456,5 @@ public class PlayerController : Attributes
     {
         heals -= 1;
         currentHealth += healAmount;
-
-        ani.SetTrigger("Heal");
     }
 }

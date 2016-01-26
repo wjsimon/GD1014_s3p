@@ -23,6 +23,7 @@ public class AnimationLibrary
 
         //PlaceHolder
         AddAnimation(new AnimationWrapper("LightAttack1", 0.2f, 0.4f, 1.0f)); //0.0f cancel = always cancel, 1.0f cancel = can't cancel
+        AddAnimation(new AnimationWrapper("HeavyAttack1", 0.3f, 0.45f, 1.0f));
     }
 
 

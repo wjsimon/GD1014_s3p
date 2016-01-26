@@ -27,6 +27,7 @@ public class WeaponScript : MonoBehaviour {
             /**/
 
             Debug.LogWarning("Player hit");
+
             other.GetComponent<Attributes>().ApplyDamage(damage, owner);
         }
     }
