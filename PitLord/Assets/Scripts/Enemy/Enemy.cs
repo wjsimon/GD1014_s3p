@@ -32,7 +32,7 @@ public class Enemy : Attributes
 
     protected int state;
     protected int strafeDir;
-    protected bool isAttacking;
+    public bool isAttacking;
 
     protected bool alerted;
 

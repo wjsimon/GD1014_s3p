@@ -37,20 +37,22 @@ public class PlayerController : Attributes
     //movement
     bool collisionAHead;
     Vector3 movement;
-    public float walkSpeed = .5f;
-    public float runSpeed = .5f;
+    public float walkSpeed = 4;
+    public float runSpeed = 6;
     public Transform inputDir;
     public Transform inputDirTarget;
     Vector3 animDir;
 
-    bool inRoll;
+    [HideInInspector]
+    public bool inRoll;
     public float rollDuration;
     public float rollCancel;
     float rollStorage;
     public float rollDelay;
     public float rollAccel;
 
-    bool inAttack;
+    [HideInInspector]
+    public bool inAttack;
     bool triggerPressed;
     //bool animTriggerBlock;
 
@@ -59,7 +61,10 @@ public class PlayerController : Attributes
     public float speed = 4;
     Vector3 moveDir;
 
-    bool inBlock;
+    [HideInInspector]
+    public bool inBlock;
+    [HideInInspector]
+    public bool inRun;
 
     //reference
     CharacterController cc;
@@ -76,7 +81,6 @@ public class PlayerController : Attributes
     AnimatorTransitionInfo animInfoTrans;
 
     public Transform handPos;
-
 
     bool potionRefill;
 
@@ -109,11 +113,13 @@ public class PlayerController : Attributes
 
         inAttack = animStateLayer1.IsTag("Attack") || animTransition1.IsUserName("Attack"); // || necessary?
         inBlock = animStateLayer2.IsTag("Block") || animTransition2.IsUserName("Block");
+        ani.SetBool("Block", block);
 
         CameraUpdate();
         MovementUpdate();
         CombatUpdate();
         InterActionUpdate();
+        StaminaRegen();
     }
 
     void CombatUpdate()
@@ -128,12 +134,16 @@ public class PlayerController : Attributes
             {
                 if (!inAttack)
                 {
-                    ani.SetTrigger("Attack");
-
-                    if(inRoll)
+                    if (StaminaCost(gameObject, "LightAttack"))
                     {
-                        inRoll = false;
-                        rollDuration = rollStorage;
+                        ani.SetTrigger("Attack");
+                        block = false;
+
+                        if (inRoll)
+                        {
+                            inRoll = false;
+                            rollDuration = rollStorage;
+                        }
                     }
                 }
             }
@@ -143,26 +153,31 @@ public class PlayerController : Attributes
                 triggerPressed = true;
                 if (!inAttack)
                 {
-                    ani.SetTrigger("HeavyAttack");
-
-                    if (inRoll)
+                    if (StaminaCost(gameObject, "HeavyAttack"))
                     {
-                        inRoll = false;
-                        rollDuration = rollStorage;
+                        ani.SetTrigger("HeavyAttack");
+
+                        if (inRoll)
+                        {
+                            inRoll = false;
+                            rollDuration = rollStorage;
+                        }
                     }
                 }
             }
 
             if (Input.GetButtonDown("Block"))
             {
-                if(!inAttack && !inRoll)
+                if (!inAttack && !inRoll && currentStamina > 0)
                 {
                     ani.SetBool("Block", true);
+                    block = true;
                 }
             }
             if (Input.GetButtonUp("Block"))
             {
                 ani.SetBool("Block", false);
+                block = false;
             }
 
             if (inAttack)
@@ -187,10 +202,13 @@ public class PlayerController : Attributes
             {
                 if ((rollDuration <= rollDelay) && (!inAttack || inAttack && animStateLayer1.normalizedTime <= AnimationLibrary.Get().SearchByName("LightAttack1").cancel))
                 {
-                    inRoll = true;
-                    rollDuration = rollStorage;
-                    h = Input.GetAxisRaw("Horizontal");
-                    v = Input.GetAxisRaw("Vertical");
+                    if (StaminaCost(gameObject, "Roll"))
+                    {
+                        inRoll = true;
+                        rollDuration = rollStorage;
+                        h = Input.GetAxisRaw("Horizontal");
+                        v = Input.GetAxisRaw("Vertical");
+                    }
                 }
                 //.Move((Mathf.Sign(animator.GetFloat("X")) * transform.right) * Time.deltaTime * agent.speed / 3);
             }
@@ -200,7 +218,7 @@ public class PlayerController : Attributes
         if (inRoll)
         {
             Debug.LogWarning((transform.TransformDirection(new Vector3(h, 0, v)) * speed));
-            if(lockOn)
+            if (lockOn)
             {
                 GetComponent<CharacterController>().Move((transform.TransformDirection(new Vector3(h, 0, v)) * speed) * Time.deltaTime * speed * rollAccel);
             }
@@ -215,12 +233,11 @@ public class PlayerController : Attributes
             }
         }
 
-        if(Input.GetAxis("HeavyAttack") <= 0 && !inAttack)
+        if (Input.GetAxis("HeavyAttack") <= 0 && !inAttack)
         {
             triggerPressed = false;
         }
 
-        block = inBlock;
         rollDuration -= Time.deltaTime;
     }
 
@@ -241,8 +258,8 @@ public class PlayerController : Attributes
         }
 
         //Debug.DrawRay(cameraTarget.position, cameraPos.position-cameraTarget.position);
-        float ch = Input.GetAxis ("CameraH");
-        float cV = Input.GetAxis ("CameraV");
+        float ch = Input.GetAxis("CameraH");
+        float cV = Input.GetAxis("CameraV");
 
         //float ch = Input.GetAxis("Mouse X");
         //float cV = Input.GetAxis("Mouse Y");
@@ -307,6 +324,25 @@ public class PlayerController : Attributes
             inputDirTarget.localPosition = new Vector3(h, 0, v);
         inputDir.eulerAngles = new Vector3(0, cameraTarget.eulerAngles.y, 0);
 
+        if (Input.GetAxis("Sprint") > 0)
+        {
+            if (!inRun && currentStamina > 0)
+            {
+                speed = runSpeed;
+                inRun = true;
+                staminaTick *= -1;
+            }
+        }
+
+        else if (Input.GetAxis("Sprint") <= 0)
+        {
+            if (inRun)
+            {
+                speed = walkSpeed;
+                inRun = false;
+                staminaTick *= -1;
+            }
+        }
 
         if (cc.isGrounded)
         {
@@ -324,8 +360,17 @@ public class PlayerController : Attributes
             {
                 moveDir = transform.forward * Vector3.Distance(Vector3.zero, new Vector3(h, 0, v));
                 moveDir *= speed;
-                ani.SetFloat("X", 0);
-                ani.SetFloat("Y", Vector3.Distance(Vector3.zero, new Vector3(h, 0, v)) * 2);
+                if (!inRun)
+                {
+                    ani.SetFloat("X", 0);
+                    ani.SetFloat("Y", Vector3.Distance(Vector3.zero, new Vector3(h, 0, v)) * 2);
+                }
+                if (inRun)
+                {
+                    ani.SetFloat("X", 0);
+                    ani.SetFloat("Y", 2);
+                }
+
 
                 transform.forward = new Vector3(-inputDir.position.x + inputDirTarget.position.x, 0, -inputDir.position.z + inputDirTarget.position.z);
             }
@@ -348,16 +393,16 @@ public class PlayerController : Attributes
             //Item, Doors,
         }
 
-        if(Input.GetButtonDown("Heal"))
+        if (Input.GetButtonDown("Heal"))
         {
-            if(heals > 0 && !(inAttack || inRoll))
+            if (heals > 0 && !(inAttack || inRoll))
             {
                 UseHeal();
             }
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter( Collider other )
     {
         if (other.name == "PotionRefill")
         {
@@ -367,7 +412,7 @@ public class PlayerController : Attributes
         }
     }
 
-    void OnTriggerExit(Collider other)
+    void OnTriggerExit( Collider other )
     {
         if (other.name == "PotionRefill")
         {

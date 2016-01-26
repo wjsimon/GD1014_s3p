@@ -24,6 +24,9 @@ public class TestEnemyBehaviour : Enemy {
 	
 	// Update is called once per frame
 	void Update () {
+
+        StaminaRegen();
+
         if (deactivate)
         {
             return;

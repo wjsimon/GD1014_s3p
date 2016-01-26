@@ -3,7 +3,8 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Attributes : MonoBehaviour {
+public class Attributes : MonoBehaviour
+{
 
     //[HideInInspector]
     public GameObject spawnPoint;
@@ -12,8 +13,12 @@ public class Attributes : MonoBehaviour {
     public int maxHealth;
 
     //[HideInInspector]
-    public int currentStamina;
-    public int maxStamina;
+    public float currentStamina;
+    public float maxStamina;
+
+    public float staminaTick;
+    float regenCounter = 0;
+    float tickRate = 0.01f;
 
     public List<AudioClip> onHit;
     public List<AudioClip> onDeath;
@@ -33,22 +38,24 @@ public class Attributes : MonoBehaviour {
 
     public bool deactivate;
 
-    public void ApplyDamage(int damage, GameObject source)
+    public int weaponIndex;
+
+    public void ApplyDamage( int damage, GameObject source )
     {
         //Debug.LogWarning(damage);
         Vector3 dir = (source.transform.position - transform.position).normalized;
         int facing = (int)Mathf.Clamp01(Mathf.Sign(Vector3.Dot(transform.forward, dir)));
 
-        if(block)
+        if (block)
         {
             currentStamina -= damage * facing;
-            currentHealth -= damage * (1-facing);
+            currentHealth -= damage * (1 - facing);
         }
         else
         {
             currentHealth -= damage;
         }
-        
+
         if (currentHealth <= 0)
         {
             Kill(source);
@@ -62,17 +69,18 @@ public class Attributes : MonoBehaviour {
         if (currentStamina <= 0)
         {
             block = false;
+            currentStamina = 0;
         }
     }
 
-    public void SetAnimTrigger(string anim)
+    public void SetAnimTrigger( string anim )
     {
         Animator ani = gameObject.transform.FindChild("Model").GetComponent<Animator>();
 
         ani.SetTrigger(anim);
     }
 
-    public void Kill(GameObject source)
+    public void Kill( GameObject source )
     {
         DisableHitbox();
         GetComponent<CharacterController>().enabled = false;
@@ -123,6 +131,102 @@ public class Attributes : MonoBehaviour {
         if (tag == "Enemy")
         {
             GameObject.Find("GameManager").GetComponent<GameManager>().AddEnemy(gameObject);
+        }
+    }
+
+    public bool StaminaCost( GameObject source, string action )
+    {
+        //I LUV H4RDC0D1NG. xoxo <3<3<3<3<3<3
+        if (source.tag == "Enemy")
+        {
+            if (action == "Block")
+            {
+
+            }
+        }
+
+        if (source.tag == "Player")
+        {
+            if (action == "LightAttack")
+            {
+                if (currentStamina >= 2)
+                {
+                    currentStamina -= 2;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            if (action == "HeavyAttack")
+            {
+                if (currentStamina >= 4)
+                {
+                    currentStamina -= 4;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            if (action == "Roll")
+            {
+                if (currentStamina >= 3)
+                {
+                    currentStamina -= 3;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public void StaminaRegen()
+    {
+        //Debug.Log(gameObject + " " + regenCounter);
+
+        if(gameObject.tag == "Player")
+        {
+            if (gameObject.GetComponent<PlayerController>().inAttack || gameObject.GetComponent<PlayerController>().inRoll || gameObject.GetComponent<PlayerController>().inBlock)
+            {
+                regenCounter = -0.5f;
+            }
+            if(gameObject.GetComponent<PlayerController>().inRun)
+            {
+                regenCounter = 0;
+            }
+        }
+        if(gameObject.tag == "Enemy")
+        {
+            if (gameObject.GetComponent<Enemy>().isAttacking || gameObject.GetComponent<Enemy>().block)
+            {
+                regenCounter = -1.5f;
+            }
+        }
+
+        //need +0.01 so we can use negative Regen for sprinting
+        if (currentStamina < maxStamina + 0.01)
+        {
+            regenCounter += Time.deltaTime;
+
+            if (regenCounter >= tickRate)
+            {
+                regenCounter = 0;
+                currentStamina += staminaTick * tickRate;
+            }
+        }
+
+        //current can overflow by small amounts, this is just for cleanup
+        if (currentStamina >= maxStamina)
+        {
+            currentStamina = maxStamina;
         }
     }
 }
