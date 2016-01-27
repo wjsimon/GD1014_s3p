@@ -26,8 +26,11 @@ public class DestructableObject : Attributes {
 
     void OnDestroy()
     {
-        AudioSource player = new AudioSource();
-
-        player.clip = onDeath[Random.Range(0, onDeath.Count)];
+        if(onDeath.Count > 0)
+        {
+            AudioSource player = new AudioSource();
+            player.clip = onDeath[Random.Range(0, onDeath.Count)];
+            player.Play();
+        }
     }
 }

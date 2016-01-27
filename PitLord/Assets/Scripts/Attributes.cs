@@ -130,7 +130,7 @@ public class Attributes : MonoBehaviour
         ani.SetTrigger("Reset");
     }
 
-    public void RegisterObject()
+    public virtual void RegisterObject()
     {
         if (tag == "Enemy")
         {
@@ -211,6 +211,7 @@ public class Attributes : MonoBehaviour
                 regenCounter = 0;
             }
         }
+
         if(gameObject.tag == "Enemy")
         {
             if (gameObject.GetComponent<Enemy>().isAttacking || gameObject.GetComponent<Enemy>().block)

@@ -39,7 +39,7 @@ public class Enemy : Attributes
     public float behavCooldown;
     float cooldownStorage;
     // Use this for initialization
-    void Start()
+    protected virtual void Start()
     {
         Init();
     }
@@ -94,6 +94,9 @@ public class Enemy : Attributes
                 Random rng = new Random();
                 Mathf.Sign(Random.Range(-2, 1));
                 Strafe(strafeDir);
+                break;
+            case 5:
+                Attack();
                 break;
         }
     }
@@ -215,6 +218,11 @@ public class Enemy : Attributes
         return agent.remainingDistance;
     }
 
+    protected virtual void Attack()
+    {
+
+    }
+
     //BETA TESTING----------------DONT USE FOR BLENDING MORE THAN ONE VALUE----------------------
     public void ResetAnimationBlend( float value, float from, float to )
     {
@@ -231,12 +239,18 @@ public class Enemy : Attributes
 
     public int ChangeState(int newState)
     {
+        if(newState == state)
+        {
+            return state;
+        }
         //Debug.Log("change state to " + newState);
 
+        /*
         if (behavCooldown >= 0 && (state == 3 || state == 4 || state == 5))
         {
             return state;
         }
+
         if (behavCooldown >= 0 && state == 1 && (newState != 5))
         {
             return state;
@@ -253,11 +267,6 @@ public class Enemy : Attributes
             if (newState == 4)
             {
                 strafeDir = (int)Mathf.Sign(Random.Range(-2, 1));
-            }
-            
-            if (behavCooldown < 0)
-            {
-                behavCooldown = cooldownStorage;//+ Random.Range(-2, 2);
             }
             /**/
         }

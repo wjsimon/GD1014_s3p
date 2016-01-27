@@ -1,18 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TestEnemyBehaviour : Enemy {
+public class TestEnemyBehaviour : Enemy
+{
 
     float attack1Start;
     float attack1End;
 
     // Use this for initialization
-    void Start () {
-        Init();
+    void Start()
+    {
+        base.Start();
 
         attack1Start = AnimationLibrary.Get().SearchByName("LightAttack1").start;
         attack1End = AnimationLibrary.Get().SearchByName("LightAttack1").end;
-        
+
         if (deactivate)
         {
             agent.Stop();
@@ -20,12 +22,11 @@ public class TestEnemyBehaviour : Enemy {
         }
 
         ChangeState(0);
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
 
-        StaminaRegen();
+    // Update is called once per frame
+    void Update()
+    {
 
         if (deactivate)
         {
@@ -38,38 +39,60 @@ public class TestEnemyBehaviour : Enemy {
         animTransition1 = animator.GetAnimatorTransitionInfo(0);
         isAttacking = animStateLayer1.IsTag("Attack") || animTransition1.IsUserName("Attack");
 
-        behavCooldown -= Time.deltaTime;
+        StaminaRegen();
+
         BehaviourSwitch();
-	}
+    }
 
     void BehaviourSwitch()
     {
         //ChangeState(4);
         //Debug.Log("behavCooldown" + (int)behavCooldown);
-        
+
         //Idle until Detection of Player
         //*
+        behavCooldown -= Time.deltaTime;
+        if (behavCooldown < 0)
+        {
+            behavCooldown = 0;
+        }
+
+        if (isAttacking)
+        {
+            return;
+        }
+
         if (Vector3.Distance(target.position, transform.position) > detectionRange)
         {
+            //If you move outside detection range while in combat, always approaches after finishing current action
+            if (Vector3.Distance(target.position, transform.position) < leashingRange)
+            {
+                ChangeState(1);
+                return;
+            }
+
             ChangeState(0); //Idle
+            return;
         }
 
         //Retreats rapidly to spawnPoint when player is out of leashing Range
-        if (Vector3.Distance(spawnPoint.transform.position, transform.position) > leashingRange && state != 0)
+        if (Vector3.Distance(spawnPoint.transform.position, transform.position) > leashingRange)
         {
             ChangeState(2); //Retreat
+            return;
         }
 
         //Within detection Range, enemy approaches the player
-        if ((Vector3.Distance(target.position, transform.position) < detectionRange || alerted) && Vector3.Distance(target.position, transform.position) > combatRange)
+        if (Vector3.Distance(target.position, transform.position) > combatRange && (behavCooldown <= 0))
         {
+            behavCooldown = Random.Range(0, 4) + 1;
             BehaviourRandomize = Random.Range(0, 3);
 
             //Debug.LogWarning("RANDOM MOVEMENT INT " + BehaviourRandomize);
 
             switch (BehaviourRandomize)
             {
-                case 0:          
+                case 0:
                     ChangeState(1);
                     break;
                 case 1:
@@ -81,16 +104,10 @@ public class TestEnemyBehaviour : Enemy {
             }
         }
 
-        //If you move outside detection range while in combat, always approaches after finishing current action
-        if (((Vector3.Distance(target.position, transform.position) > detectionRange && alerted) && Vector3.Distance(target.position, transform.position) < leashingRange))
-        {
-            ChangeState(1);
-        }
-
         //Within Combat Range, the enemy decides to attack, backoff or strafe around player
         if (Vector3.Distance(target.position, transform.position) < combatRange && !isAttacking)
         {
-            BehaviourRandomize = Random.Range(0,2);
+            BehaviourRandomize = Random.Range(0, 2);
             //Debug.LogWarning("RANDOM MOVEMENT INT " + BehaviourRandomize);
 
             switch (BehaviourRandomize)
@@ -107,24 +124,11 @@ public class TestEnemyBehaviour : Enemy {
         }
 
         /**/
-        //Im a pro.
-        if (state != 5)
-        {
-            Behaviour(state);
-        }
-        if (state == 5)
-        {
-            Attack();
-        }
-        /**/
+        Behaviour(state);
     }
 
-    void Attack()
+    protected override void Attack()
     {
-        if (state != 5)
-        {
-            return;
-        }
         //animationLock = true;
         if (!isAttacking)
         {
