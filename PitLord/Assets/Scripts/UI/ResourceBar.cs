@@ -48,25 +48,11 @@ public class ResourceBar : MonoBehaviour
 
         if (lerp)
         {
-            bar.rectTransform.localScale = new Vector3(FakeLerp(bar.rectTransform.localScale.x, local.x * scaleFactor, lerpFactor), local.y, local.z);
-
-            //Debug.Log((Mathf.Lerp(bar.rectTransform.localScale.x, local.x * scaleFactor, currentLerp)) + " " + scaleFactor);
-            /*   
-               if (!((Mathf.Lerp(bar.rectTransform.localScale.x, local.x * scaleFactor, currentLerp)) < (scaleFactor + 0.1)) && scaleFactor < 1)
-               {
-                   currentLerp = lerpFactor * Time.deltaTime;
-                   bar.rectTransform.localScale = new Vector3(Mathf.Lerp(bar.rectTransform.localScale.x, local.x * scaleFactor, currentLerp), local.y, local.z);
-               }
-               else
-               {
-                   //Debug.Log("FakeLerp");
-                   bar.rectTransform.localScale = new Vector3(FakeLerp(bar.rectTransform.localScale.x, local.x * scaleFactor, lerpFactor), local.y, local.z);
-               }
-            /**/
+            bar.rectTransform.localScale = new Vector3(Mathf.SmoothDamp(bar.rectTransform.localScale.x, local.x * scaleFactor, ref currentLerp, 0.5f), local.y, local.z);     
         }
     }
 
-    float FakeLerp(float n, float target, float a)
+    float FakeLerp( float n, float target, float a )
     {
         if (n == target)
             return n;

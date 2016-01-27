@@ -7,6 +7,8 @@ using System.Collections.Generic;
 
 public class GameStatistics
 {
+    //Singleton, LogFunctions() - Formatierung Log 
+    
     private static GameStatistics instance;
 
     public float time;

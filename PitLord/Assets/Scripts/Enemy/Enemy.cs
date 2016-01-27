@@ -39,15 +39,14 @@ public class Enemy : Attributes
     public float behavCooldown;
     float cooldownStorage;
     // Use this for initialization
-    protected virtual void Start()
+    protected override void Start()
     {
+        base.Start();
         Init();
     }
 
     public void Init()
     {
-        currentHealth = maxHealth;
-        currentStamina = maxStamina;
         cooldownStorage = behavCooldown;
 
         //Sets the spawnpoint by creating a new GameObject a playerpos
@@ -65,8 +64,9 @@ public class Enemy : Attributes
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         //Basically a state machine, gotta do all the randomizing and checking for which "state" the enemy should be in here <-- This is pretty much where enemies get coded, all the other stuff is the same
         Behaviour(state);
         /**/

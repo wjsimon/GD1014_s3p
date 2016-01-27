@@ -31,21 +31,32 @@ public class Attributes : MonoBehaviour
     public int maxHeals;
     public int healAmount;
 
-    //[HideInInspector]
-    public bool block;
-    public bool targettable;
+    public bool inAttack;
+    public bool inBlock;
+    public bool inRun;
 
+    public bool targettable;
     public bool deactivate;
 
     public int weaponIndex;
 
+    
+    protected virtual void Start()
+    {
+        currentHealth = maxHealth;
+        currentStamina = maxStamina;
+    }
+    protected virtual void Update()
+    {
+        StaminaRegen();
+    }
     public void ApplyDamage( int damage, GameObject source )
     {
         //Debug.LogWarning(damage);
         Vector3 dir = (source.transform.position - transform.position).normalized;
         int facing = (int)Mathf.Clamp01(Mathf.Sign(Vector3.Dot(transform.forward, dir)));
 
-        if (block)
+        if (inBlock)
         {
             currentStamina -= damage * facing;
             currentHealth -= damage * (1 - facing);
@@ -67,7 +78,7 @@ public class Attributes : MonoBehaviour
 
         if (currentStamina <= 0)
         {
-            block = false;
+            inBlock = false;
             currentStamina = 0;
         }
     }
@@ -90,12 +101,12 @@ public class Attributes : MonoBehaviour
         DisableHitbox();
         GetComponent<CharacterController>().enabled = false;
         GetComponent<Attributes>().enabled = false;
-        block = false;
+        inBlock = false;
         targettable = false;
 
         if (source.tag == "Player")
         {
-            source.GetComponent<PlayerController>().lockOn = false;
+            //source.GetComponent<PlayerController>().lockOn = false;
             GameObject.Find("GameManager").GetComponent<GameManager>().GameOver();
         }
 
@@ -106,7 +117,7 @@ public class Attributes : MonoBehaviour
     {
         if (tag == "Player")
         {
-            GetComponent<PlayerController>().meleeWeapon.GetComponent<BoxCollider>().enabled = false;
+            //GetComponent<PlayerController>().meleeWeapon.GetComponent<BoxCollider>().enabled = false;
         }
         else if (tag == "Enemy")
         {
@@ -121,7 +132,7 @@ public class Attributes : MonoBehaviour
         currentStamina = maxStamina;
         transform.position = spawnPoint.transform.position;
 
-        block = false;
+        inBlock = false;
         targettable = true;
         GetComponent<CharacterController>().enabled = true;
         GetComponent<Attributes>().enabled = true;
@@ -202,7 +213,7 @@ public class Attributes : MonoBehaviour
 
         if(gameObject.tag == "Player")
         {
-            if (gameObject.GetComponent<PlayerController>().inAttack || gameObject.GetComponent<PlayerController>().inRoll || gameObject.GetComponent<PlayerController>().inBlock)
+            //if (gameObject.GetComponent<PlayerController>().inAttack || gameObject.GetComponent<PlayerController>().inRoll || gameObject.GetComponent<PlayerController>().inBlock)
             {
                 regenCounter = -0.5f;
             }
@@ -214,7 +225,7 @@ public class Attributes : MonoBehaviour
 
         if(gameObject.tag == "Enemy")
         {
-            if (gameObject.GetComponent<Enemy>().isAttacking || gameObject.GetComponent<Enemy>().block)
+            if (gameObject.GetComponent<Enemy>().isAttacking || gameObject.GetComponent<Enemy>().inBlock)
             {
                 regenCounter = -1.5f;
             }

@@ -4,10 +4,9 @@ using System.Collections;
 public class DestructableObject : Attributes {
 
 	// Use this for initialization
-	void Start () 
+	protected override void Start () 
     {
-        currentHealth = 1;
-        block = false;
+        base.Start();
 
         StoreTransform temp = new StoreTransform(transform.position, transform.rotation, transform.localScale);
         spawnPoint = new GameObject(gameObject.name + "_Spawn");

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 public class AnimationLibrary
 {
     private static AnimationLibrary instance;
-    public List<AnimationWrapper> animations;
+    public Dictionary<string, AnimationWrapper> animations;
 
     private AnimationLibrary()
     {
@@ -19,7 +19,7 @@ public class AnimationLibrary
 
     private void Init()
     {
-        animations = new List<AnimationWrapper>();
+        animations = new Dictionary<string, AnimationWrapper>();
 
         //PlaceHolder
         AddAnimation(new AnimationWrapper("LightAttack1", 0.2f, 0.4f, 1.0f)); //0.0f cancel = always cancel, 1.0f cancel = can't cancel
@@ -39,33 +39,11 @@ public class AnimationLibrary
 
     private void AddAnimation(AnimationWrapper wrapper)
     {
-        animations.Add(wrapper);
+        animations[wrapper.name] = wrapper;
     }
 
     public AnimationWrapper SearchByName( string name )
     {
-        int count = 0;
-        AnimationWrapper wrapper = new AnimationWrapper();
-
-        for (int i = 0; i < animations.Count; i++)
-        {
-            if (animations[i].name == name)
-            {
-                count++;
-                wrapper = animations[i];
-            }
-        }
-
-        //Returns the Animation going by name specified
-        if(count == 1)
-        {
-            //Debug.Log("Animations found; data returned");
-            return wrapper;
-        }
-
-        //Returns null if there's multiple or no animations by name specified
-
-        Debug.Log(count + " animations found for name specified. Get it together dude.");
-        return null;
+        return animations[name];
     }
 }

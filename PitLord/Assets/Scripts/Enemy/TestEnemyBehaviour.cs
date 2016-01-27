@@ -4,6 +4,7 @@ using System.Collections;
 public class TestEnemyBehaviour : Enemy
 {
 
+    //Animationen per Hand; Bool raus - Cooldown rein
     float attack1Start;
     float attack1End;
 

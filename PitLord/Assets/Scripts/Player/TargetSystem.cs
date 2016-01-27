@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 public class TargetSystem : MonoBehaviour
 {
-
-
     public List<GameObject> targetList;
     bool lockOn;
     public GameObject pc;
@@ -14,12 +12,12 @@ public class TargetSystem : MonoBehaviour
     void Start()
     {
         targetList = new List<GameObject>();
-
     }
 
     // Update is called once per frame
     void Update()
     {
+        /*
         transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, transform.eulerAngles.z);
         if (Input.GetButtonDown("LockOn"))
         {
@@ -31,14 +29,14 @@ public class TargetSystem : MonoBehaviour
                     {
                         lockOn = true;
                         sortListByDistance();
-                        pc.GetComponent<PlayerController>().CameraRotateToTarget();
+                        //pc.GetComponent<PlayerController>().CameraRotateToTarget();
                     }
 
                 }
             }
             else
             {
-                pc.GetComponent<PlayerController>().lockOn = false;
+                //pc.GetComponent<PlayerController>().lockOn = false;
                 lockOn = false;
 
             }
@@ -64,37 +62,40 @@ public class TargetSystem : MonoBehaviour
             }
         }
     }
-    bool findLockOn()
-    {
-        if (targetList.Count <= 0)
+    /**/
+        /*
+        bool findLockOn()
         {
-            pc.GetComponent<PlayerController>().target = null;
-            pc.GetComponent<PlayerController>().lockOn = false;
+            if (targetList.Count <= 0)
+            {
+                pc.GetComponent<PlayerController>().target = null;
+                pc.GetComponent<PlayerController>().lockOn = false;
+                return false;
+            }
+
+            GameObject newTarget;
+            newTarget = targetList[0];
+
+            if (!newTarget.GetComponent<Attributes>().targettable)
+            {
+                Debug.LogWarning(newTarget.GetComponent<Attributes>().targettable);
+                pc.GetComponent<PlayerController>().target = null;
+                pc.GetComponent<PlayerController>().lockOn = false;
+                return false;
+            }
+
+            if (newTarget != null)
+            {
+                pc.GetComponent<PlayerController>().target = newTarget;
+                pc.GetComponent<PlayerController>().lockOn = true;
+                return true;
+            }
+
             return false;
+
         }
-
-        GameObject newTarget;
-        newTarget = targetList[0];
-
-        if (!newTarget.GetComponent<Attributes>().targettable)
-        {
-            Debug.LogWarning(newTarget.GetComponent<Attributes>().targettable);
-            pc.GetComponent<PlayerController>().target = null;
-            pc.GetComponent<PlayerController>().lockOn = false;
-            return false;
-        }
-
-        if (newTarget != null)
-        {
-            pc.GetComponent<PlayerController>().target = newTarget;
-            pc.GetComponent<PlayerController>().lockOn = true;
-            return true;
-        }
-
-        return false;
-
+        /**/
     }
-
     void switchLockOn( int add )
     {
         if (add == 1)
@@ -115,7 +116,7 @@ public class TargetSystem : MonoBehaviour
         newTarget = targetList[currentLockOn];
         if (newTarget != null)
         {
-            pc.GetComponent<PlayerController>().target = newTarget;
+            //pc.GetComponent<PlayerController>().target = newTarget;
             //pc.GetComponent<playerControler>().lockOn=true;  
         }
     }
@@ -147,8 +148,6 @@ public class TargetSystem : MonoBehaviour
     {
         targetList.Remove(removeGo);
         sortListByDistance();
-        if (lockOn == true)
-            findLockOn();
-
+      //if (lockOn == true) findLockOn();
     }
 }
