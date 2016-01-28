@@ -32,4 +32,9 @@ public class DestructableObject : Attributes {
             player.Play();
         }
     }
+
+    protected override void RegisterObject()
+    {
+        GameObject.Find("GameManager").GetComponent<GameManager>().AddObject(gameObject);
+    }
 }

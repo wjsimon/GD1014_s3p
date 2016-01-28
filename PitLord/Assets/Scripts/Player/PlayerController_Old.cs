@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlayerController_Old : Attributes
 {
-
+    /*
     //combat
     public GameObject target;
 
@@ -129,7 +129,7 @@ public class PlayerController_Old : Attributes
             if(inRun)
             {
                 inRun = false;
-                //Find better solution maybe? Can probably bug this big time
+                //Find better solution maybe? Can probably bug big time
                 staminaTick *= -1;
             }
         }
@@ -318,7 +318,6 @@ public class PlayerController_Old : Attributes
             Camera.main.transform.forward = Vector3.Lerp(Camera.main.transform.forward, cameraPos.forward, cameraSmoothRot * Time.deltaTime);
         }
     }
-    /**/
 
     public void CameraRotateToTarget()
     {
@@ -457,4 +456,5 @@ public class PlayerController_Old : Attributes
         heals -= 1;
         currentHealth += healAmount;
     }
+     */
 }

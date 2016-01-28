@@ -3,7 +3,6 @@ using System.Collections;
 
 public class TestEnemyBehaviour : Enemy
 {
-
     //Animationen per Hand; Bool raus - Cooldown rein
     float attack1Start;
     float attack1End;
@@ -13,8 +12,8 @@ public class TestEnemyBehaviour : Enemy
     {
         base.Start();
 
-        attack1Start = AnimationLibrary.Get().SearchByName("LightAttack1").start;
-        attack1End = AnimationLibrary.Get().SearchByName("LightAttack1").end;
+        attack1Start = AnimationLibrary.Get().SearchByName("LightAttack1").colStart;
+        attack1End = AnimationLibrary.Get().SearchByName("LightAttack1").colEnd;
 
         if (deactivate)
         {
@@ -151,5 +150,10 @@ public class TestEnemyBehaviour : Enemy
                 }
             }
         }
+    }
+
+    protected override void RegisterObject()
+    {
+        GameObject.Find("GameManager").GetComponent<GameManager>().AddEnemy(gameObject);
     }
 }

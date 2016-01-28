@@ -12,8 +12,8 @@ public class SwordEnemy : Enemy {
     void Start () {
         Init();
 
-        attack1Start = AnimationLibrary.Get().SearchByName("LightAttack1").start;
-        attack1End = AnimationLibrary.Get().SearchByName("LightAttack1").end;
+        attack1Start = AnimationLibrary.Get().SearchByName("LightAttack1").colStart;
+        attack1End = AnimationLibrary.Get().SearchByName("LightAttack1").colEnd;
         
         if (deactivate)
         {

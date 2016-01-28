@@ -17,13 +17,16 @@ public class AnimationLibrary
         Init();
     }
 
+    //Name, colStart, colEnd, cancel, duration
     private void Init()
     {
         animations = new Dictionary<string, AnimationWrapper>();
 
         //PlaceHolder
-        AddAnimation(new AnimationWrapper("LightAttack1", 0.2f, 0.4f, 1.0f)); //0.0f cancel = always cancel, 1.0f cancel = can't cancel
-        AddAnimation(new AnimationWrapper("HeavyAttack1", 0.3f, 0.45f, 1.0f));
+        AddAnimation(new AnimationWrapper("default", 0.0f, 0.0f, 0.0f, 0.0f));
+        AddAnimation(new AnimationWrapper("LightAttack1", 0.1f, 2.0f, 1.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("LightAttack2", 0.1f, 2.0f, 1.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("HeavyAttack1", 0.2f, 2.0f, 2.5f, 2.5f));
     }
 
 
@@ -37,7 +40,7 @@ public class AnimationLibrary
         return instance;
     }
 
-    private void AddAnimation(AnimationWrapper wrapper)
+    private void AddAnimation( AnimationWrapper wrapper )
     {
         animations[wrapper.name] = wrapper;
     }

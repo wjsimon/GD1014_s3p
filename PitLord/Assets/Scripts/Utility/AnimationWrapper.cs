@@ -6,22 +6,26 @@ using System.Collections;
 public class AnimationWrapper {
 
     public string name;
-    public float start;
-    public float end;
+    public float colStart;
+    public float colEnd;
     public float cancel;
+    public float duration;
 
     public AnimationWrapper()
     {
         name = "";
-        start = 0.0f;
-        end = 0.0f;
+        colStart = 0.0f;
+        colEnd = 0.0f;
+        cancel = 0.0f;
+        duration = 0.0f;
     }
 
-    public AnimationWrapper(string name, float start, float end, float cancel)
+    public AnimationWrapper(string name, float start, float end, float cancel, float duration)
     {
         this.name = name;
-        this.start = start;
-        this.end = end;
+        this.colStart = start;
+        this.colEnd = end;
         this.cancel = cancel;
+        this.duration = duration;
     }
 }

@@ -31,15 +31,17 @@ public class Attributes : MonoBehaviour
     public int maxHeals;
     public int healAmount;
 
-    public bool inAttack;
-    public bool inBlock;
-    public bool inRun;
-
     public bool targettable;
     public bool deactivate;
 
     public int weaponIndex;
 
+    //Animation Controls
+    public string attackName = "default";
+    public float attacking;
+    public float attackingInv;
+    public bool blocking;
+    public bool running;
     
     protected virtual void Start()
     {
@@ -56,7 +58,7 @@ public class Attributes : MonoBehaviour
         Vector3 dir = (source.transform.position - transform.position).normalized;
         int facing = (int)Mathf.Clamp01(Mathf.Sign(Vector3.Dot(transform.forward, dir)));
 
-        if (inBlock)
+        if (blocking)
         {
             currentStamina -= damage * facing;
             currentHealth -= damage * (1 - facing);
@@ -78,7 +80,7 @@ public class Attributes : MonoBehaviour
 
         if (currentStamina <= 0)
         {
-            inBlock = false;
+            blocking = false;
             currentStamina = 0;
         }
     }
@@ -101,7 +103,7 @@ public class Attributes : MonoBehaviour
         DisableHitbox();
         GetComponent<CharacterController>().enabled = false;
         GetComponent<Attributes>().enabled = false;
-        inBlock = false;
+        blocking = false;
         targettable = false;
 
         if (source.tag == "Player")
@@ -117,7 +119,7 @@ public class Attributes : MonoBehaviour
     {
         if (tag == "Player")
         {
-            //GetComponent<PlayerController>().meleeWeapon.GetComponent<BoxCollider>().enabled = false;
+            GetComponent<PlayerController>().weapon.GetComponent<BoxCollider>().enabled = false;
         }
         else if (tag == "Enemy")
         {
@@ -132,7 +134,7 @@ public class Attributes : MonoBehaviour
         currentStamina = maxStamina;
         transform.position = spawnPoint.transform.position;
 
-        inBlock = false;
+        blocking = false;
         targettable = true;
         GetComponent<CharacterController>().enabled = true;
         GetComponent<Attributes>().enabled = true;
@@ -141,16 +143,9 @@ public class Attributes : MonoBehaviour
         ani.SetTrigger("Reset");
     }
 
-    public virtual void RegisterObject()
+    protected virtual void RegisterObject()
     {
-        if (tag == "Enemy")
-        {
-            GameObject.Find("GameManager").GetComponent<GameManager>().AddEnemy(gameObject);
-        }
-        if(tag == "DesObj")
-        {
-            GameObject.Find("GameManager").GetComponent<GameManager>().AddObject(gameObject);
-        }
+
     }
 
     public bool StaminaCost( GameObject source, string action )
@@ -217,7 +212,7 @@ public class Attributes : MonoBehaviour
             {
                 regenCounter = -0.5f;
             }
-            if(gameObject.GetComponent<PlayerController>().inRun)
+            if(gameObject.GetComponent<PlayerController>().running)
             {
                 regenCounter = 0;
             }
@@ -225,7 +220,7 @@ public class Attributes : MonoBehaviour
 
         if(gameObject.tag == "Enemy")
         {
-            if (gameObject.GetComponent<Enemy>().isAttacking || gameObject.GetComponent<Enemy>().inBlock)
+            if (gameObject.GetComponent<Enemy>().isAttacking || gameObject.GetComponent<Enemy>().blocking)
             {
                 regenCounter = -1.5f;
             }
@@ -247,6 +242,18 @@ public class Attributes : MonoBehaviour
         if (currentStamina >= maxStamina)
         {
             currentStamina = maxStamina;
+        }
+    }
+
+    public bool inAttack()
+    {
+        if(attacking > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }
