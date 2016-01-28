@@ -9,13 +9,13 @@ public class Attributes : MonoBehaviour
     public GameObject spawnPoint;
 
     public int currentHealth;
-    public int maxHealth;
+    public int maxHealth = 10;
 
     //[HideInInspector]
     public float currentStamina;
-    public float maxStamina;
+    public float maxStamina = 10;
 
-    public float staminaTick;
+    public float staminaTick = 3.0f;
     float regenCounter = 0;
     float tickRate = 0.01f;
 
@@ -28,8 +28,8 @@ public class Attributes : MonoBehaviour
 
     [HideInInspector]
     public int heals;
-    public int maxHeals;
-    public int healAmount;
+    public int maxHeals = 5;
+    public int healAmount = 10;
 
     public bool targettable;
     public bool deactivate;
