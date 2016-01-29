@@ -12,8 +12,8 @@ public class TestEnemyBehaviour : Enemy
     {
         base.Start();
 
-        attack1Start = AnimationLibrary.Get().SearchByName("LightAttack1").colStart;
-        attack1End = AnimationLibrary.Get().SearchByName("LightAttack1").colEnd;
+        attack1Start = AnimationLibrary.Get().SearchByName("LightAttack1_enemyplaceholder").colStart;
+        attack1End = AnimationLibrary.Get().SearchByName("LightAttack1_enemyplaceholder").colEnd;
 
         if (deactivate)
         {
@@ -37,11 +37,13 @@ public class TestEnemyBehaviour : Enemy
 
         animStateLayer1 = animator.GetCurrentAnimatorStateInfo(0);
         animTransition1 = animator.GetAnimatorTransitionInfo(0);
+        //Debug.Log(animStateLayer1.tagHash + " " + animTransition1.userNameHash);
         isAttacking = animStateLayer1.IsTag("Attack") || animTransition1.IsUserName("Attack");
 
         StaminaRegen();
 
         BehaviourSwitch();
+        CombatUpdate();
     }
 
     void BehaviourSwitch()
@@ -67,18 +69,18 @@ public class TestEnemyBehaviour : Enemy
             //If you move outside detection range while in combat, always approaches after finishing current action
             if (Vector3.Distance(target.position, transform.position) < leashingRange)
             {
-                ChangeState(1);
+                ChangeState(State.APPROACH);
                 return;
             }
 
-            ChangeState(0); //Idle
+            ChangeState(State.IDLE); //Idle
             return;
         }
 
         //Retreats rapidly to spawnPoint when player is out of leashing Range
         if (Vector3.Distance(spawnPoint.transform.position, transform.position) > leashingRange)
         {
-            ChangeState(2); //Retreat
+            ChangeState(State.RETREAT); //Retreat
             return;
         }
 
@@ -93,13 +95,13 @@ public class TestEnemyBehaviour : Enemy
             switch (BehaviourRandomize)
             {
                 case 0:
-                    ChangeState(1);
+                    ChangeState(State.APPROACH);
                     break;
                 case 1:
-                    ChangeState(3);
+                    ChangeState(State.BACKOFF);
                     break;
                 case 2:
-                    ChangeState(4);
+                    ChangeState(State.STRAFE);
                     break;
             }
         }
@@ -113,10 +115,10 @@ public class TestEnemyBehaviour : Enemy
             switch (BehaviourRandomize)
             {
                 case 0:
-                    ChangeState(5);
+                    ChangeState(State.ATTACK);
                     break;
                 case 1:
-                    ChangeState(3);
+                    ChangeState(State.BACKOFF);
                     break;
             }
 
@@ -124,7 +126,7 @@ public class TestEnemyBehaviour : Enemy
         }
 
         /**/
-        Behaviour(state);
+        Behaviour(currentState);
     }
 
     protected override void Attack()
@@ -133,22 +135,9 @@ public class TestEnemyBehaviour : Enemy
         if (!isAttacking)
         {
             animator.SetTrigger("Attack");
-        }
-
-        if (isAttacking)
-        {
-            agent.Stop();
-            if (animStateLayer1.IsName("LightAttack1") == true)
-            {
-                if (animStateLayer1.normalizedTime >= attack1Start && animStateLayer1.normalizedTime <= attack1End)
-                {
-                    weapon.GetComponent<BoxCollider>().enabled = true;
-                }
-                else
-                {
-                    weapon.GetComponent<BoxCollider>().enabled = false;
-                }
-            }
+            attackName = "LightAttack1";
+            attacking = AnimationLibrary.Get().SearchByName(attackName).duration;
+            attackingInv = 0;
         }
     }
 

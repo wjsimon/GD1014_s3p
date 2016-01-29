@@ -304,4 +304,10 @@ public class PlayerController : Attributes
             currentHealth = maxHealth;
         }
     }
+
+    protected override void DisableHitbox()
+    {
+        base.DisableHitbox();
+        GetComponent<PlayerController>().weapon.GetComponent<BoxCollider>().enabled = false;
+    }
 }

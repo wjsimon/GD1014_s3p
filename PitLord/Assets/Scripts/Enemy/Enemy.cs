@@ -3,8 +3,6 @@ using System.Collections;
 
 public class Enemy : Attributes
 {
-
-    //[HideInInspector]
     public Animator animator;
     protected AnimatorStateInfo animStateLayer1;
     protected AnimatorStateInfo animStateLayer2;
@@ -30,7 +28,18 @@ public class Enemy : Attributes
     //TIMER IS FOR TESTING ONLY, USE SEPERATE TIMERS FOR NON-TEMPORARY STUFF
     float timer = 0;
 
-    protected int state;
+    protected enum State
+    {
+        IDLE,
+        APPROACH,
+        BACKOFF,
+        STRAFE,
+        RETREAT,
+        ATTACK,
+    };
+
+    protected State currentState;
+
     protected int strafeDir;
     public bool isAttacking;
 
@@ -48,6 +57,7 @@ public class Enemy : Attributes
     public void Init()
     {
         cooldownStorage = behavCooldown;
+        behavCooldown = 0;
 
         //Sets the spawnpoint by creating a new GameObject a playerpos
         StoreTransform temp = new StoreTransform(transform.position, transform.rotation, transform.localScale);
@@ -67,35 +77,36 @@ public class Enemy : Attributes
     protected override void Update()
     {
         base.Update();
+        CombatUpdate();
         //Basically a state machine, gotta do all the randomizing and checking for which "state" the enemy should be in here <-- This is pretty much where enemies get coded, all the other stuff is the same
-        Behaviour(state);
+        Behaviour(currentState);
         /**/
     }
 
-    public void Behaviour(int state)
+    protected void Behaviour( State state )
     {
         //Debug.Log("behaviour state " + state);
 
         switch (state)
         {
-            case 0:
+            case State.IDLE:
                 Idle();
                 break;
-            case 1:
+            case State.APPROACH:
                 Approach();
                 break;
-            case 2:
+            case State.RETREAT:
                 Retreat();
                 break;
-            case 3:
+            case State.BACKOFF:
                 BackOff();
                 break;
-            case 4:
+            case State.STRAFE:
                 Random rng = new Random();
                 Mathf.Sign(Random.Range(-2, 1));
                 Strafe(strafeDir);
                 break;
-            case 5:
+            case State.ATTACK:
                 Attack();
                 break;
         }
@@ -122,11 +133,11 @@ public class Enemy : Attributes
     {
         BackwardsMovement();
     }
-    public void Strafe(int direction) //4
+    public void Strafe( int direction ) //4
     {
         agent.Stop();
 
-        if((Vector3.Distance(target.position, transform.position) > detectionRange || (Vector3.Distance(target.position, transform.position) < combatRange)))
+        if ((Vector3.Distance(target.position, transform.position) > detectionRange || (Vector3.Distance(target.position, transform.position) < combatRange)))
         {
             behavCooldown = 0;
             return;
@@ -151,7 +162,7 @@ public class Enemy : Attributes
         target = spawnPoint.transform;
         agent.SetDestination(spawnPoint.transform.position);
 
-        if(transform.position == spawnPoint.transform.position)
+        if (transform.position == spawnPoint.transform.position)
         {
             ChangeState(0);
         }
@@ -181,7 +192,7 @@ public class Enemy : Attributes
         if (Vector3.Distance(Vector3.zero, agent.velocity) >= 1)
         {
             float tempBlend = 2;
-            
+
             if (blending)
             {
                 animationBlend += Time.deltaTime;
@@ -237,11 +248,11 @@ public class Enemy : Attributes
         }
     }
 
-    public int ChangeState(int newState)
+    protected State ChangeState( State newState )
     {
-        if(newState == state)
+        if (newState == currentState)
         {
-            return state;
+            return currentState;
         }
         //Debug.Log("change state to " + newState);
 
@@ -250,28 +261,52 @@ public class Enemy : Attributes
         {
             return state;
         }
-
         if (behavCooldown >= 0 && state == 1 && (newState != 5))
         {
             return state;
         }
         /**/
 
-        if (state == 2)
+        if (currentState == State.RETREAT)
         {
-            return state;
+            return currentState;
         }
 
-        if (newState != state)
+        if (newState != currentState)
         {
-            if (newState == 4)
+            if (newState == State.STRAFE)
             {
                 strafeDir = (int)Mathf.Sign(Random.Range(-2, 1));
             }
             /**/
         }
 
-        state = newState;
+        currentState = newState;
         return newState;
+    }
+
+    protected void CombatUpdate()
+    {
+        if (inAttack())
+        {
+            agent.Stop();
+            attacking -= Time.deltaTime;
+            attackingInv += Time.deltaTime;
+
+            if (attacking >= AnimationLibrary.Get().SearchByName(attackName).colStart && attacking <= AnimationLibrary.Get().SearchByName(attackName).colEnd)
+            {
+                weapon.GetComponent<BoxCollider>().enabled = true;
+            }
+            else
+            {
+                weapon.GetComponent<BoxCollider>().enabled = false;
+            }
+        }
+    }
+
+    protected override void DisableHitbox()
+    {
+        base.DisableHitbox();
+        GetComponent<Enemy>().weapon.GetComponent<BoxCollider>().enabled = false;
     }
 }

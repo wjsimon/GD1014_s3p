@@ -42,6 +42,8 @@ public class Attributes : MonoBehaviour
     public float attackingInv;
     public bool blocking;
     public bool running;
+
+    public float iFrames;
     
     protected virtual void Start()
     {
@@ -51,10 +53,16 @@ public class Attributes : MonoBehaviour
     protected virtual void Update()
     {
         StaminaRegen();
+        iFrames -= Time.deltaTime;
     }
     public void ApplyDamage( int damage, GameObject source )
     {
         //Debug.LogWarning(damage);
+        if(iFrames > 0)
+        {
+            return;
+        }
+
         Vector3 dir = (source.transform.position - transform.position).normalized;
         int facing = (int)Mathf.Clamp01(Mathf.Sign(Vector3.Dot(transform.forward, dir)));
 
@@ -87,7 +95,7 @@ public class Attributes : MonoBehaviour
 
     public void SetAnimTrigger( string anim )
     {
-        Animator ani = gameObject.transform.FindChild("Model").GetComponent<Animator>();
+        Animator ani = GetComponent<Animator>();
 
         ani.SetTrigger(anim);
     }
@@ -115,16 +123,9 @@ public class Attributes : MonoBehaviour
         SetAnimTrigger("Death");
     }
 
-    public void DisableHitbox()
+    protected virtual void DisableHitbox()
     {
-        if (tag == "Player")
-        {
-            GetComponent<PlayerController>().weapon.GetComponent<BoxCollider>().enabled = false;
-        }
-        else if (tag == "Enemy")
-        {
-            GetComponent<Enemy>().weapon.GetComponent<BoxCollider>().enabled = false;
-        }
+        iFrames = 5.0f;
     }
 
     public void SoftReset()
@@ -208,9 +209,9 @@ public class Attributes : MonoBehaviour
 
         if(gameObject.tag == "Player")
         {
-            //if (gameObject.GetComponent<PlayerController>().inAttack || gameObject.GetComponent<PlayerController>().inRoll || gameObject.GetComponent<PlayerController>().inBlock)
+            if (gameObject.GetComponent<PlayerController>().inAttack() || gameObject.GetComponent<PlayerController>().inRoll() || gameObject.GetComponent<PlayerController>().blocking)
             {
-                regenCounter = -0.5f;
+                regenCounter = -0.1f;
             }
             if(gameObject.GetComponent<PlayerController>().running)
             {
