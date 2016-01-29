@@ -4,16 +4,10 @@ using System.Collections;
 public class TestEnemyBehaviour : Enemy
 {
     //Animationen per Hand; Bool raus - Cooldown rein
-    float attack1Start;
-    float attack1End;
-
-    // Use this for initialization
+    //Use this for initialization
     void Start()
     {
         base.Start();
-
-        attack1Start = AnimationLibrary.Get().SearchByName("LightAttack1_enemyplaceholder").colStart;
-        attack1End = AnimationLibrary.Get().SearchByName("LightAttack1_enemyplaceholder").colEnd;
 
         if (deactivate)
         {
@@ -27,21 +21,13 @@ public class TestEnemyBehaviour : Enemy
     // Update is called once per frame
     void Update()
     {
-
         if (deactivate)
         {
             return;
         }
 
-        //Debug.Log("Current State" + state);
-
-        animStateLayer1 = animator.GetCurrentAnimatorStateInfo(0);
-        animTransition1 = animator.GetAnimatorTransitionInfo(0);
-        //Debug.Log(animStateLayer1.tagHash + " " + animTransition1.userNameHash);
-        isAttacking = animStateLayer1.IsTag("Attack") || animTransition1.IsUserName("Attack");
-
+        base.Update();
         StaminaRegen();
-
         BehaviourSwitch();
         CombatUpdate();
     }
@@ -54,12 +40,14 @@ public class TestEnemyBehaviour : Enemy
         //Idle until Detection of Player
         //*
         behavCooldown -= Time.deltaTime;
+        /*
         if (behavCooldown < 0)
         {
             behavCooldown = 0;
         }
+        /**/
 
-        if (isAttacking)
+        if (inAttack())
         {
             return;
         }
@@ -107,7 +95,7 @@ public class TestEnemyBehaviour : Enemy
         }
 
         //Within Combat Range, the enemy decides to attack, backoff or strafe around player
-        if (Vector3.Distance(target.position, transform.position) < combatRange && !isAttacking)
+        if (Vector3.Distance(target.position, transform.position) < combatRange && !inAttack())
         {
             BehaviourRandomize = Random.Range(0, 2);
             //Debug.LogWarning("RANDOM MOVEMENT INT " + BehaviourRandomize);
@@ -132,13 +120,15 @@ public class TestEnemyBehaviour : Enemy
     protected override void Attack()
     {
         //animationLock = true;
-        if (!isAttacking)
+        if (inAttack())
         {
-            animator.SetTrigger("Attack");
-            attackName = "LightAttack1";
-            attacking = AnimationLibrary.Get().SearchByName(attackName).duration;
-            attackingInv = 0;
+            return;
         }
+
+        animator.SetTrigger("Attack");
+        attackName = "LightAttack1";
+        attacking = AnimationLibrary.Get().SearchByName(attackName).duration;
+        attackingInv = 0;
     }
 
     protected override void RegisterObject()

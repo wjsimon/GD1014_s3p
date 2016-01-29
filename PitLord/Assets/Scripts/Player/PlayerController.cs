@@ -69,6 +69,7 @@ public class PlayerController : Attributes
         {
             return;
         }
+        /**/
 
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");

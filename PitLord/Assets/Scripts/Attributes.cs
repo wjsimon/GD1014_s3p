@@ -52,14 +52,15 @@ public class Attributes : MonoBehaviour
     }
     protected virtual void Update()
     {
-        StaminaRegen();
         iFrames -= Time.deltaTime;
+        StaminaRegen();
     }
     public void ApplyDamage( int damage, GameObject source )
     {
         //Debug.LogWarning(damage);
         if(iFrames > 0)
         {
+            Debug.Log("INVINCIBLE");
             return;
         }
 
@@ -221,7 +222,7 @@ public class Attributes : MonoBehaviour
 
         if(gameObject.tag == "Enemy")
         {
-            if (gameObject.GetComponent<Enemy>().isAttacking || gameObject.GetComponent<Enemy>().blocking)
+            if (gameObject.GetComponent<Enemy>().inAttack() || gameObject.GetComponent<Enemy>().blocking)
             {
                 regenCounter = -1.5f;
             }

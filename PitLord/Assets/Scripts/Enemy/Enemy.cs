@@ -4,10 +4,6 @@ using System.Collections;
 public class Enemy : Attributes
 {
     public Animator animator;
-    protected AnimatorStateInfo animStateLayer1;
-    protected AnimatorStateInfo animStateLayer2;
-    protected AnimatorTransitionInfo animTransition1;
-    protected AnimatorTransitionInfo animTransition2;
     bool blending = true;
     float animationBlend;
 
@@ -41,7 +37,6 @@ public class Enemy : Attributes
     protected State currentState;
 
     protected int strafeDir;
-    public bool isAttacking;
 
     protected bool alerted;
 
@@ -79,6 +74,7 @@ public class Enemy : Attributes
         base.Update();
         CombatUpdate();
         //Basically a state machine, gotta do all the randomizing and checking for which "state" the enemy should be in here <-- This is pretty much where enemies get coded, all the other stuff is the same
+        Debug.Log(currentState);
         Behaviour(currentState);
         /**/
     }
@@ -231,7 +227,6 @@ public class Enemy : Attributes
 
     protected virtual void Attack()
     {
-
     }
 
     //BETA TESTING----------------DONT USE FOR BLENDING MORE THAN ONE VALUE----------------------
@@ -287,11 +282,16 @@ public class Enemy : Attributes
 
     protected void CombatUpdate()
     {
+        attacking -= Time.deltaTime;
+        attackingInv += Time.deltaTime;
+
         if (inAttack())
         {
-            agent.Stop();
-            attacking -= Time.deltaTime;
-            attackingInv += Time.deltaTime;
+            //transform.Rotate(new Vector3(0, 10, 0));
+            if (attacking >= AnimationLibrary.Get().SearchByName(attackName).colStart)
+            {
+                agent.Stop();
+            }
 
             if (attacking >= AnimationLibrary.Get().SearchByName(attackName).colStart && attacking <= AnimationLibrary.Get().SearchByName(attackName).colEnd)
             {
