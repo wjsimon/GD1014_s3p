@@ -12,7 +12,7 @@ public class PlayerController : Attributes
     public float runSpeed = 8;
 
     float fallSpeed = 0;
-    float gravity = 20;
+    float gravity = 9.81f;
 
     public GameObject weapon;
 
@@ -65,11 +65,37 @@ public class PlayerController : Attributes
         animator.SetFloat("X", 0);
         animator.SetFloat("Y", 0);
 
-        if (inAttack() || inRoll())
+        if (inRoll())
         {
             return;
         }
-        /**/
+
+        if (inAttack())
+        {
+            if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart)
+            {
+                return;
+            }
+            else
+            {
+                //math magics
+                float y = Mathf.Atan2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * Mathf.Rad2Deg;
+
+                //Cus' inputs can be 0;
+                if (y == 0)
+                {
+                    y = transform.localEulerAngles.y;
+                }
+
+                //thanks, unity answers
+                //transform.eulerAngles = new Vector3(transform.localEulerAngles.x, y, transform.localEulerAngles.z);
+                transform.eulerAngles = new Vector3(transform.localEulerAngles.x, y, transform.localEulerAngles.z);
+
+                //transform.rotation = Quaternion.RotateTowards(transform.rotation, newRotation, Time.deltaTime * 90);
+                //transform.Rotate(0, Input.GetAxis("Horizontal") * 180 * Time.deltaTime, 0);
+                return;      
+            }
+        }
 
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
@@ -87,8 +113,7 @@ public class PlayerController : Attributes
         {
             if (!running && currentStamina > 0)
             {
-                running = true;
-                staminaTick *= -1;
+                SprintSwitch();
             }
         }
 
@@ -96,8 +121,16 @@ public class PlayerController : Attributes
         {
             if (running)
             {
-                running = false;
-                staminaTick *= -1;
+                SprintSwitch();
+            }
+        }
+
+        if (running)
+        {
+            StaminaCost(gameObject, "Sprint");
+            if (currentStamina <= 0)
+            {
+                SprintSwitch();
             }
         }
 
@@ -144,6 +177,7 @@ public class PlayerController : Attributes
             if (!(inAttack() || inRoll()))
             {
                 blocking = false;
+                SprintSwitch();
 
                 attackName = "LightAttack1";
                 attacking = AnimationLibrary.Get().SearchByName(attackName).duration;
@@ -154,6 +188,7 @@ public class PlayerController : Attributes
             else if (inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).cancel)
             {
                 blocking = false;
+                SprintSwitch();
 
                 if (attackName == "LightAttack1")
                 {
@@ -173,9 +208,12 @@ public class PlayerController : Attributes
             Debug.Log(attackName);
         }
 
-        //HeavyAttack - KEYBOARD
+        //HeavyAttack - KEYBOARD ---- THIS IS MISSING STAMING COST YO
         if (Input.GetButtonDown("HeavyAttack") && !(inAttack() || inRoll()))
         {
+            blocking = false;
+            SprintSwitch();
+
             attackName = "HeavyAttack1";
             attacking = AnimationLibrary.Get().SearchByName(attackName).duration;
             attackingInv = 0;
@@ -191,6 +229,9 @@ public class PlayerController : Attributes
             {
                 if (StaminaCost(gameObject, "HeavyAttack"))
                 {
+                    blocking = false;
+                    SprintSwitch();
+
                     attackName = "HeavyAttack1";
                     attacking = AnimationLibrary.Get().SearchByName(attackName).duration;
                     attackingInv = 0;
@@ -229,12 +270,18 @@ public class PlayerController : Attributes
             {
                 if (StaminaCost(gameObject, "Roll"))
                 {
+                    blocking = false;
+                    SprintSwitch();
+
                     rollDuration = rollStorage;
+                    iFrames = rollDuration;
                     attacking = 0;
 
                     //---
                     float v = Input.GetAxis("Vertical");
                     float h = Input.GetAxis("Horizontal");
+
+                    v = v <= 0 ? -1 : 1;
 
                     Vector3 forward = Camera.main.transform.forward;
                     Vector3 right = Camera.main.transform.right;
@@ -304,6 +351,72 @@ public class PlayerController : Attributes
         {
             currentHealth = maxHealth;
         }
+    }
+    protected void SprintSwitch()
+    {
+        running = !running;
+    }
+
+    protected override bool StaminaCost( GameObject source, string action )
+    {
+        bool pass = false;
+
+        if (action == "LightAttack")
+        {
+            if (currentStamina >= 2)
+            {
+                currentStamina -= 2;
+                pass = true;
+            }
+            else
+            {
+                pass = false;
+            }
+        }
+        if (action == "HeavyAttack")
+        {
+            if (currentStamina >= 4)
+            {
+                currentStamina -= 4;
+                pass = true;
+            }
+            else
+            {
+                pass = false;
+            }
+        }
+        if (action == "Roll")
+        {
+            if (currentStamina >= 3)
+            {
+                currentStamina -= 3;
+                pass = true;
+            }
+            else
+            {
+                pass = false;
+            }
+        }
+        if (action == "Sprint")
+        {
+            if (currentStamina >= 0)
+            {
+                currentStamina -= (staminaTick * tickRate) * 0.5f;
+                pass = true;
+            }
+            else
+            {
+                pass = false;
+            }
+        }
+
+        if (currentStamina <= 0)
+        {
+            currentStamina = 0;
+            regenCounter = .5f;
+        }
+
+        return pass;
     }
 
     protected override void DisableHitbox()

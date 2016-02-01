@@ -11,7 +11,7 @@ public class TestEnemyBehaviour : Enemy
 
         if (deactivate)
         {
-            agent.Stop();
+            SwitchNavMesh(false);
             return;
         }
 
@@ -19,7 +19,7 @@ public class TestEnemyBehaviour : Enemy
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
         if (deactivate)
         {
@@ -27,9 +27,24 @@ public class TestEnemyBehaviour : Enemy
         }
 
         base.Update();
+
         StaminaRegen();
         BehaviourSwitch();
-        CombatUpdate();
+        Tracking();
+    }
+
+    protected override void Tracking()
+    {
+        base.Tracking();
+
+        if(inAttack())
+        {
+            //if(attacking >= AnimationLibrary.Get().SearchByName(attackName).colStart);
+            if (attackingInv <= 0.8f)
+            {
+                LookAtTarget();
+            }
+        }
     }
 
     void BehaviourSwitch()
@@ -47,6 +62,7 @@ public class TestEnemyBehaviour : Enemy
         }
         /**/
 
+        //Not working?? - Slides around during attack animation a lot
         if (inAttack())
         {
             return;
@@ -55,7 +71,7 @@ public class TestEnemyBehaviour : Enemy
         if (Vector3.Distance(target.position, transform.position) > detectionRange)
         {
             //If you move outside detection range while in combat, always approaches after finishing current action
-            if (Vector3.Distance(target.position, transform.position) < leashingRange)
+            if (Vector3.Distance(target.position, transform.position) < leashingRange && !inAttack())
             {
                 ChangeState(State.APPROACH);
                 return;
@@ -73,7 +89,7 @@ public class TestEnemyBehaviour : Enemy
         }
 
         //Within detection Range, enemy approaches the player
-        if (Vector3.Distance(target.position, transform.position) > combatRange && (behavCooldown <= 0))
+        if (Vector3.Distance(target.position, transform.position) > combatRange && (behavCooldown <= 0) && !inAttack())
         {
             behavCooldown = Random.Range(0, 4) + 1;
             BehaviourRandomize = Random.Range(0, 3);
@@ -119,6 +135,12 @@ public class TestEnemyBehaviour : Enemy
 
     protected override void Attack()
     {
+        base.Attack();
+
+        if(!inAttack())
+        {
+            ChangeState(State.IDLE);
+        }
         //animationLock = true;
         if (inAttack())
         {

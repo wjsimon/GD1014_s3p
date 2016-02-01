@@ -72,9 +72,10 @@ public class Enemy : Attributes
     protected override void Update()
     {
         base.Update();
+
         CombatUpdate();
         //Basically a state machine, gotta do all the randomizing and checking for which "state" the enemy should be in here <-- This is pretty much where enemies get coded, all the other stuff is the same
-        Debug.Log(currentState);
+        //Debug.Log(currentState);
         Behaviour(currentState);
         /**/
     }
@@ -108,21 +109,30 @@ public class Enemy : Attributes
         }
     }
 
+    protected void LookAtTarget()
+    {
+        transform.LookAt(target, Vector3.up);
+    }
+
+    protected virtual void Tracking()
+    {
+
+    }
+
     public void Idle() //0
     {
-        agent.Stop();
+        SwitchNavMesh(false);
 
         animator.SetFloat("X", 0);
         animator.SetFloat("Y", 0);
     }
 
-    public float Approach()//1
+    public void Approach()//1
     {
         alerted = true;
 
+        SwitchNavMesh(true);
         agent.SetDestination(target.position);
-
-        return ForwardMovement();
     }
 
     public void BackOff() //3
@@ -131,7 +141,7 @@ public class Enemy : Attributes
     }
     public void Strafe( int direction ) //4
     {
-        agent.Stop();
+        SwitchNavMesh(false);
 
         if ((Vector3.Distance(target.position, transform.position) > detectionRange || (Vector3.Distance(target.position, transform.position) < combatRange)))
         {
@@ -146,11 +156,12 @@ public class Enemy : Attributes
 
         float step = agent.speed * Time.deltaTime;
         //transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((target.position - transform.position).normalized, Vector3.up), Time.deltaTime * 180);
-        transform.RotateAround(target.position, Vector3.up, (Mathf.Sign(direction) * Mathf.Clamp((10 * Vector3.Distance(transform.position, target.position)), 15, 15) * Time.deltaTime));
+        //transform.RotateAround(target.position, Vector3.up, (Mathf.Sign(direction) * Mathf.Clamp((10 * Vector3.Distance(transform.position, target.position)), 15, 15) * Time.deltaTime));
+        transform.RotateAround(target.position, Vector3.up, (Mathf.Sign(direction) * 8 * Time.deltaTime));
         transform.LookAt(target.transform);
         //GetComponent<CharacterController>().Move((Mathf.Sign(animator.GetFloat("X")) * transform.right) * Time.deltaTime * agent.speed / 3);
     }
-    public float Retreat() //2
+    public void Retreat() //2
     {
         alerted = false;
 
@@ -162,22 +173,20 @@ public class Enemy : Attributes
         {
             ChangeState(0);
         }
-
-        return ForwardMovement();
     }
 
-    public float ForwardMovement()
+    public void ForwardMovement()
     {
         if (Vector3.Angle((target.position - transform.position), transform.forward) > 30)
         {
-            agent.Stop();
+            SwitchNavMesh(false);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((target.position - transform.position).normalized, Vector3.up), Time.deltaTime * agent.angularSpeed);
             animator.SetFloat("X", 0);
             animator.SetFloat("Y", 1);
         }
         else
         {
-            agent.Resume();
+            SwitchNavMesh(true);
         }
 
         if (Vector3.Distance(Vector3.zero, agent.velocity) > 0 && Vector3.Distance(Vector3.zero, agent.velocity) < 1)
@@ -207,13 +216,12 @@ public class Enemy : Attributes
             animator.SetFloat("X", Mathf.Lerp(animator.GetFloat("X"), 0, animationBlend));
             animator.SetFloat("Y", Mathf.Lerp(animator.GetFloat("Y"), 0, animationBlend));
         }
-
-        return agent.remainingDistance;
     }
 
-    public float BackwardsMovement()
+    public void BackwardsMovement()
     {
-        agent.Stop();
+        SwitchNavMesh(false);
+
         //Debug.LogWarning("backwalking");
 
         animator.SetFloat("X", 0);
@@ -222,11 +230,11 @@ public class Enemy : Attributes
         float step = agent.speed * Time.deltaTime;
         transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((target.position - transform.position).normalized, Vector3.up), Time.deltaTime * agent.angularSpeed * 2);
         GetComponent<CharacterController>().Move(-transform.forward * Time.deltaTime * agent.speed / 3);
-        return agent.remainingDistance;
     }
 
     protected virtual void Attack()
     {
+        SwitchNavMesh(false);
     }
 
     //BETA TESTING----------------DONT USE FOR BLENDING MORE THAN ONE VALUE----------------------
@@ -282,18 +290,17 @@ public class Enemy : Attributes
 
     protected void CombatUpdate()
     {
-        attacking -= Time.deltaTime;
-        attackingInv += Time.deltaTime;
-
         if (inAttack())
         {
+            attacking -= Time.deltaTime;
+            attackingInv += Time.deltaTime;
             //transform.Rotate(new Vector3(0, 10, 0));
             if (attacking >= AnimationLibrary.Get().SearchByName(attackName).colStart)
             {
-                agent.Stop();
+                SwitchNavMesh(false);
             }
 
-            if (attacking >= AnimationLibrary.Get().SearchByName(attackName).colStart && attacking <= AnimationLibrary.Get().SearchByName(attackName).colEnd)
+            if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart && attackingInv <= AnimationLibrary.Get().SearchByName(attackName).colEnd)
             {
                 weapon.GetComponent<BoxCollider>().enabled = true;
             }
@@ -308,5 +315,24 @@ public class Enemy : Attributes
     {
         base.DisableHitbox();
         GetComponent<Enemy>().weapon.GetComponent<BoxCollider>().enabled = false;
+    }
+
+    protected virtual void SwitchNavMesh(bool enable)
+    {
+        if(enable == agent.enabled)
+        {
+            return;
+        }
+
+        if(!enable)
+        {
+            agent.Stop();
+            agent.enabled = false;
+        }
+        else if (enable)
+        {
+            agent.enabled = true;
+            agent.Resume();
+        }
     }
 }

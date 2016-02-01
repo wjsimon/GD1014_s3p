@@ -4,7 +4,6 @@ using System.Collections;
 
 public class ResourceBar : MonoBehaviour
 {
-
     public Image bar;
     public GameObject target;
 
@@ -48,7 +47,16 @@ public class ResourceBar : MonoBehaviour
 
         if (lerp)
         {
-            bar.rectTransform.localScale = new Vector3(Mathf.SmoothDamp(bar.rectTransform.localScale.x, local.x * scaleFactor, ref currentLerp, 0.5f), local.y, local.z);     
+            //Special cases, looks a lot better imo; would also like to add instant recovery
+            if (id == "stamina")
+            {
+                if (target.GetComponent<Attributes>().running)
+                {
+                    return;
+                }
+            }
+
+            bar.rectTransform.localScale = new Vector3(Mathf.SmoothDamp(bar.rectTransform.localScale.x, local.x * scaleFactor, ref currentLerp, 0.5f), local.y, local.z);
         }
     }
 

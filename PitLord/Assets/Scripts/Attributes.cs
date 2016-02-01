@@ -16,8 +16,8 @@ public class Attributes : MonoBehaviour
     public float maxStamina = 10;
 
     public float staminaTick = 3.0f;
-    float regenCounter = 0;
-    float tickRate = 0.01f;
+    protected float regenCounter = 0;
+    protected float tickRate = 0.01f;
 
     public List<AudioClip> onHit;
     public List<AudioClip> onDeath;
@@ -35,6 +35,7 @@ public class Attributes : MonoBehaviour
     public bool deactivate;
 
     public int weaponIndex;
+    public List<GameObject> projectiles;
 
     //Animation Controls
     public string attackName = "default";
@@ -126,7 +127,7 @@ public class Attributes : MonoBehaviour
 
     protected virtual void DisableHitbox()
     {
-        iFrames = 5.0f;
+        iFrames = 0.5f;
     }
 
     public void SoftReset()
@@ -150,9 +151,10 @@ public class Attributes : MonoBehaviour
 
     }
 
-    public bool StaminaCost( GameObject source, string action )
+    protected virtual bool StaminaCost( GameObject source, string action )
     {
-        //I LUV H4RDC0D1NG. xoxo <3<3<3<3<3<3
+        bool pass = false;
+
         if (source.tag == "Enemy")
         {
             if (action == "Block")
@@ -161,62 +163,17 @@ public class Attributes : MonoBehaviour
             }
         }
 
-        if (source.tag == "Player")
-        {
-            if (action == "LightAttack")
-            {
-                if (currentStamina >= 2)
-                {
-                    currentStamina -= 2;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            if (action == "HeavyAttack")
-            {
-                if (currentStamina >= 4)
-                {
-                    currentStamina -= 4;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            if (action == "Roll")
-            {
-                if (currentStamina >= 3)
-                {
-                    currentStamina -= 3;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        return false;
+        return pass;
     }
 
     public void StaminaRegen()
     {
         //Debug.Log(gameObject + " " + regenCounter);
-
         if(gameObject.tag == "Player")
         {
-            if (gameObject.GetComponent<PlayerController>().inAttack() || gameObject.GetComponent<PlayerController>().inRoll() || gameObject.GetComponent<PlayerController>().blocking)
+            if (gameObject.GetComponent<PlayerController>().inAttack() || gameObject.GetComponent<PlayerController>().inRoll() || gameObject.GetComponent<PlayerController>().blocking || gameObject.GetComponent<PlayerController>().running)
             {
                 regenCounter = -0.1f;
-            }
-            if(gameObject.GetComponent<PlayerController>().running)
-            {
-                regenCounter = 0;
             }
         }
 
@@ -229,7 +186,7 @@ public class Attributes : MonoBehaviour
         }
 
         //need +0.01 so we can use negative Regen for sprinting
-        if (currentStamina < maxStamina + 0.01)
+        if (currentStamina < maxStamina)
         {
             regenCounter += Time.deltaTime;
 
@@ -257,5 +214,15 @@ public class Attributes : MonoBehaviour
         {
             return false;
         }
+    }
+
+    public void LaunchProjectile()
+    {
+        //can be changed to random, can be overridden in specific enemies;
+        GameObject projectile = projectiles[0];
+        GameObject projectileSource = gameObject.transform.FindChild("ProjectileSource").gameObject;
+
+        projectile.GetComponent<ProjectileScript>().source = gameObject;
+        GameObject.Instantiate(projectile, projectileSource.transform.position, transform.localRotation);
     }
 }

@@ -15,7 +15,8 @@ public class GameManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        
+
+        //Time.timeScale = 0.1f;
         /*
         GameObject[] collector;
         collector = GameObject.FindGameObjectsWithTag("Enemy");
