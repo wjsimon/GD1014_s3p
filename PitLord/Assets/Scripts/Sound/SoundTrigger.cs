@@ -3,11 +3,13 @@ using System.Collections;
 
 public class SoundTrigger : MonoBehaviour {
 
+    public GameObject SoundManager;
     public AudioClip clip;
     bool played;
 
 	// Use this for initialization
 	void Start () {
+        SoundManager = GameObject.Find("Narrator");
         played = false;
 	}
 	
@@ -25,7 +27,7 @@ public class SoundTrigger : MonoBehaviour {
 
         if(other.tag == "Player")
         {
-            other.gameObject.transform.FindChild("Narrator").gameObject.GetComponent<SoundManager>().PlayNextNew(clip);
+            SoundManager.GetComponent<SoundManager>().PlayNextNew(clip);
             played = true;
         }
     }
