@@ -5,7 +5,7 @@ public class CameraController : MonoBehaviour {
 
     public PlayerController player;
     public Transform CameraTarget;
-    public float distance = 20;
+    public float distance = 6;
     public float angleV;
     public float angleDiffH;
 
@@ -26,6 +26,7 @@ public class CameraController : MonoBehaviour {
         CameraControl();
         LookAtTarget();
         FollowTarget();
+        CameraCollision();
 	}
 
     void LookAtTarget()
@@ -54,6 +55,50 @@ public class CameraController : MonoBehaviour {
 
         transform.position = Vector3.Lerp(transform.position, moveTarget, attenuation);
     }
+    
+    void CameraCollision()
+    {
+        float minDistance = distance;
+        RaycastHit hitInfo;
+
+        Vector3 camDir=(transform.position-CameraTarget.transform.position).normalized;
+        Vector3 camMaxPos = CameraTarget.transform.position+camDir*distance;
+        Vector3 camRight = camMaxPos + 1.0f * CameraTarget.right;
+        Vector3 camLeft = camMaxPos + 1.0f * -CameraTarget.right;
+        Debug.DrawRay(CameraTarget.position, (camRight - CameraTarget.transform.position), Color.red);
+        Debug.DrawRay(CameraTarget.position, (camLeft - CameraTarget.transform.position), Color.green);
+
+        if (Physics.Raycast(CameraTarget.position, (camRight - CameraTarget.transform.position), out hitInfo, distance))
+        {
+            float colDistance = (CameraTarget.position - hitInfo.point).magnitude;
+
+            if (colDistance < minDistance)
+            {
+                minDistance = colDistance;
+            }
+        }
+        if (Physics.Raycast(CameraTarget.position, (camLeft - CameraTarget.transform.position), out hitInfo, distance))
+        {
+            float colDistance = (CameraTarget.position - hitInfo.point).magnitude;
+
+            if (colDistance < minDistance)
+            {
+                minDistance = colDistance;
+            }
+        }
+
+        if(minDistance != distance)
+        {
+            minDistance -= 0.5f;
+            if(minDistance < 0.5f)
+            {
+                minDistance = 0.5f;
+            }
+
+            transform.position = CameraTarget.transform.position + camDir * minDistance;
+        }
+    }
+
     void CameraControl()
     {
         float cH = Input.GetAxis("CameraH");
