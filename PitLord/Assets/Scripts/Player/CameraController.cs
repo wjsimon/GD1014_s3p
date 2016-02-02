@@ -13,6 +13,7 @@ public class CameraController : MonoBehaviour {
     public float attenuation = 0.09f;
     public float rotationSpeed = 80;
 
+    public bool simpleCam = false;
     public bool InverseX;
     public bool InverseY;
 
@@ -28,7 +29,16 @@ public class CameraController : MonoBehaviour {
         CameraControl();
         LookAtTarget();
         FollowTarget();
-        CameraCollision();
+
+        if(simpleCam)
+        {
+            CameraCollision_simple();
+        }
+        else
+        {
+            CameraCollision();
+        }
+
         CameraSmoothing();
 	}
 
