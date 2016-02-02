@@ -335,4 +335,16 @@ public class Enemy : Attributes
             agent.Resume();
         }
     }
+
+    protected override void RegisterObject()
+    {
+        base.RegisterObject();
+        GameManager.instance.AddEnemy(gameObject);
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        GameManager.instance.AddEnemy(gameObject);
+    }
 }

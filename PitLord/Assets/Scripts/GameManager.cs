@@ -4,18 +4,24 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
 
+    public static GameManager instance;
     public GameObject player;
     public Transform playerSpawn;
-    List<GameObject> enemyList = new List<GameObject>();
-    List<GameObject> objectsList = new List<GameObject>();
-    List<GameObject> alpacaList = new List<GameObject>();
+    public List<GameObject> enemyList = new List<GameObject>();
+    public List<GameObject> objectsList = new List<GameObject>();
+    public List<GameObject> alpacaList = new List<GameObject>();
+
+    public GameManager()
+    {
+        instance = this;
+    }
 
     //ITEM LIST List<PickUp> pickUpList= new List<PickUp>();
     //COMBAT List<CombatZone> combatZones = new List<CombatZone>();
 
     // Use this for initialization
-    void Start () {
-
+    void Start () 
+    {
         //Time.timeScale = 0.1f;
         /*
         GameObject[] collector;
@@ -63,10 +69,18 @@ public class GameManager : MonoBehaviour {
 
         //Debug.LogWarning(enemyList.Count);
     }
+    public void RemoveEnemy(GameObject obj)
+    {
+        enemyList.Remove(obj);
+    }
 
     public void AddObject(GameObject obj)
     {
         objectsList.Add(obj);
+    }
+    public void RemoveObject( GameObject obj )
+    {
+        objectsList.Remove(obj);
     }
 
     public void GameOver()

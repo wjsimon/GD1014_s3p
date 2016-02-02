@@ -4,6 +4,7 @@ using System.Collections;
 public class CameraController : MonoBehaviour {
 
     public PlayerController player;
+    public Transform CameraSmooth;
     public Transform CameraTarget;
     public float distance = 6;
     public float angleV;
@@ -18,15 +19,17 @@ public class CameraController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         angleV = transform.rotation.eulerAngles.x;
+        CameraSmooth.transform.position = transform.position;
+        CameraSmooth.transform.rotation = transform.rotation;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
         CameraControl();
         LookAtTarget();
         FollowTarget();
         CameraCollision();
+        CameraSmoothing();
 	}
 
     void LookAtTarget()
@@ -55,7 +58,18 @@ public class CameraController : MonoBehaviour {
 
         transform.position = Vector3.Lerp(transform.position, moveTarget, attenuation);
     }
-    
+
+    void CameraCollision_simple()
+    {
+        RaycastHit hitInfo;
+        Debug.DrawRay(CameraTarget.position, (transform.position - CameraTarget.transform.position), Color.green);
+
+        if (Physics.Raycast(CameraTarget.position, (transform.position - CameraTarget.transform.position), out hitInfo, distance,~(1<<LayerMask.NameToLayer("Character"))))
+        {
+            transform.position = hitInfo.point;
+        }
+    }
+
     void CameraCollision()
     {
         float minDistance = distance;
@@ -63,12 +77,15 @@ public class CameraController : MonoBehaviour {
 
         Vector3 camDir=(transform.position-CameraTarget.transform.position).normalized;
         Vector3 camMaxPos = CameraTarget.transform.position+camDir*distance;
-        Vector3 camRight = camMaxPos + 1.0f * CameraTarget.right;
-        Vector3 camLeft = camMaxPos + 1.0f * -CameraTarget.right;
-        Debug.DrawRay(CameraTarget.position, (camRight - CameraTarget.transform.position), Color.red);
-        Debug.DrawRay(CameraTarget.position, (camLeft - CameraTarget.transform.position), Color.green);
+        Vector3 camRight = camMaxPos + 0.3f * CameraTarget.right;
+        Vector3 camLeft = camMaxPos + 0.3f * -CameraTarget.right;
+        Vector3 charRight = CameraTarget.position + 0.3f * CameraTarget.right;
+        Vector3 charLeft = CameraTarget.position + 0.3f * -CameraTarget.right;
 
-        if (Physics.Raycast(CameraTarget.position, (camRight - CameraTarget.transform.position), out hitInfo, distance))
+        Debug.DrawRay(charRight, (camRight - CameraTarget.transform.position), Color.red);
+        Debug.DrawRay(charLeft, (camLeft - CameraTarget.transform.position), Color.green);
+
+        if (Physics.Raycast(charRight, (camRight - CameraTarget.transform.position), out hitInfo, distance, ~(1 << LayerMask.NameToLayer("Character"))))
         {
             float colDistance = (CameraTarget.position - hitInfo.point).magnitude;
 
@@ -77,7 +94,7 @@ public class CameraController : MonoBehaviour {
                 minDistance = colDistance;
             }
         }
-        if (Physics.Raycast(CameraTarget.position, (camLeft - CameraTarget.transform.position), out hitInfo, distance))
+        if (Physics.Raycast(charLeft, (camLeft - CameraTarget.transform.position), out hitInfo, distance, ~(1 << LayerMask.NameToLayer("Character"))))
         {
             float colDistance = (CameraTarget.position - hitInfo.point).magnitude;
 
@@ -89,14 +106,19 @@ public class CameraController : MonoBehaviour {
 
         if(minDistance != distance)
         {
-            minDistance -= 0.5f;
-            if(minDistance < 0.5f)
+            minDistance -= 0.75f;
+            if(minDistance < 0.75f)
             {
-                minDistance = 0.5f;
+                minDistance = 0.75f;
             }
 
             transform.position = CameraTarget.transform.position + camDir * minDistance;
         }
+    }
+    void CameraSmoothing()
+    {
+        CameraSmooth.transform.position = Vector3.Lerp(CameraSmooth.transform.position, transform.position, 0.04f);
+        CameraSmooth.transform.rotation = Quaternion.Slerp(CameraSmooth.transform.rotation, transform.rotation, 0.04f);
     }
 
     void CameraControl()
@@ -112,5 +134,6 @@ public class CameraController : MonoBehaviour {
         angleDiffH -= angleH;
 
         transform.RotateAround(CameraTarget.position, Vector3.up, angleH);
+        CameraSmooth.RotateAround(CameraTarget.position, Vector3.up, angleH);
     }
 }

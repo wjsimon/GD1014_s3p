@@ -123,6 +123,12 @@ public class Attributes : MonoBehaviour
         }
 
         SetAnimTrigger("Death");
+        Destroy(gameObject, 10.0f);
+    }
+
+    protected virtual void OnDestroy()
+    {
+
     }
 
     protected virtual void DisableHitbox()

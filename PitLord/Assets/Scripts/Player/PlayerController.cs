@@ -26,6 +26,12 @@ public class PlayerController : Attributes
     public float rollSpeed;
     public Vector3 rollAxis;
 
+    //Animation Control - RoMo
+    public float romoStartTime;
+    public float romoDuration;
+    public Vector3 romoDirection;
+
+
     // Use this for initialization
     protected override void Start()
     {
@@ -47,6 +53,7 @@ public class PlayerController : Attributes
         base.Update();
         MovementUpdate();
         CombatUpdate();
+        RomoUpdate();
 
         if (Input.GetButtonDown("Heal"))
         {
@@ -58,12 +65,24 @@ public class PlayerController : Attributes
         }
     }
 
+    void RomoUpdate()
+    {
+        if (romoStartTime <= 0)
+        {
+            return;
+        }
 
+        cc.Move(romoDirection * Time.deltaTime);
+
+        if(Time.time >= romoStartTime + romoDuration)
+        {
+            romoStartTime = 0;
+            return;
+        }
+    }
     void MovementUpdate()
     {
         //No idea how to get local direction
-        animator.SetFloat("X", 0);
-        animator.SetFloat("Y", 0);
 
         if (inRoll())
         {
@@ -100,14 +119,18 @@ public class PlayerController : Attributes
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
-        Vector3 forward = Camera.main.transform.forward;
-        Vector3 right = Camera.main.transform.right;
+        Transform camera = Camera.main.GetComponent<CameraController>().CameraSmooth;
+        Vector3 forward = camera.transform.forward;
+        Vector3 right = camera.transform.right;
 
         forward.y = 0;
         right.y = 0;
 
         Vector3 move = forward * v + right * h;
         move *= running ? runSpeed : walkSpeed;
+
+        animator.SetFloat("X", 0);
+        animator.SetFloat("Y", move.magnitude);
 
         if (Input.GetAxis("Sprint") > 0)
         {
@@ -182,6 +205,10 @@ public class PlayerController : Attributes
                 attackName = "LightAttack1";
                 attacking = AnimationLibrary.Get().SearchByName(attackName).duration;
                 attackingInv = 0;
+
+                romoStartTime = Time.time;
+                romoDuration = 2.4f;
+                romoDirection = transform.forward * 0.511f;
 
                 animator.SetTrigger("Attack");
             }
