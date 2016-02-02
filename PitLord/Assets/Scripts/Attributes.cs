@@ -26,10 +26,13 @@ public class Attributes : MonoBehaviour
     public float detectionRange;
     public float combatRange;
 
+    protected float gravity = 9.81f;
+    protected float fallSpeed = 0;
+    protected bool falling;
+    protected float fallHeight = 0;
+    protected Vector3 offMeshPos;
+
     [HideInInspector]
-    public int heals;
-    public int maxHeals = 5;
-    public int healAmount = 10;
 
     public bool targettable;
     public bool deactivate;
@@ -80,6 +83,7 @@ public class Attributes : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            currentHealth = 0;
             Kill(source);
         }
         else

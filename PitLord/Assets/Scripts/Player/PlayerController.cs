@@ -7,16 +7,17 @@ public class PlayerController : Attributes
     [HideInInspector]
     public Transform lockOnTarget;
     public Animator animator;
+    public GameObject weapon;
 
     public float walkSpeed = 4;
     public float runSpeed = 8;
 
-    float fallSpeed = 0;
-    float gravity = 9.81f;
-
-    public GameObject weapon;
-
-    bool triggerPressed;
+    public int heals;
+    public int maxHeals = 5;
+    public int healAmount = 10;
+    public bool healed;
+    public float healTrigger;
+    public float healDuration;
 
     //ROLLING STUFF
     float rollStorage;
@@ -25,6 +26,8 @@ public class PlayerController : Attributes
     public float rollDelay;
     public float rollSpeed;
     public Vector3 rollAxis;
+
+    bool triggerPressed;
 
     //Animation Control - RoMo
     public float romoStartTime;
@@ -54,13 +57,30 @@ public class PlayerController : Attributes
         MovementUpdate();
         CombatUpdate();
         RomoUpdate();
+        FallUpdate();
 
+        //Input Update()?
         if (Input.GetButtonDown("Heal"))
         {
             if (heals > 0 && !(inAttack() || inRoll()))
             {
-                animator.SetTrigger("Heal");
-                //UseHeal(); - Triggered in Animation
+                if(!inHeal())
+                {
+                    animator.SetTrigger("Heal");
+                    StartHeal(); //- Triggered in Animation
+                }
+
+            }
+        }
+
+        if(inHeal())
+        {
+            //Can control via AnimLibrary? - Set Name in StartHeal(), Set healTrigger = Library.start in StartHeal();
+            healTrigger -= Time.deltaTime;
+            healDuration -= Time.deltaTime;
+            if(healTrigger <= 0)
+            {
+                UseHeal();
             }
         }
     }
@@ -74,18 +94,78 @@ public class PlayerController : Attributes
 
         cc.Move(romoDirection * Time.deltaTime);
 
-        if(Time.time >= romoStartTime + romoDuration)
+        if (Time.time >= romoStartTime + romoDuration)
         {
             romoStartTime = 0;
             return;
         }
     }
+
+    void FallUpdate()
+    {
+        if(cc.isGrounded)
+        {
+            animator.SetBool("Falling", false);
+
+            if(!falling)
+            {
+                return;
+            }
+        }
+
+        RaycastHit hitInfo;
+        fallHeight = Mathf.Abs((transform.position.y - offMeshPos.y));
+
+        if (!cc.isGrounded)
+        {
+            if (!falling)
+            {
+                falling = true;
+                offMeshPos = transform.position;
+            }
+
+            if(Physics.Raycast(transform.position, -transform.up, out hitInfo, 20f))
+            {
+                if ((hitInfo.point - transform.position).magnitude <= 0.5f)
+                {
+                    if (fallHeight >= 5 && fallHeight <= 8)
+                    {
+                        Debug.Log("FALLANIMATION 1");
+                        animator.SetInteger("FallId", 1);
+                        animator.SetTrigger("FallTrigger");
+                    }
+                    else if (fallHeight >= 8)
+                    {
+                        Debug.Log("FALLANIMATION 2");
+                        animator.SetInteger("FallId", 2);
+                        animator.SetTrigger("FallTrigger");
+                    }
+                }
+            }
+
+            if (fallHeight > 0.5f)
+            {
+                Debug.Log(fallHeight);
+                animator.SetBool("Falling", true);
+            }
+        }
+
+        if (cc.isGrounded && falling)
+        {
+            falling = false;
+            if (fallHeight > 5)
+            {
+                ApplyDamage((int)Mathf.Round(Mathf.Abs(fallHeight)) - 4, gameObject);
+            }
+        }
+    }
+
     void MovementUpdate()
     {
-        //No idea how to get local direction
-
-        if (inRoll())
+        //Still a problem with the speed getting affected by camera angle??
+        if (inRoll() || inHeal())
         {
+            animator.SetBool("Block", blocking);
             return;
         }
 
@@ -112,7 +192,7 @@ public class PlayerController : Attributes
 
                 //transform.rotation = Quaternion.RotateTowards(transform.rotation, newRotation, Time.deltaTime * 90);
                 //transform.Rotate(0, Input.GetAxis("Horizontal") * 180 * Time.deltaTime, 0);
-                return;      
+                return;
             }
         }
 
@@ -187,11 +267,17 @@ public class PlayerController : Attributes
 
     void CombatUpdate()
     {
+        if(inHeal())
+        {
+            return;
+        }
+
         if (inAttack())
         {
             attacking -= Time.deltaTime;
             attackingInv += Time.deltaTime;
         }
+
         rollDuration -= Time.deltaTime;
 
         //LightAttack
@@ -369,8 +455,22 @@ public class PlayerController : Attributes
         }
     }
 
+    public void StartHeal()
+    {
+        blocking = false;
+        //AnimationLibrary / Variables?, prolly not worth though bud
+        healTrigger = 1.5f;
+        healDuration = 2.5f;
+        healed = false;
+    }
+
     public void UseHeal()
     {
+        if(healed)
+        {
+            return;
+        }
+
         heals -= 1;
         currentHealth += healAmount;
 
@@ -378,13 +478,16 @@ public class PlayerController : Attributes
         {
             currentHealth = maxHealth;
         }
+
+        healed = true;
     }
+
     protected void SprintSwitch()
     {
         running = !running;
     }
 
-    protected override bool StaminaCost( GameObject source, string action )
+    protected override bool StaminaCost(GameObject source, string action)
     {
         bool pass = false;
 
@@ -444,6 +547,18 @@ public class PlayerController : Attributes
         }
 
         return pass;
+    }
+
+    bool inHeal()
+    {
+        if (healDuration > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     protected override void DisableHitbox()
