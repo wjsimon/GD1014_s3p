@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour {
     public static GameManager instance;
     public GameObject player;
     public Transform playerSpawn;
+    public Inventory inventory;
     public List<GameObject> enemyList = new List<GameObject>();
     public List<GameObject> objectsList = new List<GameObject>();
     public List<GameObject> alpacaList = new List<GameObject>();
@@ -52,6 +53,15 @@ public class GameManager : MonoBehaviour {
     public void SpawnPlayer()
     {
         //Spawns Player, Resets Positions (usually on Death) <- Scene Reload pretty much
+    }
+
+    public void DisableInputStartMenu()
+    {
+        //
+    }
+    public void DisableInputInMenuScreens()
+    {
+
     }
 
     public void SoftReset()

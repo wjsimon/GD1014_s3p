@@ -39,6 +39,7 @@ public class Attributes : MonoBehaviour
 
     public int weaponIndex;
     public List<GameObject> projectiles;
+    public float applyKnockback;
 
     //Animation Controls
     public string attackName = "default";
@@ -46,6 +47,7 @@ public class Attributes : MonoBehaviour
     public float attackingInv;
     public bool blocking;
     public bool running;
+    public float stunned;
 
     public float iFrames;
     public List<DamageBuffer> buffer = new List<DamageBuffer>();
@@ -61,7 +63,7 @@ public class Attributes : MonoBehaviour
         StaminaRegen();
         DamageUpdate();
     }
-    public void ApplyDamage( int damage, GameObject source, float delay = 0)
+    public void ApplyDamage( int damage, GameObject source, float delay = 0, bool knockback = false)
     {
         if (delay > 0)
         {
@@ -107,7 +109,15 @@ public class Attributes : MonoBehaviour
                 if (blocking == false)
                 {
                     //Set BlockHit Int for hit
-                    SetAnimTrigger("Hit");
+                    if(knockback)
+                    {
+                        KnockBack();
+                    }
+                    else
+                    {
+                        SetAnimTrigger("Hit");
+                    }
+
                     DisableHitbox(0.5f);
                 }
                 if (blocking == true && currentStamina > 0)
@@ -146,7 +156,6 @@ public class Attributes : MonoBehaviour
     public void SetAnimTrigger( string anim )
     {
         Animator ani = GetComponent<Animator>();
-
         ani.SetTrigger(anim);
     }
 
@@ -171,7 +180,12 @@ public class Attributes : MonoBehaviour
         }
 
         SetAnimTrigger("Death");
-        Destroy(gameObject, 10.0f);
+        //Destroy(gameObject, 10.0f);
+    }
+
+    protected virtual void KnockBack()
+    {
+        //SetAnimTrigger("Knockback");
     }
 
     protected virtual void OnDestroy()
@@ -196,7 +210,7 @@ public class Attributes : MonoBehaviour
         GetComponent<CharacterController>().enabled = true;
         GetComponent<Attributes>().enabled = true;
 
-        Animator ani = gameObject.transform.FindChild("Model").GetComponent<Animator>();
+        Animator ani = gameObject.GetComponent<Animator>();
         ani.SetTrigger("Reset");
     }
 
