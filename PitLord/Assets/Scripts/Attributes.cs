@@ -88,7 +88,11 @@ public class Attributes : MonoBehaviour
         }
         else
         {
-            SetAnimTrigger("Hit");
+            if(!(source.tag == "Player" && gameObject.tag == "Player"))
+            {
+                SetAnimTrigger("Hit");
+            }
+
             DisableHitbox();
         }
 

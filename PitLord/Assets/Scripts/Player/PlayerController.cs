@@ -64,7 +64,7 @@ public class PlayerController : Attributes
         {
             if (heals > 0 && !(inAttack() || inRoll()))
             {
-                if(!inHeal())
+                if (!inHeal())
                 {
                     animator.SetTrigger("Heal");
                     StartHeal(); //- Triggered in Animation
@@ -73,12 +73,12 @@ public class PlayerController : Attributes
             }
         }
 
-        if(inHeal())
+        if (inHeal())
         {
             //Can control via AnimLibrary? - Set Name in StartHeal(), Set healTrigger = Library.start in StartHeal();
             healTrigger -= Time.deltaTime;
             healDuration -= Time.deltaTime;
-            if(healTrigger <= 0)
+            if (healTrigger <= 0)
             {
                 UseHeal();
             }
@@ -103,51 +103,58 @@ public class PlayerController : Attributes
 
     void FallUpdate()
     {
-        if(cc.isGrounded)
+        if (!cc.isGrounded)
         {
-            animator.SetBool("Falling", false);
+            offMeshPos = transform.position;
+        }
 
-            if(!falling)
+        Debug.DrawRay((transform.position + Vector3.up * 0.9f), -transform.up, Color.red);
+
+        RaycastHit hitInfo;
+        if (Physics.Raycast(transform.position + (Vector3.up * 0.5f), -transform.up, out hitInfo))
+        {
+            Debug.Log((hitInfo.point - (transform.position + (Vector3.up * 0.5f))).magnitude);
+            float mag = (hitInfo.point - (transform.position + (Vector3.up * 0.5f))).magnitude;
+            if (mag >= 1.5f)
             {
-                return;
+                Debug.Log("Mag working?");
+                falling = true;
+            }
+            else if (mag < 1.5f)
+            {
+                if (falling)
+                {
+                    Debug.Log("Play Land Animation");
+                }
+                falling = false;
             }
         }
 
-        RaycastHit hitInfo;
-        fallHeight = Mathf.Abs((transform.position.y - offMeshPos.y));
+        animator.SetBool("Falling", falling);
+        /*
+        fallHeight = Mathf.Abs(transform.position.y + (Vector3.up * 0.5f).y - offMeshPos.y);
 
-        if (!cc.isGrounded)
+        if (Physics.Raycast(transform.position + (Vector3.up * 0.5f), -transform.up, out hitInfo, 20f))
         {
-            if (!falling)
+            if ((hitInfo.point - transform.position).magnitude <= 1.5f)
             {
-                falling = true;
-                offMeshPos = transform.position;
-            }
-
-            if(Physics.Raycast(transform.position, -transform.up, out hitInfo, 20f))
-            {
-                if ((hitInfo.point - transform.position).magnitude <= 0.5f)
+                if (fallHeight >= 5 && fallHeight <= 8)
                 {
-                    if (fallHeight >= 5 && fallHeight <= 8)
-                    {
-                        Debug.Log("FALLANIMATION 1");
-                        animator.SetInteger("FallId", 1);
-                        animator.SetTrigger("FallTrigger");
-                    }
-                    else if (fallHeight >= 8)
-                    {
-                        Debug.Log("FALLANIMATION 2");
-                        animator.SetInteger("FallId", 2);
-                        animator.SetTrigger("FallTrigger");
-                    }
+                    Debug.Log("FALLANIMATION 1");
+                    animator.SetBool("Falling", false);
+                }
+                else if (fallHeight >= 8)
+                {
+                    Debug.Log("FALLANIMATION 2");
+                    animator.SetBool("Falling", false);
                 }
             }
+        }
 
-            if (fallHeight > 0.5f)
-            {
-                Debug.Log(fallHeight);
-                animator.SetBool("Falling", true);
-            }
+        if (fallHeight > 1.0f)
+        {
+            Debug.Log(fallHeight);
+            animator.SetBool("Falling", true);
         }
 
         if (cc.isGrounded && falling)
@@ -158,6 +165,7 @@ public class PlayerController : Attributes
                 ApplyDamage((int)Mathf.Round(Mathf.Abs(fallHeight)) - 4, gameObject);
             }
         }
+        /**/
     }
 
     void MovementUpdate()
@@ -171,29 +179,31 @@ public class PlayerController : Attributes
 
         if (inAttack())
         {
-            if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart)
-            {
-                return;
-            }
-            else
-            {
-                //math magics
-                float y = Mathf.Atan2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * Mathf.Rad2Deg;
+            return;
+            /*
+if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart)
+{
+return;
+}
+else
+{
+//math magics - broken now :(
+float y = Mathf.Atan2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * Mathf.Rad2Deg;
 
-                //Cus' inputs can be 0;
-                if (y == 0)
-                {
-                    y = transform.localEulerAngles.y;
-                }
+//Cus' inputs can be 0;
+if (y == 0)
+{
+    y = transform.localEulerAngles.y;
+}
 
-                //thanks, unity answers
-                //transform.eulerAngles = new Vector3(transform.localEulerAngles.x, y, transform.localEulerAngles.z);
-                transform.eulerAngles = new Vector3(transform.localEulerAngles.x, y, transform.localEulerAngles.z);
+//thanks, unity answers
+//transform.eulerAngles = new Vector3(transform.localEulerAngles.x, y, transform.localEulerAngles.z);
+transform.eulerAngles = new Vector3(transform.localEulerAngles.x, y, transform.localEulerAngles.z);
 
-                //transform.rotation = Quaternion.RotateTowards(transform.rotation, newRotation, Time.deltaTime * 90);
-                //transform.Rotate(0, Input.GetAxis("Horizontal") * 180 * Time.deltaTime, 0);
-                return;
-            }
+//transform.rotation = Quaternion.RotateTowards(transform.rotation, newRotation, Time.deltaTime * 90);
+//transform.Rotate(0, Input.GetAxis("Horizontal") * 180 * Time.deltaTime, 0);
+return;
+/**/
         }
 
         float h = Input.GetAxisRaw("Horizontal");
@@ -267,7 +277,7 @@ public class PlayerController : Attributes
 
     void CombatUpdate()
     {
-        if(inHeal())
+        if (inHeal())
         {
             return;
         }
@@ -466,7 +476,7 @@ public class PlayerController : Attributes
 
     public void UseHeal()
     {
-        if(healed)
+        if (healed)
         {
             return;
         }
@@ -487,7 +497,7 @@ public class PlayerController : Attributes
         running = !running;
     }
 
-    protected override bool StaminaCost(GameObject source, string action)
+    protected override bool StaminaCost( GameObject source, string action )
     {
         bool pass = false;
 
