@@ -1,0 +1,347 @@
+fileFormatVersion: 2
+guid: bc9c2f90f2d63aa4b8e310b3708d7fe5
+timeCreated: 1454505493
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: base
+    100002: Base Human001
+    100004: Base Human001Head
+    100006: Base Human001LArmCollarbone
+    100008: Base Human001LArmDigit11
+    100010: Base Human001LArmDigit12
+    100012: Base Human001LArmDigit13
+    100014: Base Human001LArmDigit21
+    100016: Base Human001LArmDigit22
+    100018: Base Human001LArmDigit23
+    100020: Base Human001LArmDigit31
+    100022: Base Human001LArmDigit32
+    100024: Base Human001LArmDigit33
+    100026: Base Human001LArmDigit41
+    100028: Base Human001LArmDigit42
+    100030: Base Human001LArmDigit43
+    100032: Base Human001LArmDigit51
+    100034: Base Human001LArmDigit52
+    100036: Base Human001LArmDigit53
+    100038: Base Human001LArmForearm
+    100040: Base Human001LArmPalm
+    100042: Base Human001LArmUpperarm
+    100044: Base Human001LLegCalf
+    100046: Base Human001LLegDigit11
+    100048: Base Human001LLegFoot
+    100050: Base Human001LLegPlatform
+    100052: Base Human001LLegThigh
+    100054: Base Human001Neck
+    100056: Base Human001Pelvis
+    100058: Base Human001RArmCollarbone
+    100060: Base Human001RArmDigit11
+    100062: Base Human001RArmDigit12
+    100064: Base Human001RArmDigit13
+    100066: Base Human001RArmDigit21
+    100068: Base Human001RArmDigit22
+    100070: Base Human001RArmDigit23
+    100072: Base Human001RArmDigit31
+    100074: Base Human001RArmDigit32
+    100076: Base Human001RArmDigit33
+    100078: Base Human001RArmDigit41
+    100080: Base Human001RArmDigit42
+    100082: Base Human001RArmDigit43
+    100084: Base Human001RArmDigit51
+    100086: Base Human001RArmDigit52
+    100088: Base Human001RArmDigit53
+    100090: Base Human001RArmForearm
+    100092: Base Human001RArmPalm
+    100094: Base Human001RArmUpperarm
+    100096: Base Human001RCalf
+    100098: Base Human001RDigit11
+    100100: Base Human001RFoot
+    100102: Base Human001Ribcage
+    100104: Base Human001RPlatform
+    100106: Base Human001RThigh
+    100108: Base Human001Spine1
+    100110: Base Human001Spine2
+    100112: stoff
+    100114: //RootNode
+    400000: base
+    400002: Base Human001
+    400004: Base Human001Head
+    400006: Base Human001LArmCollarbone
+    400008: Base Human001LArmDigit11
+    400010: Base Human001LArmDigit12
+    400012: Base Human001LArmDigit13
+    400014: Base Human001LArmDigit21
+    400016: Base Human001LArmDigit22
+    400018: Base Human001LArmDigit23
+    400020: Base Human001LArmDigit31
+    400022: Base Human001LArmDigit32
+    400024: Base Human001LArmDigit33
+    400026: Base Human001LArmDigit41
+    400028: Base Human001LArmDigit42
+    400030: Base Human001LArmDigit43
+    400032: Base Human001LArmDigit51
+    400034: Base Human001LArmDigit52
+    400036: Base Human001LArmDigit53
+    400038: Base Human001LArmForearm
+    400040: Base Human001LArmPalm
+    400042: Base Human001LArmUpperarm
+    400044: Base Human001LLegCalf
+    400046: Base Human001LLegDigit11
+    400048: Base Human001LLegFoot
+    400050: Base Human001LLegPlatform
+    400052: Base Human001LLegThigh
+    400054: Base Human001Neck
+    400056: Base Human001Pelvis
+    400058: Base Human001RArmCollarbone
+    400060: Base Human001RArmDigit11
+    400062: Base Human001RArmDigit12
+    400064: Base Human001RArmDigit13
+    400066: Base Human001RArmDigit21
+    400068: Base Human001RArmDigit22
+    400070: Base Human001RArmDigit23
+    400072: Base Human001RArmDigit31
+    400074: Base Human001RArmDigit32
+    400076: Base Human001RArmDigit33
+    400078: Base Human001RArmDigit41
+    400080: Base Human001RArmDigit42
+    400082: Base Human001RArmDigit43
+    400084: Base Human001RArmDigit51
+    400086: Base Human001RArmDigit52
+    400088: Base Human001RArmDigit53
+    400090: Base Human001RArmForearm
+    400092: Base Human001RArmPalm
+    400094: Base Human001RArmUpperarm
+    400096: Base Human001RCalf
+    400098: Base Human001RDigit11
+    400100: Base Human001RFoot
+    400102: Base Human001Ribcage
+    400104: Base Human001RPlatform
+    400106: Base Human001RThigh
+    400108: Base Human001Spine1
+    400110: Base Human001Spine2
+    400112: stoff
+    400114: //RootNode
+    2300000: Base Human001Head
+    2300002: Base Human001LArmCollarbone
+    2300004: Base Human001LArmDigit11
+    2300006: Base Human001LArmDigit12
+    2300008: Base Human001LArmDigit13
+    2300010: Base Human001LArmDigit21
+    2300012: Base Human001LArmDigit22
+    2300014: Base Human001LArmDigit23
+    2300016: Base Human001LArmDigit31
+    2300018: Base Human001LArmDigit32
+    2300020: Base Human001LArmDigit33
+    2300022: Base Human001LArmDigit41
+    2300024: Base Human001LArmDigit42
+    2300026: Base Human001LArmDigit43
+    2300028: Base Human001LArmDigit51
+    2300030: Base Human001LArmDigit52
+    2300032: Base Human001LArmDigit53
+    2300034: Base Human001LArmForearm
+    2300036: Base Human001LArmPalm
+    2300038: Base Human001LArmUpperarm
+    2300040: Base Human001LLegCalf
+    2300042: Base Human001LLegDigit11
+    2300044: Base Human001LLegFoot
+    2300046: Base Human001LLegThigh
+    2300048: Base Human001Neck
+    2300050: Base Human001Pelvis
+    2300052: Base Human001RArmCollarbone
+    2300054: Base Human001RArmDigit11
+    2300056: Base Human001RArmDigit12
+    2300058: Base Human001RArmDigit13
+    2300060: Base Human001RArmDigit21
+    2300062: Base Human001RArmDigit22
+    2300064: Base Human001RArmDigit23
+    2300066: Base Human001RArmDigit31
+    2300068: Base Human001RArmDigit32
+    2300070: Base Human001RArmDigit33
+    2300072: Base Human001RArmDigit41
+    2300074: Base Human001RArmDigit42
+    2300076: Base Human001RArmDigit43
+    2300078: Base Human001RArmDigit51
+    2300080: Base Human001RArmDigit52
+    2300082: Base Human001RArmDigit53
+    2300084: Base Human001RArmForearm
+    2300086: Base Human001RArmPalm
+    2300088: Base Human001RArmUpperarm
+    2300090: Base Human001RCalf
+    2300092: Base Human001RDigit11
+    2300094: Base Human001RFoot
+    2300096: Base Human001Ribcage
+    2300098: Base Human001RThigh
+    2300100: Base Human001Spine1
+    2300102: Base Human001Spine2
+    3300000: Base Human001Head
+    3300002: Base Human001LArmCollarbone
+    3300004: Base Human001LArmDigit11
+    3300006: Base Human001LArmDigit12
+    3300008: Base Human001LArmDigit13
+    3300010: Base Human001LArmDigit21
+    3300012: Base Human001LArmDigit22
+    3300014: Base Human001LArmDigit23
+    3300016: Base Human001LArmDigit31
+    3300018: Base Human001LArmDigit32
+    3300020: Base Human001LArmDigit33
+    3300022: Base Human001LArmDigit41
+    3300024: Base Human001LArmDigit42
+    3300026: Base Human001LArmDigit43
+    3300028: Base Human001LArmDigit51
+    3300030: Base Human001LArmDigit52
+    3300032: Base Human001LArmDigit53
+    3300034: Base Human001LArmForearm
+    3300036: Base Human001LArmPalm
+    3300038: Base Human001LArmUpperarm
+    3300040: Base Human001LLegCalf
+    3300042: Base Human001LLegDigit11
+    3300044: Base Human001LLegFoot
+    3300046: Base Human001LLegThigh
+    3300048: Base Human001Neck
+    3300050: Base Human001Pelvis
+    3300052: Base Human001RArmCollarbone
+    3300054: Base Human001RArmDigit11
+    3300056: Base Human001RArmDigit12
+    3300058: Base Human001RArmDigit13
+    3300060: Base Human001RArmDigit21
+    3300062: Base Human001RArmDigit22
+    3300064: Base Human001RArmDigit23
+    3300066: Base Human001RArmDigit31
+    3300068: Base Human001RArmDigit32
+    3300070: Base Human001RArmDigit33
+    3300072: Base Human001RArmDigit41
+    3300074: Base Human001RArmDigit42
+    3300076: Base Human001RArmDigit43
+    3300078: Base Human001RArmDigit51
+    3300080: Base Human001RArmDigit52
+    3300082: Base Human001RArmDigit53
+    3300084: Base Human001RArmForearm
+    3300086: Base Human001RArmPalm
+    3300088: Base Human001RArmUpperarm
+    3300090: Base Human001RCalf
+    3300092: Base Human001RDigit11
+    3300094: Base Human001RFoot
+    3300096: Base Human001Ribcage
+    3300098: Base Human001RThigh
+    3300100: Base Human001Spine1
+    3300102: Base Human001Spine2
+    4300000: Base Human001Pelvis
+    4300002: Base Human001RThigh
+    4300004: Base Human001RCalf
+    4300006: Base Human001RFoot
+    4300008: Base Human001RDigit11
+    4300010: Base Human001Spine1
+    4300012: Base Human001Spine2
+    4300014: Base Human001Ribcage
+    4300016: Base Human001Neck
+    4300018: Base Human001Head
+    4300020: Base Human001LArmCollarbone
+    4300022: Base Human001LArmUpperarm
+    4300024: Base Human001LArmForearm
+    4300026: Base Human001LArmPalm
+    4300028: Base Human001LArmDigit11
+    4300030: Base Human001LArmDigit12
+    4300032: Base Human001LArmDigit13
+    4300034: Base Human001LArmDigit21
+    4300036: Base Human001LArmDigit22
+    4300038: Base Human001LArmDigit23
+    4300040: Base Human001LArmDigit31
+    4300042: Base Human001LArmDigit32
+    4300044: Base Human001LArmDigit33
+    4300046: Base Human001LArmDigit41
+    4300048: Base Human001LArmDigit42
+    4300050: Base Human001LArmDigit43
+    4300052: Base Human001LArmDigit51
+    4300054: Base Human001LArmDigit52
+    4300056: Base Human001LArmDigit53
+    4300058: Base Human001RArmCollarbone
+    4300060: Base Human001RArmUpperarm
+    4300062: Base Human001RArmForearm
+    4300064: Base Human001RArmPalm
+    4300066: Base Human001RArmDigit11
+    4300068: Base Human001RArmDigit12
+    4300070: Base Human001RArmDigit13
+    4300072: Base Human001RArmDigit21
+    4300074: Base Human001RArmDigit22
+    4300076: Base Human001RArmDigit23
+    4300078: Base Human001RArmDigit31
+    4300080: Base Human001RArmDigit32
+    4300082: Base Human001RArmDigit33
+    4300084: Base Human001RArmDigit41
+    4300086: Base Human001RArmDigit42
+    4300088: Base Human001RArmDigit43
+    4300090: Base Human001RArmDigit51
+    4300092: Base Human001RArmDigit52
+    4300094: Base Human001RArmDigit53
+    4300096: Base Human001LLegThigh
+    4300098: Base Human001LLegCalf
+    4300100: Base Human001LLegFoot
+    4300102: Base Human001LLegDigit11
+    4300104: base
+    4300106: stoff
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: base
+    13700002: stoff
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

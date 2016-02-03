@@ -189,7 +189,7 @@ public class PlayerController : Attributes
         if (inAttack())
         {
             return;
-            /*
+/*
 if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart)
 {
 return;
@@ -312,7 +312,7 @@ return;
                 attackingInv = 0;
 
                 romoStartTime = Time.time;
-                romoDuration = 2.4f;
+                romoDuration = 2.4f/1.5f;
                 romoDirection = transform.forward * 0.511f;
 
                 animator.SetTrigger("Attack");

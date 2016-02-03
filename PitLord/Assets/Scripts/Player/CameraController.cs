@@ -76,7 +76,7 @@ public class CameraController : MonoBehaviour {
 
         if (Physics.Raycast(CameraTarget.position, (transform.position - CameraTarget.transform.position), out hitInfo, distance,~(1<<LayerMask.NameToLayer("Character"))))
         {
-            transform.position = hitInfo.point;
+            transform.position = hitInfo.point - (transform.position - CameraTarget.transform.position).normalized;
         }
     }
 
