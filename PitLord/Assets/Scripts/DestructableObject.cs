@@ -19,11 +19,11 @@ public class DestructableObject : Attributes {
     }
 	
 	// Update is called once per frame
-	void Update () 
+	protected override void Update () 
     {
 	}
 
-    void OnDestroy()
+    protected override void OnDestroy()
     {
         if(onDeath.Count > 0)
         {
@@ -31,6 +31,8 @@ public class DestructableObject : Attributes {
             player.clip = onDeath[Random.Range(0, onDeath.Count)];
             player.Play();
         }
+
+        GameManager.instance.RemoveObject(gameObject);
     }
 
     protected override void RegisterObject()

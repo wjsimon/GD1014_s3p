@@ -26,7 +26,7 @@ public class AnimationLibrary
         AddAnimation(new AnimationWrapper("default", 0.0f, 0.0f, 0.0f, 0.0f));
         AddAnimation(new AnimationWrapper("LightAttack1", 0.5f, 2.0f, 1.5f, 2.5f));
         AddAnimation(new AnimationWrapper("LightAttack2", 0.5f, 2.0f, 1.5f, 2.5f));
-        AddAnimation(new AnimationWrapper("HeavyAttack1", 0.2f, 2.0f, 2.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("HeavyAttack1", 1.0f, 2.0f, 2.5f, 2.5f));
         AddAnimation(new AnimationWrapper("LightAttack1_enemyplaceholder", 0.2f, 0.6f, 2.5f, 2.5f));
     }
 

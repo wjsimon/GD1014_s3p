@@ -48,6 +48,7 @@ public class Attributes : MonoBehaviour
     public bool running;
 
     public float iFrames;
+    public List<DamageBuffer> buffer = new List<DamageBuffer>();
     
     protected virtual void Start()
     {
@@ -58,9 +59,16 @@ public class Attributes : MonoBehaviour
     {
         iFrames -= Time.deltaTime;
         StaminaRegen();
+        DamageUpdate();
     }
-    public void ApplyDamage( int damage, GameObject source )
+    public void ApplyDamage( int damage, GameObject source, float delay = 0)
     {
+        if (delay > 0)
+        {
+            buffer.Add(new DamageBuffer(damage, source, delay));
+            return;
+        }
+
         //Debug.LogWarning(damage);
         if(iFrames > 0)
         {
@@ -90,16 +98,42 @@ public class Attributes : MonoBehaviour
         {
             if(!(source.tag == "Player" && gameObject.tag == "Player"))
             {
-                SetAnimTrigger("Hit");
+                if (blocking == false)
+                {
+                    //Set BlockHit Int for hit
+                    SetAnimTrigger("Hit");
+                    DisableHitbox(0.5f);
+                }
+                if (blocking == true && currentStamina > 0)
+                {
+                    //Set BlockHit Int for blockhit
+                    SetAnimTrigger("Hit");
+                    DisableHitbox(0.1f);
+                }
             }
-
-            DisableHitbox();
         }
 
         if (currentStamina <= 0)
         {
             blocking = false;
+            //BlockBreak animation;
             currentStamina = 0;
+        }
+    }
+
+    public void DamageUpdate()
+    {
+        for (int i = 0; i < buffer.Count; i++ )
+        {
+            buffer[i].delay -= Time.deltaTime;
+            Debug.Log(buffer.Count + " " + buffer[i].delay);
+
+
+            if (buffer[i].delay <= 0)
+            {
+                ApplyDamage(buffer[i].damage, buffer[i].source, 0);
+                buffer.Remove(buffer[i]);
+            }
         }
     }
 
@@ -118,7 +152,7 @@ public class Attributes : MonoBehaviour
             return;
         }
 
-        DisableHitbox();
+        DisableHitbox(0.5f);
         GetComponent<CharacterController>().enabled = false;
         GetComponent<Attributes>().enabled = false;
         blocking = false;
@@ -139,9 +173,9 @@ public class Attributes : MonoBehaviour
 
     }
 
-    protected virtual void DisableHitbox()
+    protected virtual void DisableHitbox(float dur)
     {
-        iFrames = 0.5f;
+        iFrames = dur;
     }
 
     public void SoftReset()

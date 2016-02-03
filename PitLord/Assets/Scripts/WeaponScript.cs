@@ -3,8 +3,10 @@ using System.Collections;
 
 public class WeaponScript : MonoBehaviour {
 
+    Vector3 lastPos;
     public int damage;
     public GameObject owner;
+    public Vector3 hitDirection;
 
 	// Use this for initialization
 	void Start () {
@@ -13,7 +15,7 @@ public class WeaponScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        lastPos = transform.position;
 	}
 
     void OnTriggerEnter(Collider other)
@@ -26,8 +28,20 @@ public class WeaponScript : MonoBehaviour {
 		    hitDir = Mathf.Sign (Vector3.Dot (transform.forward, dir));
             /**/
 
-            Debug.LogWarning("Player hit");
+            //Debug.LogWarning("Player hit");
+            CalcHitDirection();
             other.GetComponent<Attributes>().ApplyDamage(damage, owner);
         }
+    }
+
+    void CalcHitDirection()
+    {
+        Debug.DrawRay(transform.position, lastPos - transform.position, Color.blue);
+        hitDirection = lastPos - transform.position;
+    }
+
+    void SpawnParticles()
+    {
+        //Stuff
     }
 }

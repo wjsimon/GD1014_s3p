@@ -17,13 +17,15 @@ public class Enemy : Attributes
     protected NavMeshAgent agent;
     public Transform target;
     public GameObject weapon;
+    public bool alerted;
 
     public int BehaviourRandomize;
 
 
-    //TIMER IS FOR TESTING ONLY, USE SEPERATE TIMERS FOR NON-TEMPORARY STUFF
-    float timer = 0;
+    //THIS TIMER IS FOR TESTING ONLY, USE SEPERATE TIMERS FOR NON-TEMPORARY STUFF
+    float timer;
 
+    protected State currentState;
     protected enum State
     {
         IDLE,
@@ -34,14 +36,9 @@ public class Enemy : Attributes
         ATTACK,
     };
 
-    protected State currentState;
-
     protected int strafeDir;
-
-    protected bool alerted;
-
     public float behavCooldown;
-    float cooldownStorage;
+
     // Use this for initialization
     protected override void Start()
     {
@@ -51,8 +48,8 @@ public class Enemy : Attributes
 
     public void Init()
     {
-        cooldownStorage = behavCooldown;
         behavCooldown = 0;
+        currentState = State.IDLE;
 
         //Sets the spawnpoint by creating a new GameObject a playerpos
         StoreTransform temp = new StoreTransform(transform.position, transform.rotation, transform.localScale);
@@ -72,6 +69,10 @@ public class Enemy : Attributes
     protected override void Update()
     {
         base.Update();
+        if (deactivate)
+        {
+            return;
+        }
 
         CombatUpdate();
         //Basically a state machine, gotta do all the randomizing and checking for which "state" the enemy should be in here <-- This is pretty much where enemies get coded, all the other stuff is the same
@@ -99,7 +100,6 @@ public class Enemy : Attributes
                 BackOff();
                 break;
             case State.STRAFE:
-                Random rng = new Random();
                 Mathf.Sign(Random.Range(-2, 1));
                 Strafe(strafeDir);
                 break;
@@ -131,35 +131,10 @@ public class Enemy : Attributes
     {
         alerted = true;
 
+        animator.SetFloat("X", 0);
+        animator.SetFloat("Y", 1);
         SwitchNavMesh(true);
         agent.SetDestination(target.position);
-    }
-
-    public void BackOff() //3
-    {
-        BackwardsMovement();
-    }
-    public void Strafe( int direction ) //4
-    {
-        SwitchNavMesh(false);
-
-        if ((Vector3.Distance(target.position, transform.position) > detectionRange || (Vector3.Distance(target.position, transform.position) < combatRange)))
-        {
-            behavCooldown = 0;
-            return;
-        }
-
-        //Debug.LogWarning("strafing");
-
-        animator.SetFloat("X", -direction);
-        animator.SetFloat("Y", 0);
-
-        float step = agent.speed * Time.deltaTime;
-        //transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((target.position - transform.position).normalized, Vector3.up), Time.deltaTime * 180);
-        //transform.RotateAround(target.position, Vector3.up, (Mathf.Sign(direction) * Mathf.Clamp((10 * Vector3.Distance(transform.position, target.position)), 15, 15) * Time.deltaTime));
-        transform.RotateAround(target.position, Vector3.up, (Mathf.Sign(direction) * 8 * Time.deltaTime));
-        transform.LookAt(target.transform);
-        //GetComponent<CharacterController>().Move((Mathf.Sign(animator.GetFloat("X")) * transform.right) * Time.deltaTime * agent.speed / 3);
     }
     public void Retreat() //2
     {
@@ -173,6 +148,35 @@ public class Enemy : Attributes
         {
             ChangeState(0);
         }
+    }
+
+    public void BackOff() //3
+    {
+        BackwardsMovement();
+    }
+    public void Strafe( int direction ) //4
+    {
+        SwitchNavMesh(false);
+
+        /*
+        if ((Vector3.Distance(target.position, transform.position) > detectionRange || (Vector3.Distance(target.position, transform.position) < combatRange)))
+        {
+            behavCooldown = 0;
+            return;
+        }
+        /**/
+
+        //Debug.LogWarning("strafing");
+
+        animator.SetFloat("X", -direction);
+        animator.SetFloat("Y", 0);
+
+        //float step = agent.speed * Time.deltaTime;
+        //transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((target.position - transform.position).normalized, Vector3.up), Time.deltaTime * 180);
+        //transform.RotateAround(target.position, Vector3.up, (Mathf.Sign(direction) * Mathf.Clamp((10 * Vector3.Distance(transform.position, target.position)), 15, 15) * Time.deltaTime));
+        transform.RotateAround(target.position, Vector3.up, (Mathf.Sign(direction) * 8 * Time.deltaTime));
+        transform.LookAt(target.transform);
+        //GetComponent<CharacterController>().Move((Mathf.Sign(animator.GetFloat("X")) * transform.right) * Time.deltaTime * agent.speed / 3);
     }
 
     public void ForwardMovement()
@@ -227,7 +231,7 @@ public class Enemy : Attributes
         animator.SetFloat("X", 0);
         animator.SetFloat("Y", -1);
 
-        float step = agent.speed * Time.deltaTime;
+        //float step = agent.speed * Time.deltaTime;
         transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((target.position - transform.position).normalized, Vector3.up), Time.deltaTime * agent.angularSpeed * 2);
         GetComponent<CharacterController>().Move(-transform.forward * Time.deltaTime * agent.speed / 3);
     }
@@ -311,9 +315,9 @@ public class Enemy : Attributes
         }
     }
 
-    protected override void DisableHitbox()
+    protected override void DisableHitbox(float dur)
     {
-        base.DisableHitbox();
+        base.DisableHitbox(dur);
         GetComponent<Enemy>().weapon.GetComponent<BoxCollider>().enabled = false;
     }
 
@@ -346,5 +350,11 @@ public class Enemy : Attributes
     {
         base.OnDestroy();
         GameManager.instance.AddEnemy(gameObject);
+    }
+
+    public void Alert()
+    {
+        alerted = true;
+        ChangeState(State.APPROACH);
     }
 }

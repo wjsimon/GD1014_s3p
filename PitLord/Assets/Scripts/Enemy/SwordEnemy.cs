@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TestEnemyBehaviour : Enemy
+public class SwordEnemy : Enemy
 {
     //Animationen per Hand; Bool raus - Cooldown rein
     //Use this for initialization
@@ -21,14 +21,15 @@ public class TestEnemyBehaviour : Enemy
     // Update is called once per frame
     protected override void Update()
     {
+        base.Update();
+
+        StaminaRegen();
+
         if (deactivate)
         {
             return;
         }
 
-        base.Update();
-
-        StaminaRegen();
         BehaviourSwitch();
         Tracking();
     }
@@ -50,78 +51,56 @@ public class TestEnemyBehaviour : Enemy
     void BehaviourSwitch()
     {
         //ChangeState(4);
-        //Debug.Log("behavCooldown" + (int)behavCooldown);
 
         //Idle until Detection of Player
-        //*
         behavCooldown -= Time.deltaTime;
-        /*
-        if (behavCooldown < 0)
-        {
-            behavCooldown = 0;
-        }
-        /**/
 
         //Not working?? - Slides around during attack animation a lot
-        if (inAttack())
+        if (inAttack() || !alerted)
         {
-            return;
-        }
-
-        if (Vector3.Distance(target.position, transform.position) > detectionRange)
-        {
-            //If you move outside detection range while in combat, always approaches after finishing current action
-            if (Vector3.Distance(target.position, transform.position) < leashingRange && !inAttack())
-            {
-                ChangeState(State.APPROACH);
-                return;
-            }
-
-            ChangeState(State.IDLE); //Idle
             return;
         }
 
         //Retreats rapidly to spawnPoint when player is out of leashing Range
+        /*
         if (Vector3.Distance(spawnPoint.transform.position, transform.position) > leashingRange)
         {
             ChangeState(State.RETREAT); //Retreat
             return;
         }
+        /**/
 
         //Within detection Range, enemy approaches the player
         if (Vector3.Distance(target.position, transform.position) > combatRange && (behavCooldown <= 0) && !inAttack())
         {
             behavCooldown = Random.Range(0, 4) + 1;
-            BehaviourRandomize = Random.Range(0, 3);
+            BehaviourRandomize = Random.Range(0, 100);
 
-            //Debug.LogWarning("RANDOM MOVEMENT INT " + BehaviourRandomize);
-
-            switch (BehaviourRandomize)
+            if (BehaviourRandomize >= 0 && BehaviourRandomize < 60)
             {
-                case 0:
-                    ChangeState(State.APPROACH);
-                    break;
-                case 1:
-                    ChangeState(State.BACKOFF);
-                    break;
-                case 2:
-                    ChangeState(State.STRAFE);
-                    break;
+                ChangeState(State.APPROACH);
+            }
+            if(BehaviourRandomize >= 60 && BehaviourRandomize < 90)
+            {
+                ChangeState(State.STRAFE);
+            }
+            if(BehaviourRandomize >= 90 && BehaviourRandomize < 100)
+            {
+                ChangeState(State.BACKOFF);
             }
         }
 
         //Within Combat Range, the enemy decides to attack, backoff or strafe around player
-        if (Vector3.Distance(target.position, transform.position) < combatRange && !inAttack())
+        if (Vector3.Distance(target.position, transform.position) <= combatRange && !inAttack())
         {
-            BehaviourRandomize = Random.Range(0, 2);
-            //Debug.LogWarning("RANDOM MOVEMENT INT " + BehaviourRandomize);
+            BehaviourRandomize = (int)Mathf.Sign(Random.Range(-2, 5));
 
             switch (BehaviourRandomize)
             {
-                case 0:
+                case 1:
                     ChangeState(State.ATTACK);
                     break;
-                case 1:
+                case -1:
                     ChangeState(State.BACKOFF);
                     break;
             }

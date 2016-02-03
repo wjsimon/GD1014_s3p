@@ -103,22 +103,23 @@ public class PlayerController : Attributes
 
     void FallUpdate()
     {
-        if (!cc.isGrounded)
+        if (!cc.isGrounded && !falling)
         {
             offMeshPos = transform.position;
         }
 
         Debug.DrawRay((transform.position + Vector3.up * 0.9f), -transform.up, Color.red);
+        fallHeight = Mathf.Abs(offMeshPos.y - transform.position.y);
 
         RaycastHit hitInfo;
         if (Physics.Raycast(transform.position + (Vector3.up * 0.5f), -transform.up, out hitInfo))
         {
-            Debug.Log((hitInfo.point - (transform.position + (Vector3.up * 0.5f))).magnitude);
+            //Debug.Log(fallHeight);
             float mag = (hitInfo.point - (transform.position + (Vector3.up * 0.5f))).magnitude;
             if (mag >= 1.5f)
             {
-                Debug.Log("Mag working?");
                 falling = true;
+                animator.SetBool("Falling", falling);
             }
             else if (mag < 1.5f)
             {
@@ -126,11 +127,19 @@ public class PlayerController : Attributes
                 {
                     Debug.Log("Play Land Animation");
                 }
+
+                if (fallHeight > 5 && falling)
+                {
+                    ApplyDamage((int)Mathf.Round(Mathf.Abs(fallHeight)) - 4, gameObject);
+                }
+
                 falling = false;
+                animator.SetBool("Falling", falling);
+
+                return;
             }
         }
 
-        animator.SetBool("Falling", falling);
         /*
         fallHeight = Mathf.Abs(transform.position.y + (Vector3.up * 0.5f).y - offMeshPos.y);
 
@@ -157,7 +166,7 @@ public class PlayerController : Attributes
             animator.SetBool("Falling", true);
         }
 
-        if (cc.isGrounded && falling)
+        if (falling)
         {
             falling = false;
             if (fallHeight > 5)
@@ -328,7 +337,7 @@ return;
                 animator.SetTrigger("Attack");
             }
 
-            Debug.Log(attackName);
+            //Debug.Log(attackName);
         }
 
         //HeavyAttack - KEYBOARD ---- THIS IS MISSING STAMING COST YO
@@ -571,9 +580,9 @@ return;
         }
     }
 
-    protected override void DisableHitbox()
+    protected override void DisableHitbox(float dur)
     {
-        base.DisableHitbox();
+        base.DisableHitbox(dur);
         GetComponent<PlayerController>().weapon.GetComponent<BoxCollider>().enabled = false;
     }
 }

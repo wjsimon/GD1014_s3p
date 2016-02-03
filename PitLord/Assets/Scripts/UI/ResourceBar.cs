@@ -27,7 +27,7 @@ public class ResourceBar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float currentScale = bar.rectTransform.localScale.x;
+//        float currentScale = bar.rectTransform.localScale.x;
 
         switch (id)
         {
