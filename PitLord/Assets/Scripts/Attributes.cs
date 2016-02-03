@@ -69,10 +69,16 @@ public class Attributes : MonoBehaviour
             return;
         }
 
-        //Debug.LogWarning(damage);
         if(iFrames > 0)
         {
             Debug.Log("INVINCIBLE");
+
+            if (currentHealth <= 0)
+            {
+                currentHealth = 0;
+                Kill(source);
+            }
+
             return;
         }
 
