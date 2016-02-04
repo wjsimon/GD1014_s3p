@@ -10,6 +10,9 @@ public class AnimationWrapper {
     public float colEnd;
     public float cancel;
     public float duration;
+    public float romoLength;
+    public float koboDuration;
+    public float koboLength;
 
     public AnimationWrapper()
     {
@@ -27,5 +30,19 @@ public class AnimationWrapper {
         this.colEnd = end;
         this.cancel = cancel;
         this.duration = duration;
+    }
+
+    public AnimationWrapper RomoLength(float l)
+    {
+        romoLength = l;
+        return this;
+    }
+
+    public AnimationWrapper Knockback(float length, float duration)
+    {
+        koboLength = length;
+        koboDuration = duration;
+
+        return this;
     }
 }

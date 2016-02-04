@@ -24,9 +24,9 @@ public class AnimationLibrary
 
         //PlaceHolder
         AddAnimation(new AnimationWrapper("default", 0.0f, 0.0f, 0.0f, 0.0f));
-        AddAnimation(new AnimationWrapper("LightAttack1", 0.5f, 2.0f, 1.5f, 2.5f));
-        AddAnimation(new AnimationWrapper("LightAttack2", 0.5f, 2.0f, 1.5f, 2.5f));
-        AddAnimation(new AnimationWrapper("HeavyAttack1", 1.0f, 2.0f, 2.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("LightAttack1", 0.5f, 2.0f, 1.5f, 2.9f).RomoLength(0.465f));
+        AddAnimation(new AnimationWrapper("LightAttack2", 0.5f, 2.0f, 1.5f, 2.4f).RomoLength(0.247f));
+        AddAnimation(new AnimationWrapper("HeavyAttack1", 1.2f, 2.1f, 2.6f, 3.0f).RomoLength(0.499f).Knockback(20f, 10f));
         AddAnimation(new AnimationWrapper("LightAttack1_enemyplaceholder", 0.2f, 0.6f, 2.5f, 2.5f));
     }
 

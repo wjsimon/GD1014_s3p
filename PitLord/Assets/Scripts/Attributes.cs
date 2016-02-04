@@ -35,13 +35,15 @@ public class Attributes : MonoBehaviour
     }
     public virtual bool ApplyDamage( int damage, Character source)
     {
-        currentHealth -= damage;
+        bool selfIsPlayer = this is PlayerController;
+        bool selfIsEnemy = this is Enemy;
+        bool selfIsDesObj = this is DestructableObject;
+        bool sourceIsPlayer = source is PlayerController;
+        bool sourceIsEnemy = source is Enemy;
 
-        if (currentHealth <= 0)
-        {
-            currentHealth = 0;
-            Kill();
-        }
+        if (selfIsPlayer && sourceIsPlayer) { return false; }
+        if (selfIsEnemy && sourceIsEnemy) { return false; }
+        //if (selfIsDesObj && sourceIsEnemy) { return false; }
 
         return true;
     }

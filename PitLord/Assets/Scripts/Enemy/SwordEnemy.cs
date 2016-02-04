@@ -22,7 +22,6 @@ public class SwordEnemy : Enemy
     protected override void Update()
     {
         base.Update();
-
         StaminaRegen();
 
         if (deactivate)
@@ -126,10 +125,14 @@ public class SwordEnemy : Enemy
             return;
         }
 
-        animator.SetTrigger("Attack");
         attackName = "LightAttack1";
-        attacking = AnimationLibrary.Get().SearchByName(attackName).duration;
+        float duration = AnimationLibrary.Get().SearchByName(attackName).duration;
+        attacking = duration;
         attackingInv = 0;
+
+        SetRomo(duration, AnimationLibrary.Get().SearchByName(attackName).romoLength);
+
+        animator.SetTrigger("Attack");
     }
 
     protected override void RegisterObject()

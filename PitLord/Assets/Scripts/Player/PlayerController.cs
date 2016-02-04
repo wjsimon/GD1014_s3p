@@ -6,7 +6,6 @@ public class PlayerController : Character
     [HideInInspector]
     public Transform lockOnTarget;
     public Animator animator;
-    public GameObject weapon;
 
     public float walkSpeed = 4;
     public float runSpeed = 8;
@@ -50,7 +49,6 @@ public class PlayerController : Character
         base.Update();
         MovementUpdate();
         CombatUpdate();
-        RomoUpdate();
         FallUpdate();
 
         //Input Update()?
@@ -284,16 +282,11 @@ public class PlayerController : Character
                 blocking = false;
                 SprintSwitch();
 
-                attackName = "LightAttack1";
-                attacking = AnimationLibrary.Get().SearchByName(attackName).duration;
-                attackingInv = 0;
-
-                romoStartTime = Time.time;
-                romoDuration = 2.4f;
-                romoDirection = transform.forward * 0.511f;
+                StartAttack("LightAttack1");
 
                 animator.SetTrigger("Attack");
             }
+
             else if (inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).cancel)
             {
                 blocking = false;
@@ -308,8 +301,7 @@ public class PlayerController : Character
                     attackName = "LightAttack1";
                 }
 
-                attacking = AnimationLibrary.Get().SearchByName(attackName).duration;
-                attackingInv = 0;
+                StartAttack(attackName);
 
                 animator.SetTrigger("Attack");
             }
@@ -341,9 +333,7 @@ public class PlayerController : Character
                     blocking = false;
                     SprintSwitch();
 
-                    attackName = "HeavyAttack1";
-                    attacking = AnimationLibrary.Get().SearchByName(attackName).duration;
-                    attackingInv = 0;
+                    StartAttack("HeavyAttack1");
 
                     animator.SetTrigger("HeavyAttack");
 
@@ -418,20 +408,6 @@ public class PlayerController : Character
 
         animator.SetBool("Block", blocking);
         animator.SetBool("Roll", inRoll());
-
-
-        //does collider for weapon regardless of Input
-        if (inAttack())
-        {
-            if ((attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart) && (attackingInv <= AnimationLibrary.Get().SearchByName(attackName).colEnd))
-            {
-                weapon.GetComponent<BoxCollider>().enabled = true;
-            }
-            else
-            {
-                weapon.GetComponent<BoxCollider>().enabled = false;
-            }
-        }
 
         if (!inAttack())
         {
@@ -568,11 +544,5 @@ public class PlayerController : Character
         {
             return false;
         }
-    }
-
-    protected override void DisableHitbox( float dur )
-    {
-        base.DisableHitbox(dur);
-        GetComponent<PlayerController>().weapon.GetComponent<BoxCollider>().enabled = false;
     }
 }

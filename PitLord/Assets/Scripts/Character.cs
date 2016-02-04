@@ -30,6 +30,10 @@ public class Character : Attributes
     public bool running;
     public float stunned;
 
+    public WeaponScript shortSword;
+    public WeaponScript shield;
+    public WeaponScript twoHanded;
+
     //Animation Control - RoMo
     public float romoStartTime;
     public float romoDuration;
@@ -51,14 +55,17 @@ public class Character : Attributes
     protected override void Update()
     {
         base.Update();
-
-        iFrames -= Time.deltaTime;
+        WeaponColliderUpdate();
+        RomoUpdate();
         StaminaRegen();
+        iFrames -= Time.deltaTime;
         //DamageUpdate();
     }
 
     public override bool ApplyDamage(int damage, Character source)
     {
+        if (!base.ApplyDamage(damage, source)) { return false; }
+
         if (iFrames > 0)
         {
             Debug.Log("INVINCIBLE");
@@ -85,13 +92,17 @@ public class Character : Attributes
         }
         else
         {
-            if (!(source.tag == "Player" && gameObject.tag == "Player"))
+            if (source != this)
             {
                 if (blocking == false)
                 {
+                    CancelAttack();
                     //Set BlockHit Int for hit
-                    SetAnimTrigger("Hit");
-                    DisableHitbox(0.5f);
+                    if (!KnockBack(source))
+                    {
+                        SetAnimTrigger("Hit");
+                        DisableHitbox(0.5f);
+                    }
                 }
                 if (blocking == true && currentStamina > 0)
                 {
@@ -140,9 +151,52 @@ public class Character : Attributes
         }
     }
 
-    protected virtual void KnockBack()
+    protected virtual void SetRomo(float duration, float length)
     {
+        if (length == 0) return;
+
+        romoStartTime = Time.time;
+        romoDuration = duration;
+        romoDirection = transform.forward * length;
+    }
+
+    protected virtual void StartAttack(string name)
+    {
+        attackName = name;
+
+        float duration = AnimationLibrary.Get().SearchByName(attackName).duration;
+
+        attacking = duration;
+        attackingInv = 0;
+
+        SetRomo(duration, AnimationLibrary.Get().SearchByName(attackName).romoLength);
+    }
+
+    protected virtual void CancelAttack()
+    {
+        attackName = "default";
+        attacking = 0;
+        attackingInv = 0;
+
+        romoDuration = 0;
+        romoStartTime = 0;
+    }
+
+    protected virtual bool KnockBack(Character source)
+    {
+        float duration = AnimationLibrary.Get().SearchByName(source.attackName).koboDuration;
+        if(duration <= 0) { return false; }
+
+        Vector3 dir = (transform.position - source.transform.position);
+        dir.y = 0;
+        dir.Normalize();
+        transform.forward = -dir;
+
+        Debug.Log(duration + " " + AnimationLibrary.Get().SearchByName(source.attackName).koboLength);
+        SetRomo(duration, -AnimationLibrary.Get().SearchByName(source.attackName).koboLength);
+        stunned = duration;
         //SetAnimTrigger("Knockback");
+        return true;
     }
 
     protected virtual void DisableHitbox( float dur )
@@ -153,6 +207,10 @@ public class Character : Attributes
     public override bool inAttack()
     {
         return attacking > 0;
+    }
+    public virtual bool inStun()
+    {
+        return stunned > 0;
     }
 
     public void LaunchProjectile()
@@ -210,6 +268,30 @@ public class Character : Attributes
         }
     }
 
+    protected virtual void WeaponColliderUpdate()
+    {
+        if (inAttack())
+        {
+            WeaponScript weapon = shortSword;
+            if(attackName == "HeavyAttack1")
+            {
+                weapon = shield;
+            }
 
-
+            if ((attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart) && (attackingInv <= AnimationLibrary.Get().SearchByName(attackName).colEnd))
+            {
+                weapon.GetComponent<BoxCollider>().enabled = true;
+            }
+            else
+            {
+                weapon.GetComponent<BoxCollider>().enabled = false;
+            }
+        }
+        else
+        {
+            if (shortSword != null)shortSword.GetComponent<BoxCollider>().enabled = false;
+            if (shield != null)shield.GetComponent<BoxCollider>().enabled = false;
+            if (twoHanded != null)twoHanded.GetComponent<BoxCollider>().enabled = false;
+        }
+    }
 }

@@ -24,6 +24,19 @@ public class DestructableObject : Attributes
     {
     }
 
+    public override bool ApplyDamage( int damage, Character source )
+    {
+        if (!base.ApplyDamage(damage, source)) { return false; }
+        currentHealth -= damage;
+
+        if (currentHealth <= 0)
+        {
+            currentHealth = 0;
+            Kill();
+        }
+
+        return true;
+    }
     protected virtual void Kill()
     {
         base.Kill();
