@@ -4,7 +4,7 @@ using System.Collections;
 public class ProjectileScript : MonoBehaviour {
 
     public float speed = 10;
-    public GameObject source;
+    public Character source;
 	// Use this for initialization
 	void Start () 
     {
@@ -21,7 +21,7 @@ public class ProjectileScript : MonoBehaviour {
         //Debug.Log(other.gameObject.name);
         if (source.gameObject.tag == "Enemy" && other.gameObject.tag == "Player")
         {
-            other.gameObject.GetComponent<Attributes>().ApplyDamage(2, gameObject);
+            other.gameObject.GetComponent<Attributes>().ApplyDamage(2, source);
         }
     }
 }

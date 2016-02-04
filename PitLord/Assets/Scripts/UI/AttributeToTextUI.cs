@@ -18,12 +18,12 @@ public class AttributeToTextUI : MonoBehaviour {
 
         if(health)
         {
-            GetComponent<Text>().text = source.GetComponent<Attributes>().currentHealth.ToString();
+            GetComponent<Text>().text = source.GetComponent<Character>().currentHealth.ToString();
         }
 
         if(stamina)
         {
-            GetComponent<Text>().text = source.GetComponent<Attributes>().currentStamina.ToString();
+            GetComponent<Text>().text = source.GetComponent<Character>().currentStamina.ToString();
         }
 	}
 }

@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DestructableObject : Attributes {
+public class DestructableObject : Attributes
+{
 
-	// Use this for initialization
-	protected override void Start () 
+    // Use this for initialization
+    protected override void Start()
     {
         base.Start();
 
@@ -17,15 +18,23 @@ public class DestructableObject : Attributes {
 
         RegisterObject();
     }
-	
-	// Update is called once per frame
-	protected override void Update () 
+
+    // Update is called once per frame
+    protected override void Update()
     {
-	}
+    }
+
+    protected virtual void Kill()
+    {
+        base.Kill();
+        Destroy(gameObject);
+
+        SetAnimTrigger("Death");
+    }
 
     protected override void OnDestroy()
     {
-        if(onDeath.Count > 0)
+        if (onDeath.Count > 0)
         {
             AudioSource player = new AudioSource();
             player.clip = onDeath[Random.Range(0, onDeath.Count)];

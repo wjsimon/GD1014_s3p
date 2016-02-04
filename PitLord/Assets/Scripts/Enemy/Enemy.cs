@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Enemy : Attributes
+public class Enemy : Character
 {
     public Animator animator;
     bool blending = true;
@@ -315,20 +315,29 @@ public class Enemy : Attributes
         }
     }
 
-    protected override void DisableHitbox(float dur)
+    protected override void StaminaRegen()
+    {
+        base.StaminaRegen();
+        if (inAttack() || blocking)
+        {
+            regenCounter = -1.5f;
+        }
+    }
+
+    protected override void DisableHitbox( float dur )
     {
         base.DisableHitbox(dur);
         GetComponent<Enemy>().weapon.GetComponent<BoxCollider>().enabled = false;
     }
 
-    protected virtual void SwitchNavMesh(bool enable)
+    protected virtual void SwitchNavMesh( bool enable )
     {
-        if(enable == agent.enabled)
+        if (enable == agent.enabled)
         {
             return;
         }
 
-        if(!enable)
+        if (!enable)
         {
             agent.Stop();
             agent.enabled = false;

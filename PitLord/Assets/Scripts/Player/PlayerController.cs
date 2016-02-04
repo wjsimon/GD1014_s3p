@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerController : Attributes
+public class PlayerController : Character
 {
-    CharacterController cc;
     [HideInInspector]
     public Transform lockOnTarget;
     public Animator animator;
@@ -28,11 +27,6 @@ public class PlayerController : Attributes
     public Vector3 rollAxis;
 
     bool triggerPressed;
-
-    //Animation Control - RoMo
-    public float romoStartTime;
-    public float romoDuration;
-    public Vector3 romoDirection;
 
 
     // Use this for initialization
@@ -69,7 +63,6 @@ public class PlayerController : Attributes
                     animator.SetTrigger("Heal");
                     StartHeal(); //- Triggered in Animation
                 }
-
             }
         }
 
@@ -82,22 +75,6 @@ public class PlayerController : Attributes
             {
                 UseHeal();
             }
-        }
-    }
-
-    void RomoUpdate()
-    {
-        if (romoStartTime <= 0)
-        {
-            return;
-        }
-
-        cc.Move(romoDirection * Time.deltaTime);
-
-        if (Time.time >= romoStartTime + romoDuration)
-        {
-            romoStartTime = 0;
-            return;
         }
     }
 
@@ -121,6 +98,7 @@ public class PlayerController : Attributes
                 falling = true;
                 animator.SetBool("Falling", falling);
             }
+
             else if (mag < 1.5f)
             {
                 if (falling)
@@ -130,12 +108,11 @@ public class PlayerController : Attributes
 
                 if (fallHeight > 5 && falling)
                 {
-                    ApplyDamage((int)Mathf.Round(Mathf.Abs(fallHeight)) - 4, gameObject);
+                    ApplyDamage((int)Mathf.Round(Mathf.Abs(fallHeight)) - 4, this);
                 }
 
                 falling = false;
                 animator.SetBool("Falling", falling);
-
                 return;
             }
         }
@@ -189,30 +166,30 @@ public class PlayerController : Attributes
         if (inAttack())
         {
             return;
-/*
-if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart)
-{
-return;
-}
-else
-{
-//math magics - broken now :(
-float y = Mathf.Atan2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * Mathf.Rad2Deg;
+            /*
+            if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart)
+            {
+            return;
+            }
+            else
+            {
+            //math magics - broken now :(
+            float y = Mathf.Atan2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * Mathf.Rad2Deg;
 
-//Cus' inputs can be 0;
-if (y == 0)
-{
-    y = transform.localEulerAngles.y;
-}
+            //Cus' inputs can be 0;
+            if (y == 0)
+            {
+                y = transform.localEulerAngles.y;
+            }
 
-//thanks, unity answers
-//transform.eulerAngles = new Vector3(transform.localEulerAngles.x, y, transform.localEulerAngles.z);
-transform.eulerAngles = new Vector3(transform.localEulerAngles.x, y, transform.localEulerAngles.z);
+            //thanks, unity answers
+            //transform.eulerAngles = new Vector3(transform.localEulerAngles.x, y, transform.localEulerAngles.z);
+            transform.eulerAngles = new Vector3(transform.localEulerAngles.x, y, transform.localEulerAngles.z);
 
-//transform.rotation = Quaternion.RotateTowards(transform.rotation, newRotation, Time.deltaTime * 90);
-//transform.Rotate(0, Input.GetAxis("Horizontal") * 180 * Time.deltaTime, 0);
-return;
-/**/
+            //transform.rotation = Quaternion.RotateTowards(transform.rotation, newRotation, Time.deltaTime * 90);
+            //transform.Rotate(0, Input.GetAxis("Horizontal") * 180 * Time.deltaTime, 0);
+            return;
+            /**/
         }
 
         float h = Input.GetAxisRaw("Horizontal");
@@ -312,7 +289,7 @@ return;
                 attackingInv = 0;
 
                 romoStartTime = Time.time;
-                romoDuration = 2.4f/1.5f;
+                romoDuration = 2.4f;
                 romoDirection = transform.forward * 0.511f;
 
                 animator.SetTrigger("Attack");
@@ -462,6 +439,15 @@ return;
         }
     }
 
+    protected override void StaminaRegen()
+    {
+        base.StaminaRegen();
+        if (inAttack() || inRoll() || blocking || running)
+        {
+            regenCounter = -0.1f;
+        }
+    }
+
     public bool inRoll()
     {
         if (rollDuration > 0)
@@ -500,7 +486,11 @@ return;
 
         healed = true;
     }
-
+    protected override void Kill()
+    {
+        base.Kill();
+        GameObject.Find("GameManager").GetComponent<GameManager>().GameOver();
+    }
     protected void SprintSwitch()
     {
         running = !running;
@@ -580,7 +570,7 @@ return;
         }
     }
 
-    protected override void DisableHitbox(float dur)
+    protected override void DisableHitbox( float dur )
     {
         base.DisableHitbox(dur);
         GetComponent<PlayerController>().weapon.GetComponent<BoxCollider>().enabled = false;

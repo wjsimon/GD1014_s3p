@@ -36,7 +36,7 @@ public class ResourceBar : MonoBehaviour
                 break;
 
             case "stamina":
-                scaleFactor = ((float)target.GetComponent<Attributes>().currentStamina / (float)target.GetComponent<Attributes>().maxStamina);
+                scaleFactor = ((float)target.GetComponent<Character>().currentStamina / (float)target.GetComponent<Character>().maxStamina);
                 break;
         }
 
@@ -50,7 +50,7 @@ public class ResourceBar : MonoBehaviour
             //Special cases, looks a lot better imo; would also like to add instant recovery
             if (id == "stamina")
             {
-                if (target.GetComponent<Attributes>().running)
+                if (target.GetComponent<Character>().running)
                 {
                     return;
                 }

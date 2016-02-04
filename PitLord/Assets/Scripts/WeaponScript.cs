@@ -5,12 +5,12 @@ public class WeaponScript : MonoBehaviour {
 
     Vector3 lastPos;
     public int damage;
-    public GameObject owner;
+    public Character owner;
     public Vector3 hitDirection;
 
 	// Use this for initialization
 	void Start () {
-	
+        owner = GetComponentInParent<Character>();
 	}
 	
 	// Update is called once per frame
