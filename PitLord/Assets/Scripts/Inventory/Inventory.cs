@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Inventory {
 
     public List<Item> itemList = new List<Item>();
+    public List<Key> keys = new List<Key>();
 
 	// Use this for initialization
 	void Start () {
@@ -36,5 +37,13 @@ public class Inventory {
                 RemoveItem(itemList[i]);
             }
         }
+    }
+    public void AddKey(Key t)
+    {
+        keys.Add(t);
+    }
+    public void RemoveKey(Key t)
+    {
+        keys.Add(t);
     }
 }

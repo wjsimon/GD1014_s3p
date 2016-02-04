@@ -5,9 +5,9 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour {
 
     public static GameManager instance;
-    public GameObject player;
+    public PlayerController player;
     public Transform playerSpawn;
-    public Inventory inventory;
+    public Inventory inventory = new Inventory();
     public List<GameObject> enemyList = new List<GameObject>();
     public List<GameObject> objectsList = new List<GameObject>();
     public List<GameObject> alpacaList = new List<GameObject>();

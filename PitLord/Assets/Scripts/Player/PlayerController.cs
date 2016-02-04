@@ -25,12 +25,16 @@ public class PlayerController : Character
     public float rollSpeed;
     public Vector3 rollAxis;
 
+    public Interaction interaction;
     bool triggerPressed;
-
 
     // Use this for initialization
     protected override void Start()
     {
+        //Debug
+        GameManager.instance.inventory.AddKey(new Key("test"));
+
+
         base.Start();
 
         rollDelay = -rollDelay;
@@ -49,6 +53,7 @@ public class PlayerController : Character
         base.Update();
         MovementUpdate();
         CombatUpdate();
+        InteractionUpdate();
         FallUpdate();
 
         //Input Update()?
@@ -163,39 +168,32 @@ public class PlayerController : Character
 
         if (inAttack())
         {
-            return;
-            /*
             if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart)
             {
-            return;
+                //return;
             }
             else
             {
-            //math magics - broken now :(
-            float y = Mathf.Atan2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * Mathf.Rad2Deg;
+                Vector3 traceDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+                if(traceDir.magnitude > 0.1f)
+                {
+                    traceDir=Camera.main.transform.TransformDirection(traceDir);
+                    traceDir.y = 0;
 
-            //Cus' inputs can be 0;
-            if (y == 0)
-            {
-                y = transform.localEulerAngles.y;
+                    traceDir.Normalize();
+                    transform.forward = Vector3.Lerp(transform.forward, traceDir, 0.07f);
+                }
             }
 
-            //thanks, unity answers
-            //transform.eulerAngles = new Vector3(transform.localEulerAngles.x, y, transform.localEulerAngles.z);
-            transform.eulerAngles = new Vector3(transform.localEulerAngles.x, y, transform.localEulerAngles.z);
-
-            //transform.rotation = Quaternion.RotateTowards(transform.rotation, newRotation, Time.deltaTime * 90);
-            //transform.Rotate(0, Input.GetAxis("Horizontal") * 180 * Time.deltaTime, 0);
             return;
-            /**/
         }
 
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
         Transform camera = Camera.main.GetComponent<CameraController>().CameraSmooth;
-        Vector3 forward = camera.transform.forward;
-        Vector3 right = camera.transform.right;
+        Vector3 forward = camera.transform.forward.normalized;
+        Vector3 right = camera.transform.right.normalized;
 
         forward.y = 0;
         right.y = 0;
@@ -245,7 +243,7 @@ public class PlayerController : Character
 
         if (cc.isGrounded)
         {
-            fallSpeed = 0;
+            fallSpeed = 10;
         }
         else
         {
@@ -413,6 +411,24 @@ public class PlayerController : Character
         {
             attackName = "";
         }
+    }
+    void InteractionUpdate()
+    {
+        if (interaction == null)
+        {
+            return;
+        }
+
+        else if (Input.GetButtonDown("Interaction"))
+        {
+            interaction.Execute();
+            interaction = null;
+        }
+    }
+
+    public void SetInteraction(Interaction t)
+    {
+        interaction = t;
     }
 
     protected override void StaminaRegen()

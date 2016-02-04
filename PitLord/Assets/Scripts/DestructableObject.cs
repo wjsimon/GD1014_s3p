@@ -37,7 +37,7 @@ public class DestructableObject : Attributes
 
         return true;
     }
-    protected virtual void Kill()
+    protected override void Kill()
     {
         base.Kill();
         Destroy(gameObject);

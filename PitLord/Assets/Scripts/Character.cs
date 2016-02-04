@@ -37,7 +37,7 @@ public class Character : Attributes
     //Animation Control - RoMo
     public float romoStartTime;
     public float romoDuration;
-    public Vector3 romoDirection;
+    public float romoDirection;
 
     public float iFrames;
     public List<DamageBuffer> buffer = new List<DamageBuffer>();
@@ -100,13 +100,16 @@ public class Character : Attributes
                     //Set BlockHit Int for hit
                     if (!KnockBack(source))
                     {
+                        GetComponent<Animator>().SetInteger("HitInt", 0);
                         SetAnimTrigger("Hit");
                         DisableHitbox(0.5f);
                     }
                 }
+
                 if (blocking == true && currentStamina > 0)
                 {
                     //Set BlockHit Int for blockhit
+                    GetComponent<Animator>().SetInteger("HitInt", 1);
                     SetAnimTrigger("Hit");
                     DisableHitbox(0.1f);
                 }
@@ -116,6 +119,8 @@ public class Character : Attributes
         if (currentStamina <= 0)
         {
             blocking = false;
+            GetComponent<Animator>().SetInteger("HitInt", 2);
+            SetAnimTrigger("Hit");
             //BlockBreak animation;
             currentStamina = 0;
         }
@@ -142,7 +147,9 @@ public class Character : Attributes
             return;
         }
 
-        cc.Move(romoDirection * Time.deltaTime);
+        Vector3 dir = (transform.forward * romoDirection);
+        dir.y = 0;
+        cc.Move(dir * Time.deltaTime);
 
         if (Time.time >= romoStartTime + romoDuration)
         {
@@ -157,7 +164,7 @@ public class Character : Attributes
 
         romoStartTime = Time.time;
         romoDuration = duration;
-        romoDirection = transform.forward * length;
+        romoDirection = length;
     }
 
     protected virtual void StartAttack(string name)
@@ -195,7 +202,8 @@ public class Character : Attributes
         Debug.Log(duration + " " + AnimationLibrary.Get().SearchByName(source.attackName).koboLength);
         SetRomo(duration, -AnimationLibrary.Get().SearchByName(source.attackName).koboLength);
         stunned = duration;
-        //SetAnimTrigger("Knockback");
+        GetComponent<Animator>().SetInteger("HitInt", 3);
+        SetAnimTrigger("Hit");
         return true;
     }
 
