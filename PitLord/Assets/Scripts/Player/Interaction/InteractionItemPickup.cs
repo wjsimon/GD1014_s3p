@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ItemPickup : Interaction {
+public class InteractionItemPickup : Interaction {
 
 	// Use this for initialization
 	void Start () {	

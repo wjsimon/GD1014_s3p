@@ -22,7 +22,6 @@ public class SwordEnemy : Enemy
     protected override void Update()
     {
         base.Update();
-        StaminaRegen();
 
         if (deactivate)
         {

@@ -34,7 +34,6 @@ public class PlayerController : Character
         //Debug
         GameManager.instance.inventory.AddKey(new Key("test"));
 
-
         base.Start();
 
         rollDelay = -rollDelay;
@@ -175,9 +174,9 @@ public class PlayerController : Character
             else
             {
                 Vector3 traceDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-                if(traceDir.magnitude > 0.1f)
+                if (traceDir.magnitude > 0.1f)
                 {
-                    traceDir=Camera.main.transform.TransformDirection(traceDir);
+                    traceDir = Camera.main.transform.TransformDirection(traceDir);
                     traceDir.y = 0;
 
                     traceDir.Normalize();
@@ -204,31 +203,6 @@ public class PlayerController : Character
         animator.SetFloat("X", 0);
         animator.SetFloat("Y", move.magnitude);
 
-        if (Input.GetAxis("Sprint") > 0)
-        {
-            if (!running && currentStamina > 0)
-            {
-                SprintSwitch();
-            }
-        }
-
-        else if (Input.GetAxis("Sprint") <= 0)
-        {
-            if (running)
-            {
-                SprintSwitch();
-            }
-        }
-
-        if (running)
-        {
-            StaminaCost(gameObject, "Sprint");
-            if (currentStamina <= 0)
-            {
-                SprintSwitch();
-            }
-        }
-
         if (move.magnitude > 0.01)
         {
             transform.LookAt(transform.position + move);
@@ -254,6 +228,37 @@ public class PlayerController : Character
         if (move.magnitude > 0.01)
         {
             cc.Move(move * Time.deltaTime);
+
+            if (Input.GetAxis("Sprint") > 0)
+            {
+                if (!running && currentStamina > 0)
+                {
+                    SprintSwitch();
+                }
+            }
+            if (Input.GetAxis("Sprint") <= 0)
+            {
+                if (running)
+                {
+                    SprintSwitch();
+                }
+            }
+
+            if (running)
+            {
+                StaminaCost(gameObject, "Sprint");
+                if (currentStamina <= 0)
+                {
+                    SprintSwitch();
+                }
+            }
+        }
+        else
+        {
+            if (running)
+            {
+                SprintSwitch();
+            }
         }
     }
 
@@ -277,33 +282,38 @@ public class PlayerController : Character
         {
             if (!(inAttack() || inRoll()))
             {
-                blocking = false;
-                SprintSwitch();
+                if (StaminaCost(gameObject, "LightAttack"))
+                {
+                    blocking = false;
+                    SprintSwitch();
 
-                StartAttack("LightAttack1");
+                    StartAttack("LightAttack1");
 
-                animator.SetTrigger("Attack");
+                    animator.SetTrigger("Attack");
+                }
             }
 
             else if (inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).cancel)
             {
-                blocking = false;
-                SprintSwitch();
-
-                if (attackName == "LightAttack1")
+                if (StaminaCost(gameObject, "LightAttack"))
                 {
-                    attackName = "LightAttack2";
-                }
-                else if (attackName == "LightAttack2")
-                {
-                    attackName = "LightAttack1";
-                }
+                    blocking = false;
+                    SprintSwitch();
 
-                StartAttack(attackName);
+                    if (attackName == "LightAttack1")
+                    {
+                        attackName = "LightAttack2";
+                    }
+                    else if (attackName == "LightAttack2")
+                    {
+                        attackName = "LightAttack1";
+                    }
 
-                animator.SetTrigger("Attack");
+                    StartAttack(attackName);
+
+                    animator.SetTrigger("Attack");
+                }
             }
-
             //Debug.Log(attackName);
         }
 
@@ -488,7 +498,7 @@ public class PlayerController : Character
         running = !running;
     }
 
-    protected override bool StaminaCost( GameObject source, string action )
+    protected override bool StaminaCost(GameObject source, string action)
     {
         bool pass = false;
 
@@ -544,7 +554,7 @@ public class PlayerController : Character
         if (currentStamina <= 0)
         {
             currentStamina = 0;
-            regenCounter = .5f;
+            regenCounter = -.5f;
         }
 
         return pass;

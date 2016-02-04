@@ -44,6 +44,6 @@ public class Inventory {
     }
     public void RemoveKey(Key t)
     {
-        keys.Add(t);
+        keys.Remove(t);
     }
 }

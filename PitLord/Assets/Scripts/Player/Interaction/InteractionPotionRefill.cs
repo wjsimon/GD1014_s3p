@@ -1,26 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class OpenLockedObject : Interaction {
+public class InteractionPotionRefill : Interaction {
 
-    LockedObject lockedObject;
+    PotionRefillObject refillObject;
 
-    public OpenLockedObject(LockedObject obj)
+    public InteractionPotionRefill(PotionRefillObject obj)
     {
-        lockedObject = obj;
+        refillObject = obj;
     }
-
 	// Use this for initialization
 	void Start () {
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	void Update () {	
 	}
 
     public override void Execute()
     {
         base.Execute();
-        lockedObject.Unlock();
+        refillObject.Refill();
     }
 }

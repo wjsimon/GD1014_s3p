@@ -258,6 +258,7 @@ public class Character : Attributes
 
     protected virtual void StaminaRegen()
     {
+        Debug.Log("StaminaRegen");
         if (currentStamina < maxStamina)
         {
             regenCounter += Time.deltaTime;
