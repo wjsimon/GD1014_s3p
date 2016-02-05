@@ -54,11 +54,11 @@ public class DestructableObject : Attributes
             player.Play();
         }
 
-        GameManager.instance.RemoveObject(gameObject);
+        GameManager.instance.RemoveObject(GetComponent<DestructableObject>());
     }
 
     protected override void RegisterObject()
     {
-        GameObject.Find("GameManager").GetComponent<GameManager>().AddObject(gameObject);
+        GameObject.Find("GameManager").GetComponent<GameManager>().AddObject(GetComponent<DestructableObject>());
     }
 }

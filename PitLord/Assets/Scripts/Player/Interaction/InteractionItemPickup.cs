@@ -3,6 +3,13 @@ using System.Collections;
 
 public class InteractionItemPickup : Interaction {
 
+    ItemPickupObject itemPickup;
+
+    public InteractionItemPickup(ItemPickupObject obj)
+    {
+        itemPickup = obj;
+        Start();
+    }
 	// Use this for initialization
 	void Start () {	
 	}
@@ -14,5 +21,6 @@ public class InteractionItemPickup : Interaction {
     public override void Execute()
     {
         base.Execute();
+        itemPickup.PickUp();
     }
 }

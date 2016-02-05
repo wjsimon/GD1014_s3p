@@ -8,9 +8,9 @@ public class GameManager : MonoBehaviour {
     public PlayerController player;
     public Transform playerSpawn;
     public Inventory inventory = new Inventory();
-    public List<GameObject> enemyList = new List<GameObject>();
-    public List<GameObject> objectsList = new List<GameObject>();
-    public List<GameObject> alpacaList = new List<GameObject>();
+    public List<Enemy> enemyList = new List<Enemy>();
+    public List<DestructableObject> objectsList = new List<DestructableObject>();
+    public List<Character> alpacaList = new List<Character>();
 
     public GameManager()
     {
@@ -42,8 +42,8 @@ public class GameManager : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
-
+    void Update () 
+    {
         if(Input.GetButtonDown("Reset"))
         {
             SoftReset();
@@ -73,22 +73,22 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public void AddEnemy(GameObject obj)
+    public void AddEnemy(Enemy obj)
     {
         enemyList.Add(obj);
 
         //Debug.LogWarning(enemyList.Count);
     }
-    public void RemoveEnemy(GameObject obj)
+    public void RemoveEnemy(Enemy obj )
     {
         enemyList.Remove(obj);
     }
 
-    public void AddObject(GameObject obj)
+    public void AddObject(DestructableObject obj)
     {
         objectsList.Add(obj);
     }
-    public void RemoveObject( GameObject obj )
+    public void RemoveObject(DestructableObject obj )
     {
         objectsList.Remove(obj);
     }

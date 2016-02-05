@@ -41,6 +41,7 @@ public class TargetSystem : MonoBehaviour
 
             }
         }
+
         if (lockOn == true)
         {
             float ch = Input.GetAxis("CameraH");
@@ -96,6 +97,7 @@ public class TargetSystem : MonoBehaviour
         }
         /**/
     }
+
     void switchLockOn( int add )
     {
         if (add == 1)
@@ -112,14 +114,16 @@ public class TargetSystem : MonoBehaviour
         {
             return;
         }
+
         GameObject newTarget;
         newTarget = targetList[currentLockOn];
         if (newTarget != null)
         {
             //pc.GetComponent<PlayerController>().target = newTarget;
-            //pc.GetComponent<playerControler>().lockOn=true;  
+            //pc.GetComponent<playerControler>().lockOn=true;
         }
     }
+
     void sortListByDistance()
     {
         currentLockOn = 0;
@@ -148,6 +152,6 @@ public class TargetSystem : MonoBehaviour
     {
         targetList.Remove(removeGo);
         sortListByDistance();
-      //if (lockOn == true) findLockOn();
+        //if (lockOn == true) findLockOn();
     }
 }

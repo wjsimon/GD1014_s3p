@@ -352,13 +352,13 @@ public class Enemy : Character
     protected override void RegisterObject()
     {
         base.RegisterObject();
-        GameManager.instance.AddEnemy(gameObject);
+        GameManager.instance.AddEnemy(GetComponent<Enemy>());
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        GameManager.instance.AddEnemy(gameObject);
+        GameManager.instance.AddEnemy(GetComponent<Enemy>());
     }
 
     public void Alert()

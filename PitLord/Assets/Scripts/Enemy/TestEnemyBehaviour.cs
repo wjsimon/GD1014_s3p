@@ -155,6 +155,6 @@ public class TestEnemyBehaviour : Enemy
 
     protected override void RegisterObject()
     {
-        GameObject.Find("GameManager").GetComponent<GameManager>().AddEnemy(gameObject);
+        GameObject.Find("GameManager").GetComponent<GameManager>().AddEnemy(GetComponent<Enemy>());
     }
 }

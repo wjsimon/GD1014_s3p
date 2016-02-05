@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using System.Collections.Generic;
 public class PlayerController : Character
 {
     [HideInInspector]
     public Transform lockOnTarget;
+    public List<Enemy> targetList;
+    public LayerMask targetLayer;
     public Animator animator;
 
     public float walkSpeed = 4;
@@ -54,6 +56,7 @@ public class PlayerController : Character
         CombatUpdate();
         InteractionUpdate();
         FallUpdate();
+        TargettingUpdate();
 
         //Input Update()?
         if (Input.GetButtonDown("Heal"))
@@ -436,7 +439,93 @@ public class PlayerController : Character
         }
     }
 
-    public void SetInteraction(Interaction t)
+    void TargettingUpdate()
+    {
+        if (Input.GetButtonDown("LockOn"))
+        {
+            if (lockOnTarget == null)
+            {
+                LockOnTarget();
+            }
+
+            else if(lockOnTarget != null)
+            {
+                lockOnTarget = null;
+            }
+        }
+
+
+        //Debug
+        /*
+        for(int i = 0; i < GameManager.instance.enemyList.Count; i++)
+        {
+            Debug.DrawRay(Camera.main.transform.position, (GameManager.instance.enemyList[i].transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position), Color.cyan);
+        }
+        /**/
+        Debug.DrawRay(Camera.main.transform.position, (GameManager.instance.enemyList[1].transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position), Color.cyan);
+
+        RaycastHit hitInfo;
+        if(Physics.Raycast(Camera.main.transform.position, (GameManager.instance.enemyList[1].transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position), out hitInfo, targetLayer))
+        {
+            Debug.Log(hitInfo.transform.name);
+        }
+
+    }
+
+    void LockOnTarget()
+    {
+        List<Enemy> enemies = GameManager.instance.enemyList;
+        RaycastHit hitInfo;
+
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            //Debug.Log((enemies[i].transform.position - transform.position).magnitude);
+            if ((enemies[i].transform.position.y - transform.position.y) > 6)
+            {
+                Debug.Log("removed " + enemies[i].name);
+                enemies.Remove(enemies[i]);
+                continue;
+            }
+
+            if(Vector3.Distance(transform.position, enemies[i].transform.position) > 20)
+            {
+                Debug.Log("removed " + enemies[i].name);
+                enemies.Remove(enemies[i]);
+                continue;
+            }
+
+            if (Physics.Raycast(Camera.main.transform.position, (enemies[i].transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position).normalized, out hitInfo, targetLayer))
+            {
+                if (hitInfo.transform.GetComponent<Enemy>() != null)
+                {
+                    //Debug.Log(hitInfo.transform.gameObject.name);
+                }
+            }
+
+            /*
+            if (Physics.Raycast(Camera.main.transform.position, (enemies[i].transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position).normalized, out hitInfo, 20))
+            {
+                Debug.Log(hitInfo.transform.name);
+                if(hitInfo.transform.GetComponent<Enemy>() != null)
+                {
+                    Debug.Log("Enemy hit");
+                    Debug.Log(hitInfo.transform.name + " " + Vector3.Dot(Camera.main.transform.transform.forward.normalized, enemies[i].transform.position.normalized));
+                    if (Vector3.Dot(Camera.main.transform.transform.forward, enemies[i].transform.position) > 0)
+                    {
+                        targetList.Add(enemies[i]);
+                    }
+                }
+            }
+            /**/
+        }
+
+        if (targetList.Count > 0)
+        {
+            lockOnTarget = targetList[0].transform;
+        }
+    }
+
+    public void SetInteraction( Interaction t )
     {
         interaction = t;
     }
@@ -498,7 +587,7 @@ public class PlayerController : Character
         running = !running;
     }
 
-    protected override bool StaminaCost(GameObject source, string action)
+    protected override bool StaminaCost( GameObject source, string action )
     {
         bool pass = false;
 

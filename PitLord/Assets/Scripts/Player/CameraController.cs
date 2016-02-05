@@ -74,7 +74,7 @@ public class CameraController : MonoBehaviour {
         RaycastHit hitInfo;
         Debug.DrawRay(CameraTarget.position, (transform.position - CameraTarget.transform.position), Color.green);
 
-        if (Physics.Raycast(CameraTarget.position, (transform.position - CameraTarget.transform.position), out hitInfo, distance,~(1<<LayerMask.NameToLayer("Character"))))
+        if (Physics.Raycast(CameraTarget.position, (transform.position - CameraTarget.transform.position), out hitInfo, distance,~(1<<LayerMask.NameToLayer("NoCameraRaycast"))))
         {
             transform.position = hitInfo.point - (transform.position - CameraTarget.transform.position).normalized;
         }
