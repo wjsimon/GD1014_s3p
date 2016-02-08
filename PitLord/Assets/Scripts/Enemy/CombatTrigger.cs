@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class CombatTrigger : MonoBehaviour {
 
     public List<Enemy> enemies;
-    bool triggered;
+    public bool triggered;
 
 	// Use this for initialization
 	void Start () {

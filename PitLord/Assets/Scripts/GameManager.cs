@@ -9,8 +9,11 @@ public class GameManager : MonoBehaviour {
     public Transform playerSpawn;
     public Inventory inventory = new Inventory();
     public List<Enemy> enemyList = new List<Enemy>();
+    public List<CombatTrigger> triggerList = new List<CombatTrigger>();
     public List<DestructableObject> objectsList = new List<DestructableObject>();
     public List<Character> alpacaList = new List<Character>();
+
+    float playGameOver;
 
     public GameManager()
     {
@@ -48,11 +51,17 @@ public class GameManager : MonoBehaviour {
         {
             SoftReset();
         }
+
+        if(playGameOver > 0)
+        {
+
+        }
     }
 
     public void SpawnPlayer()
     {
         //Spawns Player, Resets Positions (usually on Death) <- Scene Reload pretty much
+        SoftReset();
     }
 
     public void DisableInputStartMenu()
@@ -71,6 +80,12 @@ public class GameManager : MonoBehaviour {
         {
             enemyList[i].GetComponent<Attributes>().SoftReset();
         }
+        for (int i = 0; i < triggerList.Count; i++)
+        {
+            triggerList[i].GetComponent<CombatTrigger>().triggered = false;
+        }
+
+        player.SoftReset();
     }
 
     public void AddEnemy(Enemy obj)
@@ -92,9 +107,18 @@ public class GameManager : MonoBehaviour {
     {
         objectsList.Remove(obj);
     }
+    public void AddCombatTrigger( CombatTrigger obj )
+    {
+        triggerList.Add(obj);
+    }
+    public void RemoveCombatTrigger( CombatTrigger obj )
+    {
+        triggerList.Remove(obj);
+    }
 
     public void GameOver()
     {
-
+        playGameOver = 5.0f;
+        SpawnPlayer();
     }
 }

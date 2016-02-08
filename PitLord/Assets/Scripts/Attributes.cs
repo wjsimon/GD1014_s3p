@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 public class Attributes : MonoBehaviour
 {
+    //KILL ME
+
+
     //[HideInInspector]
     public GameObject spawnPoint;
 

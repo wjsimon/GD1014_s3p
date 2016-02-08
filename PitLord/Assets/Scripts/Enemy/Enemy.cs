@@ -20,7 +20,8 @@ public class Enemy : Character
     public bool alerted;
 
     public int BehaviourRandomize;
-
+    public float blockCooldown = 5.0f;
+    public float blockDuration = 0.0f;
 
     //THIS TIMER IS FOR TESTING ONLY, USE SEPERATE TIMERS FOR NON-TEMPORARY STUFF
     float timer;
@@ -75,6 +76,7 @@ public class Enemy : Character
         }
 
         CombatUpdate();
+
         //Basically a state machine, gotta do all the randomizing and checking for which "state" the enemy should be in here <-- This is pretty much where enemies get coded, all the other stuff is the same
         //Debug.Log(currentState);
         Behaviour(currentState);
@@ -238,6 +240,8 @@ public class Enemy : Character
 
     protected virtual void Attack()
     {
+        blockCooldown = 5f;
+        blockDuration = 0.0f;
         SwitchNavMesh(false);
     }
 
@@ -294,6 +298,8 @@ public class Enemy : Character
 
     protected void CombatUpdate()
     {
+        if (!alerted) { return; }
+
         if (inAttack())
         {
             attacking -= Time.deltaTime;
@@ -313,6 +319,36 @@ public class Enemy : Character
                 weapon.GetComponent<BoxCollider>().enabled = false;
             }
         }
+
+        Blocking();
+    }
+
+    protected virtual void Blocking()
+    {
+        //Works, needs tuning big time
+        blocking = blockDuration > 0;
+        blockCooldown -= Time.deltaTime;
+
+        if(blocking)
+        {
+            blockDuration -= Time.deltaTime;
+        }
+
+        if(blockCooldown <= 0)
+        {
+            blockCooldown = 5.0f;
+            int rng = Random.Range(0, 5);
+
+            if(rng == 0)
+            {
+                if(!inAttack())
+                {
+                    blockDuration = Random.Range(2, 5);
+                }
+            }
+        }
+
+        animator.SetBool("Block", blocking);
     }
 
     protected override void StaminaRegen()
@@ -365,5 +401,11 @@ public class Enemy : Character
     {
         alerted = true;
         ChangeState(State.APPROACH);
+    }
+
+    public override void SoftReset()
+    {
+        base.SoftReset();
+        alerted = false;
     }
 }

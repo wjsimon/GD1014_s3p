@@ -106,6 +106,13 @@ public class PlayerController : Character
 
             else if (mag < 1.5f)
             {
+                if(!falling)
+                {
+                    Vector3 pos = transform.position;
+                    float z = hitInfo.point.z;
+                    pos.z = z;
+                    transform.position = pos;
+                }
                 if (falling)
                 {
                     Debug.Log("Play Land Animation");
@@ -168,7 +175,7 @@ public class PlayerController : Character
             return;
         }
 
-        if (inAttack())
+        if (inAttack() && !(inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).cancel + 0.1f))
         {
             if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart)
             {
@@ -192,6 +199,7 @@ public class PlayerController : Character
 
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
+        //Debug.Log(h + " " + v); - Controller dead zones bugs movement
 
         Transform camera = Camera.main.GetComponent<CameraController>().CameraSmooth;
         Vector3 forward = camera.transform.forward.normalized;
@@ -231,6 +239,16 @@ public class PlayerController : Character
         if (move.magnitude > 0.01)
         {
             cc.Move(move * Time.deltaTime);
+            if (inAttack() && (v > 0.7 || h > 0.7))
+            {
+                animator.SetBool("MoveTransition", true);
+                CancelAttack();
+            }
+            else
+            {
+                animator.SetBool("MoveTransition", false);
+            }
+
 
             if (Input.GetAxis("Sprint") > 0)
             {
@@ -262,6 +280,7 @@ public class PlayerController : Character
             {
                 SprintSwitch();
             }
+            //animator.SetBool("MoveTransition", false);
         }
     }
 
@@ -296,12 +315,13 @@ public class PlayerController : Character
                 }
             }
 
-            else if (inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).cancel)
+            else if (inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart)
             {
                 if (StaminaCost(gameObject, "LightAttack"))
                 {
                     blocking = false;
                     SprintSwitch();
+                    //CancelAttack();
 
                     if (attackName == "LightAttack1")
                     {
@@ -361,10 +381,11 @@ public class PlayerController : Character
         }
 
         //Blocking
-        if (Input.GetButtonDown("Block"))
+        if (Input.GetButton("Block"))
         {
-            if (!inAttack() && !inRoll() && currentStamina > 0)
+            if ((!inAttack() || inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).cancel) && !inRoll() && currentStamina > 0)
             {
+                CancelAttack();
                 blocking = true;
             }
         }
@@ -382,6 +403,7 @@ public class PlayerController : Character
                 {
                     blocking = false;
                     SprintSwitch();
+                    CancelAttack();
 
                     rollDuration = rollStorage;
                     iFrames = rollDuration;
@@ -448,34 +470,57 @@ public class PlayerController : Character
                 LockOnTarget();
             }
 
-            else if(lockOnTarget != null)
+            else if (lockOnTarget != null)
             {
                 lockOnTarget = null;
             }
         }
 
+        if (Input.GetButtonDown("LockOnSwitchLeft"))
+        {
+            //lockOnTarget = targetList[]
+        }
+        if (Input.GetButtonDown("LockOnSwitchRight"))
+        {
+            GetTargetRight();
+            //lockOnTarget = targetList[]
+        }
+
 
         //Debug
+        RaycastHit hitInfo;
         /*
         for(int i = 0; i < GameManager.instance.enemyList.Count; i++)
         {
             Debug.DrawRay(Camera.main.transform.position, (GameManager.instance.enemyList[i].transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position), Color.cyan);
+            
+            if (Physics.Raycast(Camera.main.transform.position, (GameManager.instance.enemyList[i].transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position), out hitInfo, targetLayer))
+            {
+                //Debug.Log(hitInfo.transform.name);
+            }
         }
+
+        Vector3 yA = Camera.main.transform.forward;
+        Vector3 yB = GameManager.instance.enemyList[1].transform.position - Camera.main.transform.position;
+
+        yA.y = 0;
+        yB.y = 0;
+
+        Debug.DrawRay(Camera.main.transform.position, yA, Color.green);
+        Debug.DrawRay(Camera.main.transform.position, yB, Color.green);
         /**/
+        /*
         Debug.DrawRay(Camera.main.transform.position, (GameManager.instance.enemyList[1].transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position), Color.cyan);
 
-        RaycastHit hitInfo;
-        if(Physics.Raycast(Camera.main.transform.position, (GameManager.instance.enemyList[1].transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position), out hitInfo, targetLayer))
-        {
-            Debug.Log(hitInfo.transform.name);
-        }
-
+       
+        /**/
     }
 
     void LockOnTarget()
     {
         List<Enemy> enemies = GameManager.instance.enemyList;
         RaycastHit hitInfo;
+        targetList.Clear();
 
         for (int i = 0; i < enemies.Count; i++)
         {
@@ -487,7 +532,7 @@ public class PlayerController : Character
                 continue;
             }
 
-            if(Vector3.Distance(transform.position, enemies[i].transform.position) > 20)
+            if (Vector3.Distance(transform.position, enemies[i].transform.position) > 20)
             {
                 Debug.Log("removed " + enemies[i].name);
                 enemies.Remove(enemies[i]);
@@ -498,31 +543,86 @@ public class PlayerController : Character
             {
                 if (hitInfo.transform.GetComponent<Enemy>() != null)
                 {
-                    //Debug.Log(hitInfo.transform.gameObject.name);
-                }
-            }
+                    Vector3 yA = Camera.main.transform.forward;
+                    Vector3 yB = GameManager.instance.enemyList[1].transform.position - Camera.main.transform.position;
 
-            /*
-            if (Physics.Raycast(Camera.main.transform.position, (enemies[i].transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position).normalized, out hitInfo, 20))
-            {
-                Debug.Log(hitInfo.transform.name);
-                if(hitInfo.transform.GetComponent<Enemy>() != null)
-                {
-                    Debug.Log("Enemy hit");
-                    Debug.Log(hitInfo.transform.name + " " + Vector3.Dot(Camera.main.transform.transform.forward.normalized, enemies[i].transform.position.normalized));
-                    if (Vector3.Dot(Camera.main.transform.transform.forward, enemies[i].transform.position) > 0)
+                    yA.y = 0;
+                    yB.y = 0;
+
+                    Debug.Log(hitInfo.transform.gameObject.name);
+                    float dot = Vector3.Dot(yA, yB);
+
+                    if (dot > 0)
                     {
                         targetList.Add(enemies[i]);
                     }
                 }
             }
-            /**/
         }
 
         if (targetList.Count > 0)
         {
             lockOnTarget = targetList[0].transform;
+            for (int i = 0; i < targetList.Count; i++)
+            {
+                if(Vector3.Distance(transform.position, lockOnTarget.transform.position) > Vector3.Distance(transform.position, targetList[i].transform.position))
+                {
+                    lockOnTarget = targetList[i].transform;
+                }
+            }
+            /*
+            {
+                if (Vector3.Dot(Camera.main.transform.forward, lockOnTarget.transform.position - Camera.main.transform.position) > Vector3.Dot(Camera.main.transform.forward, targetList[i].transform.position  - Camera.main.transform.position))
+                {
+                    lockOnTarget = targetList[i].transform;
+                }
+            }
+            /**/
         }
+    }
+
+    public void GetTargetRight()
+    {
+        //NOT WORKING
+        if (lockOnTarget == null) { return; }
+        Transform targetStorage = lockOnTarget;
+        Vector3 relativePoint;
+
+        for(int i = 0; i < targetList.Count; i++)
+        {
+            relativePoint = lockOnTarget.InverseTransformPoint(targetList[i].transform.position);
+            Debug.Log(relativePoint);
+
+            if(relativePoint.x > 0.0)
+            {
+                continue;
+            }
+            else if (relativePoint.x < 0.0)
+            {
+                if(lockOnTarget != targetStorage)
+                {
+                    if (Vector3.Distance(targetStorage.position, targetList[i].transform.position) <= Vector3.Distance(targetStorage.position, lockOnTarget.position))
+                    {
+                        lockOnTarget = targetList[i].transform;
+                    }
+                }
+                else
+                {
+                    lockOnTarget = targetList[i].transform;
+
+                }
+                return;
+            }
+            else
+            {
+                continue;
+            }
+        }
+    }
+
+    public void GetTargetLeft()
+    {
+        if (lockOnTarget == null) { return; }
     }
 
     public void SetInteraction( Interaction t )
@@ -569,6 +669,7 @@ public class PlayerController : Character
 
         heals -= 1;
         currentHealth += healAmount;
+        GameObject.Find("HealItemDisplay").GetComponent<HealItemDisplay>().UpdateDisplay();
 
         if (currentHealth > maxHealth)
         {
@@ -580,7 +681,7 @@ public class PlayerController : Character
     protected override void Kill()
     {
         base.Kill();
-        GameObject.Find("GameManager").GetComponent<GameManager>().GameOver();
+        GameManager.instance.GameOver();
     }
     protected void SprintSwitch()
     {

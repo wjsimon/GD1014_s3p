@@ -72,7 +72,7 @@ public class CameraController : MonoBehaviour {
     void CameraCollision_simple()
     {
         RaycastHit hitInfo;
-        Debug.DrawRay(CameraTarget.position, (transform.position - CameraTarget.transform.position), Color.green);
+        //Debug.DrawRay(CameraTarget.position, (transform.position - CameraTarget.transform.position), Color.green);
 
         if (Physics.Raycast(CameraTarget.position, (transform.position - CameraTarget.transform.position), out hitInfo, distance,~(1<<LayerMask.NameToLayer("NoCameraRaycast"))))
         {

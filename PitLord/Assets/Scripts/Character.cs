@@ -181,12 +181,17 @@ public class Character : Attributes
 
     protected virtual void CancelAttack()
     {
+        if (attacking == 0) { return; }
         attackName = "default";
         attacking = 0;
         attackingInv = 0;
 
         romoDuration = 0;
         romoStartTime = 0;
+
+        shortSword.GetComponent<BoxCollider>();
+        twoHanded.GetComponent <BoxCollider>();
+        shield.GetComponent<BoxCollider>();
     }
 
     protected virtual bool KnockBack(Character source)

@@ -58,7 +58,6 @@ public class SwordEnemy : Enemy
         {
             return;
         }
-
         //Retreats rapidly to spawnPoint when player is out of leashing Range
         /*
         if (Vector3.Distance(spawnPoint.transform.position, transform.position) > leashingRange)
