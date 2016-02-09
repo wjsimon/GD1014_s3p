@@ -423,7 +423,7 @@ public class PlayerController : Character
                     float v = Input.GetAxis("Vertical");
                     float h = Input.GetAxis("Horizontal");
 
-                    v = v <= 0 ? -1 : 1;
+                    //v = v <= 0 ? -1 : 1;
 
                     Vector3 forward = Camera.main.transform.forward;
                     Vector3 right = Camera.main.transform.right;
@@ -432,6 +432,12 @@ public class PlayerController : Character
                     right.y = 0;
 
                     rollAxis = forward * v + right * h;
+                    if (rollAxis.magnitude <= Mathf.Epsilon)
+                    {
+                        rollAxis = -transform.forward;
+                    }
+
+                    rollAxis.Normalize();
                     //---
                 }
             }
