@@ -32,7 +32,7 @@ public class Character : Attributes
 
     public WeaponScript shortSword;
     public WeaponScript shield;
-    public WeaponScript twoHanded;
+    public WeaponScript greatSword;
 
     //Animation Control - RoMo
     public float romoStartTime;
@@ -190,7 +190,7 @@ public class Character : Attributes
         romoStartTime = 0;
 
         shortSword.GetComponent<BoxCollider>();
-        twoHanded.GetComponent <BoxCollider>();
+        greatSword.GetComponent <BoxCollider>();
         shield.GetComponent<BoxCollider>();
     }
 
@@ -304,7 +304,7 @@ public class Character : Attributes
         {
             if (shortSword != null)shortSword.GetComponent<BoxCollider>().enabled = false;
             if (shield != null)shield.GetComponent<BoxCollider>().enabled = false;
-            if (twoHanded != null)twoHanded.GetComponent<BoxCollider>().enabled = false;
+            if (greatSword != null)greatSword.GetComponent<BoxCollider>().enabled = false;
         }
     }
 }

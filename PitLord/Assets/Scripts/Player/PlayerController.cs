@@ -29,7 +29,11 @@ public class PlayerController : Character
     public float rollSpeed;
     public Vector3 rollAxis;
 
+    public float switchWeaponTimer;
+
     public Interaction interaction;
+    public WeaponMode currentWeaponMode;
+    public WeaponMode newWeaponMode;
     bool triggerPressed;
 
     enum TargetCycle
@@ -39,11 +43,19 @@ public class PlayerController : Character
         RIGHT,
     }
 
+    public enum WeaponMode
+    {
+        ONEHANDED,
+        TWOHANDED,
+        COUNT,
+    }
+
     // Use this for initialization
     protected override void Start()
     {
         //Debug
         GameManager.instance.inventory.AddKey(new Key("test"));
+        currentWeaponMode = WeaponMode.ONEHANDED;
 
         base.Start();
 
@@ -68,18 +80,21 @@ public class PlayerController : Character
         TargettingUpdate();
 
         //Input Update()?
-        if (Input.GetButtonDown("Heal"))
+        if (Input.GetButtonDown("Heal") && !inputBlock())
         {
-            if (heals > 0 && !(inAttack() || inRoll()))
+            if (heals > 0)
             {
-                if (!inHeal())
-                {
-                    animator.SetTrigger("Heal");
-                    StartHeal(); //- Triggered in Animation
-                }
+                animator.SetTrigger("Heal");
+                StartHeal(); //- Triggered in Animation
             }
         }
 
+        if (Input.GetButtonDown("Switch") && !inputBlock())
+        {
+            SwitchWeaponMode();
+        }
+
+        UpdateWeaponMode();
         if (inHeal())
         {
             //Can control via AnimLibrary? - Set Name in StartHeal(), Set healTrigger = Library.start in StartHeal();
@@ -115,7 +130,7 @@ public class PlayerController : Character
 
             else if (mag < 1.5f)
             {
-                if(!falling)
+                if (!falling)
                 {
                     Vector3 pos = transform.position;
                     float z = hitInfo.point.z;
@@ -465,6 +480,7 @@ public class PlayerController : Character
     }
     void InteractionUpdate()
     {
+        if (inputBlock()) { return; }
         if (interaction == null)
         {
             return;
@@ -532,16 +548,41 @@ public class PlayerController : Character
         /**/
     }
 
-    void LockOnTarget(TargetCycle dir)
+    void SwitchWeaponMode()
+    {
+        newWeaponMode = (WeaponMode)(((int)currentWeaponMode + 1) % (int)WeaponMode.COUNT);
+
+        //Play Animation
+        switchWeaponTimer = 1.0f;
+        animator.SetTrigger("Heal");
+    }
+
+    void UpdateWeaponMode()
+    {
+        if (switchWeaponTimer <= 0) { return; }
+
+        switchWeaponTimer -= Time.deltaTime;
+        if (switchWeaponTimer <= 0)
+        {
+            switchWeaponTimer = 0;
+            currentWeaponMode = newWeaponMode;
+
+            shortSword.gameObject.SetActive(currentWeaponMode == WeaponMode.ONEHANDED);
+            shield.gameObject.SetActive(currentWeaponMode == WeaponMode.ONEHANDED);
+            greatSword.gameObject.SetActive(currentWeaponMode == WeaponMode.TWOHANDED);
+        }
+    }
+
+    void LockOnTarget( TargetCycle dir )
     {
         CreateLockTargetList();
 
         Vector3 currentDir = Camera.main.transform.forward;
-        if(lockOnTarget != null)
+        if (lockOnTarget != null)
         {
             currentDir = (lockOnTarget.transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position).normalized;
         }
-        Quaternion quat=new Quaternion();
+        Quaternion quat = new Quaternion();
         quat.SetLookRotation(currentDir, Vector3.up);
         quat = Quaternion.Inverse(quat);
 
@@ -567,7 +608,7 @@ public class PlayerController : Character
                 TargetCycle currentCycle = localPos.x <= 0.0 ? TargetCycle.LEFT : TargetCycle.RIGHT;
                 bool match = dir == TargetCycle.ANY;
 
-                if(!match)
+                if (!match)
                 {
                     match = currentCycle == dir;
                 }
@@ -640,50 +681,6 @@ public class PlayerController : Character
                 }
             }
         }
-    }
-
-    public void GetTargetRight()
-    {
-        //NOT WORKING
-        if (lockOnTarget == null) { return; }
-        Transform targetStorage = lockOnTarget;
-        Vector3 relativePoint;
-
-        for(int i = 0; i < targetList.Count; i++)
-        {
-            relativePoint = lockOnTarget.InverseTransformPoint(targetList[i].transform.position);
-            Debug.Log(relativePoint);
-
-            if(relativePoint.x > 0.0)
-            {
-                continue;
-            }
-            else if (relativePoint.x < 0.0)
-            {
-                if(lockOnTarget != targetStorage)
-                {
-                    if (Vector3.Distance(targetStorage.position, targetList[i].transform.position) <= Vector3.Distance(targetStorage.position, lockOnTarget.position))
-                    {
-                        lockOnTarget = targetList[i].transform;
-                    }
-                }
-                else
-                {
-                    lockOnTarget = targetList[i].transform;
-
-                }
-                return;
-            }
-            else
-            {
-                continue;
-            }
-        }
-    }
-
-    public void GetTargetLeft()
-    {
-        if (lockOnTarget == null) { return; }
     }
 
     public void SetInteraction( Interaction t )
@@ -813,13 +810,15 @@ public class PlayerController : Character
 
     bool inHeal()
     {
-        if (healDuration > 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return healDuration > 0;
+    }
+    bool inWeaponSwitch()
+    {
+        return switchWeaponTimer > 0;
+    }
+
+    public bool inputBlock()
+    {
+        return inHeal() || inRoll() || inAttack() || blocking || inWeaponSwitch();
     }
 }
