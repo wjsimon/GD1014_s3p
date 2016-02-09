@@ -51,11 +51,6 @@ public class GameManager : MonoBehaviour {
         {
             SoftReset();
         }
-
-        if(playGameOver > 0)
-        {
-
-        }
     }
 
     public void SpawnPlayer()

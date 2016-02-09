@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
 public class PlayerController : Character
 {
     [HideInInspector]
@@ -168,6 +170,16 @@ public class PlayerController : Character
 
     void MovementUpdate()
     {
+        if (cc.isGrounded)
+        {
+            fallSpeed = 10;
+        }
+        else
+        {
+            fallSpeed += gravity * Time.deltaTime;
+            cc.Move(fallSpeed * Vector3.down);
+        }
+
         //Still a problem with the speed getting affected by camera angle??
         if (inRoll() || inHeal())
         {
@@ -221,19 +233,10 @@ public class PlayerController : Character
         }
         if (lockOnTarget != null)
         {
-            transform.LookAt(lockOnTarget.position);
+            transform.LookAt(new Vector3(lockOnTarget.position.x, transform.position.y, lockOnTarget.position.z), Vector3.up);
+            //transform.Rotate(new Vector3(0, 1, 0));
             animator.SetFloat("X", Input.GetAxis("Horizontal"));
             animator.SetFloat("Y", Input.GetAxis("Vertical"));
-        }
-
-        if (cc.isGrounded)
-        {
-            fallSpeed = 10;
-        }
-        else
-        {
-            fallSpeed += gravity * Time.deltaTime;
-            move.y -= fallSpeed;
         }
 
         if (move.magnitude > 0.01)
@@ -467,7 +470,7 @@ public class PlayerController : Character
         {
             if (lockOnTarget == null)
             {
-                LockOnTarget();
+                LockOnTarget(false);
             }
 
             else if (lockOnTarget != null)
@@ -478,11 +481,11 @@ public class PlayerController : Character
 
         if (Input.GetButtonDown("LockOnSwitchLeft"))
         {
-            //lockOnTarget = targetList[]
+            LockOnTarget(false);
         }
         if (Input.GetButtonDown("LockOnSwitchRight"))
         {
-            GetTargetRight();
+            LockOnTarget(true);
             //lockOnTarget = targetList[]
         }
 
@@ -516,59 +519,45 @@ public class PlayerController : Character
         /**/
     }
 
-    void LockOnTarget()
+    void LockOnTarget(bool right)
     {
-        List<Enemy> enemies = GameManager.instance.enemyList;
-        RaycastHit hitInfo;
-        targetList.Clear();
+        CreateLockTargetList();
 
-        for (int i = 0; i < enemies.Count; i++)
+        Vector3 currentDir = Camera.main.transform.forward;
+        if(lockOnTarget != null)
         {
-            //Debug.Log((enemies[i].transform.position - transform.position).magnitude);
-            if ((enemies[i].transform.position.y - transform.position.y) > 6)
-            {
-                Debug.Log("removed " + enemies[i].name);
-                enemies.Remove(enemies[i]);
-                continue;
-            }
-
-            if (Vector3.Distance(transform.position, enemies[i].transform.position) > 20)
-            {
-                Debug.Log("removed " + enemies[i].name);
-                enemies.Remove(enemies[i]);
-                continue;
-            }
-
-            if (Physics.Raycast(Camera.main.transform.position, (enemies[i].transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position).normalized, out hitInfo, targetLayer))
-            {
-                if (hitInfo.transform.GetComponent<Enemy>() != null)
-                {
-                    Vector3 yA = Camera.main.transform.forward;
-                    Vector3 yB = GameManager.instance.enemyList[1].transform.position - Camera.main.transform.position;
-
-                    yA.y = 0;
-                    yB.y = 0;
-
-                    Debug.Log(hitInfo.transform.gameObject.name);
-                    float dot = Vector3.Dot(yA, yB);
-
-                    if (dot > 0)
-                    {
-                        targetList.Add(enemies[i]);
-                    }
-                }
-            }
+            currentDir = (lockOnTarget.transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position).normalized;
         }
 
         if (targetList.Count > 0)
         {
-            lockOnTarget = targetList[0].transform;
+            //lockOnTarget = targetList[0].transform;
+            float bestDot = -1;
             for (int i = 0; i < targetList.Count; i++)
             {
+                Vector3 yA = Camera.main.transform.forward;
+                Vector3 yB = targetList[i].transform.position - Camera.main.transform.position;
+
+                yA.y = 0;
+                yB.y = 0;
+
+                yA.Normalize();
+                yB.Normalize();
+
+                float dot = Vector3.Dot(yA, yB);
+
+                Debug.Log("best:" + bestDot + " - "+ dot + " " + targetList[i].transform.gameObject.name);
+                if (dot > bestDot && targetList[i].transform != lockOnTarget)
+                {
+                    bestDot = dot;
+                    lockOnTarget = targetList[i].transform;
+                }
+                /*
                 if(Vector3.Distance(transform.position, lockOnTarget.transform.position) > Vector3.Distance(transform.position, targetList[i].transform.position))
                 {
                     lockOnTarget = targetList[i].transform;
                 }
+                /**/
             }
             /*
             {
@@ -578,6 +567,51 @@ public class PlayerController : Character
                 }
             }
             /**/
+        }
+    }
+
+    private void CreateLockTargetList()
+    {
+        List<Enemy> enemies = GameManager.instance.enemyList;
+        RaycastHit hitInfo;
+        targetList.Clear();
+
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            Enemy enemy = enemies[i];
+            //Debug.Log((enemies[i].transform.position - transform.position).magnitude);
+            if (Mathf.Abs(enemy.transform.position.y - transform.position.y) > 6)
+            {
+                continue;
+            }
+
+            if (Vector3.Distance(transform.position, enemy.transform.position) > 20)
+            {
+                continue;
+            }
+
+            if (Physics.Raycast(Camera.main.transform.position, (enemy.transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position).normalized, out hitInfo, targetLayer))
+            {
+                if (hitInfo.transform.GetComponent<Enemy>() != null)
+                {
+                    Vector3 yA = Camera.main.transform.forward;
+                    Vector3 yB = enemy.transform.position - Camera.main.transform.position;
+
+                    yA.y = 0;
+                    yB.y = 0;
+
+                    yA.Normalize();
+                    yB.Normalize();
+
+                    float dot = Vector3.Dot(yA, yB);
+                    Debug.Log(dot + " " + hitInfo.transform.gameObject.name);
+
+                    if (dot > 0.3f)
+                    {
+                        targetList.Add(enemy);
+                    }
+                }
+            }
         }
     }
 

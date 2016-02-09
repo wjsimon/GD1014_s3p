@@ -23,7 +23,7 @@ public class Attributes : MonoBehaviour
     public float combatRange;
 
     protected float gravity = 9.81f;
-    protected float fallSpeed = 1000;
+    protected float fallSpeed = 10;
     protected bool falling;
     protected float fallHeight = 0;
 
