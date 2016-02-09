@@ -32,6 +32,13 @@ public class PlayerController : Character
     public Interaction interaction;
     bool triggerPressed;
 
+    enum TargetCycle
+    {
+        ANY,
+        LEFT,
+        RIGHT,
+    }
+
     // Use this for initialization
     protected override void Start()
     {
@@ -470,7 +477,7 @@ public class PlayerController : Character
         {
             if (lockOnTarget == null)
             {
-                LockOnTarget(false);
+                LockOnTarget(TargetCycle.ANY);
             }
 
             else if (lockOnTarget != null)
@@ -481,11 +488,11 @@ public class PlayerController : Character
 
         if (Input.GetButtonDown("LockOnSwitchLeft"))
         {
-            LockOnTarget(false);
+            LockOnTarget(TargetCycle.LEFT);
         }
         if (Input.GetButtonDown("LockOnSwitchRight"))
         {
-            LockOnTarget(true);
+            LockOnTarget(TargetCycle.RIGHT);
             //lockOnTarget = targetList[]
         }
 
@@ -519,7 +526,7 @@ public class PlayerController : Character
         /**/
     }
 
-    void LockOnTarget(bool right)
+    void LockOnTarget(TargetCycle dir)
     {
         CreateLockTargetList();
 
@@ -528,11 +535,15 @@ public class PlayerController : Character
         {
             currentDir = (lockOnTarget.transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position).normalized;
         }
+        Quaternion quat=new Quaternion();
+        quat.SetLookRotation(currentDir, Vector3.up);
+        quat = Quaternion.Inverse(quat);
 
         if (targetList.Count > 0)
         {
             //lockOnTarget = targetList[0].transform;
             float bestDot = -1;
+            Transform bestTarget = null;
             for (int i = 0; i < targetList.Count; i++)
             {
                 Vector3 yA = Camera.main.transform.forward;
@@ -546,11 +557,20 @@ public class PlayerController : Character
 
                 float dot = Vector3.Dot(yA, yB);
 
-                Debug.Log("best:" + bestDot + " - "+ dot + " " + targetList[i].transform.gameObject.name);
-                if (dot > bestDot && targetList[i].transform != lockOnTarget)
+                Vector3 localPos = quat * targetList[i].transform.position;
+                TargetCycle currentCycle = localPos.x <= 0.0 ? TargetCycle.LEFT : TargetCycle.RIGHT;
+                bool match = dir == TargetCycle.ANY;
+
+                if(!match)
+                {
+                    match = currentCycle == dir;
+                }
+
+                Debug.Log("best:" + bestDot + " - " + dot + " " + targetList[i].transform.gameObject.name + " " + localPos);
+                if (dot > bestDot && targetList[i].transform != lockOnTarget && match)
                 {
                     bestDot = dot;
-                    lockOnTarget = targetList[i].transform;
+                    bestTarget = targetList[i].transform;
                 }
                 /*
                 if(Vector3.Distance(transform.position, lockOnTarget.transform.position) > Vector3.Distance(transform.position, targetList[i].transform.position))
@@ -559,6 +579,7 @@ public class PlayerController : Character
                 }
                 /**/
             }
+            if (bestTarget != null) { lockOnTarget = bestTarget; }
             /*
             {
                 if (Vector3.Dot(Camera.main.transform.forward, lockOnTarget.transform.position - Camera.main.transform.position) > Vector3.Dot(Camera.main.transform.forward, targetList[i].transform.position  - Camera.main.transform.position))
