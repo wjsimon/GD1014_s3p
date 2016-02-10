@@ -114,6 +114,8 @@ public class PlayerController : Character
             offMeshPos = transform.position;
         }
 
+        if (inRoll()) { return; }
+
         Debug.DrawRay((transform.position + Vector3.up * 0.9f), -transform.up, Color.red);
         fallHeight = Mathf.Abs(offMeshPos.y - transform.position.y);
 

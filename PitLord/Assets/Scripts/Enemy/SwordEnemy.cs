@@ -3,8 +3,9 @@ using System.Collections;
 
 public class SwordEnemy : Enemy
 {
-    //Animationen per Hand; Bool raus - Cooldown rein
     //Use this for initialization
+
+    public int combo;
     protected override void Start()
     {
         base.Start();
@@ -70,20 +71,25 @@ public class SwordEnemy : Enemy
         //Within detection Range, enemy approaches the player
         if (Vector3.Distance(target.position, transform.position) > combatRange && (behavCooldown <= 0) && !inAttack())
         {
-            behavCooldown = Random.Range(0, 4) + 1;
             BehaviourRandomize = Random.Range(0, 100);
 
             if (BehaviourRandomize >= 0 && BehaviourRandomize < 60)
             {
                 ChangeState(State.APPROACH);
+                behavCooldown = Random.Range(0, 4) + 1;
             }
             if(BehaviourRandomize >= 60 && BehaviourRandomize < 90)
             {
-                //ChangeState(State.STRAFE);
+                if (!Physics.Raycast(transform.position, transform.right, 1) || !Physics.Raycast(transform.position, -transform.right, 1))
+                {
+                    ChangeState(State.STRAFE);
+                    behavCooldown = Random.Range(0, 4) + 1;
+                }
             }
             if(BehaviourRandomize >= 90 && BehaviourRandomize < 100)
             {
-                //ChangeState(State.BACKOFF);
+                ChangeState(State.BACKOFF);
+                behavCooldown = Random.Range(0, 4) + 1;
             }
         }
 
@@ -96,13 +102,15 @@ public class SwordEnemy : Enemy
             {
                 case 1:
                     ChangeState(State.ATTACK);
+                    behavCooldown = Random.Range(0, 4) + 1;
                     break;
                 case -1:
-                    //ChangeState(State.BACKOFF);
+                    ChangeState(State.BACKOFF);
+                    behavCooldown = Random.Range(0, 4) + 1;
                     break;
             }
 
-            //Approach or BackOff, or Strafe. <- Need to implement random here
+            //Approach, BackOff, or Strafe. <- Need to implement random here
         }
 
         /**/
@@ -113,7 +121,7 @@ public class SwordEnemy : Enemy
     {
         base.Attack();
 
-        if(!inAttack())
+        if(!inAttack() && combo <= 0)
         {
             ChangeState(State.IDLE);
         }
@@ -123,14 +131,47 @@ public class SwordEnemy : Enemy
             return;
         }
 
-        attackName = "E_SwordCombo01";
-        float duration = AnimationLibrary.Get().SearchByName(attackName).duration;
-        attacking = duration;
-        attackingInv = 0;
+        int attackIndex = Random.Range(0, 4);
 
-        SetRomo(duration, AnimationLibrary.Get().SearchByName(attackName).romoLength);
+        if(attackIndex < 3)
+        {
+            StartAttack("E_SwordCombo01");
+        }
+        if(attackIndex == 3)
+        {
+            StartAttack("E_SwordHeavy");
+        }
+
+        if(attackName == "E_SwordHeavy")
+        {
+            animator.SetInteger("AttackId", 1);
+        }
+        else
+        {
+            animator.SetInteger("AttackId", 0);
+            combo = 3;
+        }
 
         animator.SetTrigger("Attack");
+    }
+
+    protected override void CombatUpdate()
+    {
+        base.CombatUpdate();
+
+        if(combo > 0 && !inAttack())
+        {
+            if (attackName == "E_SwordCombo01")
+            {
+                StartAttack("E_SwordCombo02");
+                combo -= 1;
+            }
+            else if (attackName == "E_SwordCombo02")
+            {
+                StartAttack("E_SwordCombo03");
+                combo -= 1;
+            }
+        }
     }
 
     protected override void RegisterObject()

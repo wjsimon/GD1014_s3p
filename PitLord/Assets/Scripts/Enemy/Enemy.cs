@@ -24,7 +24,7 @@ public class Enemy : Character
     public float blockDuration = 0.0f;
 
     public Vector3 curNavPos;
-
+    public float navMeshTimer;
     //THIS TIMER IS FOR TESTING ONLY, USE SEPERATE TIMERS FOR NON-TEMPORARY STUFF
     float timer;
 
@@ -73,9 +73,8 @@ public class Enemy : Character
         }
 
         CombatUpdate();
+        navMeshTimer -= Time.deltaTime;
 
-        //Basically a state machine, gotta do all the randomizing and checking for which "state" the enemy should be in here <-- This is pretty much where enemies get coded, all the other stuff is the same
-        //Debug.Log(currentState);
         Behaviour(currentState);
         /**/
     }
@@ -140,11 +139,13 @@ public class Enemy : Character
     protected void SetNavPosition( Vector3 pos )
     {
         if((pos-curNavPos).magnitude < 2) { return; }
+        if (navMeshTimer > 0) { return; }
 
         //Debug.Log("go");
         agent.SetDestination(pos);
         agent.Resume();
         curNavPos = pos;
+        navMeshTimer = 1.0f;
     }
 
     public void Retreat() //2
@@ -246,8 +247,9 @@ public class Enemy : Character
         animator.SetFloat("Y", -1);
 
         //float step = agent.speed * Time.deltaTime;
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((target.position - transform.position).normalized, Vector3.up), Time.deltaTime * agent.angularSpeed * 2);
-        GetComponent<CharacterController>().Move(-transform.forward * Time.deltaTime * agent.speed / 3);
+        //transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((target.position - transform.position).normalized, Vector3.up), Time.deltaTime * agent.angularSpeed * 2);
+        transform.LookAt(target);
+        agent.Move(-transform.forward * Time.deltaTime);
     }
 
     protected virtual void Attack()
@@ -300,15 +302,21 @@ public class Enemy : Character
             if (newState == State.STRAFE)
             {
                 strafeDir = (int)Mathf.Sign(Random.Range(-2, 1));
+                /*
+                if(Physics.Raycast(transform.position, -transform.right * strafeDir, 3))
+                {
+                    return currentState;
+                }
+                /**/
             }
-            /**/
         }
 
         currentState = newState;
+        SetNavPosition(target.position);
         return newState;
     }
 
-    protected void CombatUpdate()
+    protected virtual void CombatUpdate()
     {
         if (!alerted) { return; }
 
