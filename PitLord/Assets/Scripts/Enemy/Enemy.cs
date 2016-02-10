@@ -23,6 +23,8 @@ public class Enemy : Character
     public float blockCooldown = 5.0f;
     public float blockDuration = 0.0f;
 
+    public Vector3 curNavPos;
+
     //THIS TIMER IS FOR TESTING ONLY, USE SEPERATE TIMERS FOR NON-TEMPORARY STUFF
     float timer;
 
@@ -52,14 +54,6 @@ public class Enemy : Character
         behavCooldown = 0;
         currentState = State.IDLE;
 
-        //Sets the spawnpoint by creating a new GameObject a playerpos
-        StoreTransform temp = new StoreTransform(transform.position, transform.rotation, transform.localScale);
-        spawnPoint = new GameObject(gameObject.name + "_Spawn");
-        spawnPoint.transform.parent = gameObject.transform;
-        spawnPoint.transform.position = temp.position;
-        spawnPoint.transform.rotation = temp.rotation;
-        spawnPoint.transform.localScale = temp.localScale;
-
         agent = gameObject.GetComponent<NavMeshAgent>();
         agent.destination = target.position;
 
@@ -70,6 +64,9 @@ public class Enemy : Character
     protected override void Update()
     {
         base.Update();
+
+        Debug.DrawLine(transform.position, agent.destination, Color.red);
+
         if (deactivate)
         {
             return;
@@ -136,15 +133,27 @@ public class Enemy : Character
         animator.SetFloat("X", 0);
         animator.SetFloat("Y", 1);
         SwitchNavMesh(true);
-        agent.SetDestination(target.position);
+
+        SetNavPosition(target.position);
     }
+
+    protected void SetNavPosition( Vector3 pos )
+    {
+        if((pos-curNavPos).magnitude < 2) { return; }
+
+        //Debug.Log("go");
+        agent.SetDestination(pos);
+        agent.Resume();
+        curNavPos = pos;
+    }
+
     public void Retreat() //2
     {
         alerted = false;
 
         agent.speed = 6;
         target = spawnPoint.transform;
-        agent.SetDestination(spawnPoint.transform.position);
+        SetNavPosition(spawnPoint.transform.position);
 
         if (transform.position == spawnPoint.transform.position)
         {
@@ -173,11 +182,14 @@ public class Enemy : Character
         animator.SetFloat("X", -direction);
         animator.SetFloat("Y", 0);
 
-        //float step = agent.speed * Time.deltaTime;
-        //transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((target.position - transform.position).normalized, Vector3.up), Time.deltaTime * 180);
-        //transform.RotateAround(target.position, Vector3.up, (Mathf.Sign(direction) * Mathf.Clamp((10 * Vector3.Distance(transform.position, target.position)), 15, 15) * Time.deltaTime));
-        transform.RotateAround(target.position, Vector3.up, (Mathf.Sign(direction) * 8 * Time.deltaTime));
-        transform.LookAt(target.transform);
+        //transform.RotateAround(target.position, Vector3.up, (Mathf.Sign(direction) * 8 * Time.deltaTime));
+
+
+        Vector3 lookAt = target.transform.position;
+        lookAt.y = transform.position.y;
+        transform.LookAt(lookAt);
+
+        agent.Move(-transform.right * direction * Time.deltaTime);
         //GetComponent<CharacterController>().Move((Mathf.Sign(animator.GetFloat("X")) * transform.right) * Time.deltaTime * agent.speed / 3);
     }
 
@@ -368,20 +380,16 @@ public class Enemy : Character
 
     protected virtual void SwitchNavMesh( bool enable )
     {
-        if (enable == agent.enabled)
-        {
-            return;
-        }
-
         if (!enable)
         {
+            //Debug.Log("stop");
             agent.Stop();
-            agent.enabled = false;
+            //agent.enabled = false;
         }
         else if (enable)
         {
-            agent.enabled = true;
-            agent.Resume();
+            //agent.enabled = true;
+            //agent.Resume();
         }
     }
 

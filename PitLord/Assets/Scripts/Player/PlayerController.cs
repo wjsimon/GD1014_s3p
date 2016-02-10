@@ -130,13 +130,6 @@ public class PlayerController : Character
 
             else if (mag < 1.5f)
             {
-                if (!falling)
-                {
-                    Vector3 pos = transform.position;
-                    float z = hitInfo.point.z;
-                    pos.z = z;
-                    transform.position = pos;
-                }
                 if (falling)
                 {
                     Debug.Log("Play Land Animation");
@@ -194,12 +187,12 @@ public class PlayerController : Character
     {
         if (cc.isGrounded)
         {
-            fallSpeed = 10;
+            fallSpeed = 1;
         }
         else
         {
             fallSpeed += gravity * Time.deltaTime;
-            cc.Move(fallSpeed * Vector3.down);
+            cc.Move(fallSpeed * Vector3.down * 0.05f);
         }
 
         //Still a problem with the speed getting affected by camera angle??
@@ -329,17 +322,32 @@ public class PlayerController : Character
         {
             if (!(inAttack() || inRoll()))
             {
-                if (StaminaCost(gameObject, "LightAttack"))
+                if(currentWeaponMode == WeaponMode.ONEHANDED)
                 {
-                    blocking = false;
-                    SprintSwitch();
+                    if (StaminaCost(gameObject, "LightAttack"))
+                    {
+                        blocking = false;
+                        SprintSwitch();
 
-                    StartAttack("LightAttack1");
+                        StartAttack("P_ShortLight01");
 
-                    animator.SetTrigger("Attack");
+                        animator.SetTrigger("Attack");
+                    }
                 }
-            }
+                else if(currentWeaponMode == WeaponMode.TWOHANDED)
+                {
+                    if (StaminaCost(gameObject, "LightAttack"))
+                    {
+                        blocking = false;
+                        SprintSwitch();
 
+                        StartAttack("P_GreatLight01");
+
+                        animator.SetTrigger("Attack");
+                    }
+                }
+
+            }
             else if (inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart)
             {
                 if (StaminaCost(gameObject, "LightAttack"))
@@ -348,13 +356,13 @@ public class PlayerController : Character
                     SprintSwitch();
                     //CancelAttack();
 
-                    if (attackName == "LightAttack1")
+                    if (attackName == "P_ShortLight01")
                     {
-                        attackName = "LightAttack2";
+                        attackName = "P_ShortLight02";
                     }
-                    else if (attackName == "LightAttack2")
+                    else if (attackName == "P_ShortLight02")
                     {
-                        attackName = "LightAttack1";
+                        attackName = "P_ShortLight01";
                     }
 
                     StartAttack(attackName);
@@ -365,6 +373,7 @@ public class PlayerController : Character
             //Debug.Log(attackName);
         }
 
+        /*
         //HeavyAttack - KEYBOARD ---- THIS IS MISSING STAMING COST YO
         if (Input.GetButtonDown("HeavyAttack") && !(inAttack() || inRoll()))
         {
@@ -377,6 +386,7 @@ public class PlayerController : Character
 
             animator.SetTrigger("HeavyAttack");
         }
+        /**/
 
         //HeavyAttack - XBOX CONTROLLER
         if (Input.GetAxis("HeavyAttack") > 0 && triggerPressed == false && !(inAttack() || inRoll()))
@@ -389,7 +399,7 @@ public class PlayerController : Character
                     blocking = false;
                     SprintSwitch();
 
-                    StartAttack("HeavyAttack1");
+                    StartAttack("P_ShortHeavy");
 
                     animator.SetTrigger("HeavyAttack");
 
@@ -422,7 +432,7 @@ public class PlayerController : Character
         //Rolling
         if (Input.GetButtonDown("Roll"))
         {
-            if ((rollDuration <= rollDelay) && (!inAttack() || inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).cancel))
+            if ((rollDuration <= rollDelay) && (!inAttack() || inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colEnd))
             {
                 if (StaminaCost(gameObject, "Roll"))
                 {
@@ -453,6 +463,8 @@ public class PlayerController : Character
                     }
 
                     rollAxis.Normalize();
+                    //For looking in roll direction and stuff
+                    transform.forward = rollAxis;
                     //---
                 }
             }
@@ -604,7 +616,8 @@ public class PlayerController : Character
 
                 float dot = Vector3.Dot(yA, yB);
 
-                Vector3 localPos = quat * targetList[i].transform.position;
+                //Vector3 localPos = quat * targetList[i].transform.position;
+                Vector3 localPos = Camera.main.transform.InverseTransformPoint(targetList[i].transform.position);
                 TargetCycle currentCycle = localPos.x <= 0.0 ? TargetCycle.LEFT : TargetCycle.RIGHT;
                 bool match = dir == TargetCycle.ANY;
 
@@ -739,7 +752,7 @@ public class PlayerController : Character
     protected override void Kill()
     {
         base.Kill();
-        GameManager.instance.GameOver();
+        //GameManager.instance.GameOver();
     }
     protected void SprintSwitch()
     {

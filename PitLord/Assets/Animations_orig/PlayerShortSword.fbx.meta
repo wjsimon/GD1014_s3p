@@ -286,6 +286,12 @@ ModelImporter:
     7400010: BlockHit
     7400012: ForwardSideStep
     7400014: Block
+    7400016: Idle
+    7400018: Heavy
+    7400020: Attack1
+    7400022: Attack2
+    7400024: BlockBreak
+    7400026: dodge
     9500000: //RootNode
     13700000: lowman_shoes
   materials:
@@ -311,6 +317,18 @@ ModelImporter:
 
 
       MuscleClip ''PlayerShortSword'' conversion warning: ''Base Human001Pelvis/Base
+      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001RCollarbone''
+      is between humanoid transforms and has rotation animation. This might lower
+      retargeting quality.
+
+
+      MuscleClip ''PlayerShortSword'' conversion warning: ''Base Human001Pelvis/Base
+      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001RCollarbone''
+      is between humanoid transforms and has rotation animation. This might lower
+      retargeting quality.
+
+
+      MuscleClip ''PlayerShortSword'' conversion warning: ''Base Human001Pelvis/Base
       Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001LArmCollarbone''
       is between humanoid transforms and has rotation animation. This might lower
       retargeting quality.
@@ -336,18 +354,6 @@ ModelImporter:
 
       MuscleClip ''PlayerShortSword'' conversion warning: ''Base Human001Pelvis/Base
       Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001LArmCollarbone''
-      is between humanoid transforms and has rotation animation. This might lower
-      retargeting quality.
-
-
-      MuscleClip ''PlayerShortSword'' conversion warning: ''Base Human001Pelvis/Base
-      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001RCollarbone''
-      is between humanoid transforms and has rotation animation. This might lower
-      retargeting quality.
-
-
-      MuscleClip ''PlayerShortSword'' conversion warning: ''Base Human001Pelvis/Base
-      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001RCollarbone''
       is between humanoid transforms and has rotation animation. This might lower
       retargeting quality.
 
@@ -375,10 +381,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: PlayerShortSwordIdle_A
-      takeName: PlayerShortSwordIdle_A
+      name: Idle
+      takeName: Idle
       firstFrame: 0
-      lastFrame: 60
+      lastFrame: 200
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -746,12 +752,12 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: PlayerShortAttackHeavy_A
-      takeName: PlayerShortAttackHeavy_A
+      name: Heavy
+      takeName: Heavy
       firstFrame: 0
-      lastFrame: 90
+      lastFrame: 200
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: .319999993
       level: 0
       cycleOffset: 0
       loop: 0
@@ -1117,12 +1123,12 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: A_PlayerShortSword_attack1
-      takeName: A_PlayerShortSword_attack1
+      name: Attack1
+      takeName: Attack1
       firstFrame: 0
-      lastFrame: 100
+      lastFrame: 166
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: .219999999
       level: 0
       cycleOffset: 0
       loop: 0
@@ -1488,12 +1494,12 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: PlayerShortSwordAttack2_A
-      takeName: PlayerShortSwordAttack2_A
+      name: Attack2
+      takeName: Attack2
       firstFrame: 0
-      lastFrame: 80
+      lastFrame: 150
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 6
       level: 0
       cycleOffset: 0
       loop: 0
@@ -1859,10 +1865,10 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: PlayerShortBlockBreak_A
-      takeName: PlayerShortBlockBreak_A
+      name: BlockBreak
+      takeName: BlockBreak
       firstFrame: 0
-      lastFrame: 40
+      lastFrame: 200
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -2233,7 +2239,7 @@ ModelImporter:
       name: BlockHit
       takeName: BlockHit
       firstFrame: 0
-      lastFrame: 18
+      lastFrame: 50
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -2601,10 +2607,10 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
     - serializedVersion: 16
-      name: ForwardSideStep
-      takeName: ForwardSideStep
+      name: dodge
+      takeName: dodge
       firstFrame: 0
-      lastFrame: 30
+      lastFrame: 100
       wrapMode: 0
       orientationOffsetY: -6.80000019
       level: 0

@@ -49,6 +49,7 @@ public class Character : Attributes
 
         cc = GetComponent<CharacterController>();
         currentStamina = maxStamina;
+        CreateSpawnPoint();
     }
 
     // Update is called once per frame
@@ -60,6 +61,17 @@ public class Character : Attributes
         StaminaRegen();
         iFrames -= Time.deltaTime;
         //DamageUpdate();
+    }
+
+    protected void CreateSpawnPoint()
+    {
+        //Sets the spawnpoint by creating a new GameObject a playerpos
+        StoreTransform temp = new StoreTransform(transform.position, transform.rotation, transform.localScale);
+        spawnPoint = new GameObject(gameObject.name + "_Spawn");
+        spawnPoint.transform.parent = gameObject.transform;
+        spawnPoint.transform.position = temp.position;
+        spawnPoint.transform.rotation = temp.rotation;
+        spawnPoint.transform.localScale = temp.localScale;
     }
 
     public override bool ApplyDamage(int damage, Character source)
@@ -189,9 +201,9 @@ public class Character : Attributes
         romoDuration = 0;
         romoStartTime = 0;
 
-        shortSword.GetComponent<BoxCollider>();
-        greatSword.GetComponent <BoxCollider>();
-        shield.GetComponent<BoxCollider>();
+        if (shortSword != null) { shortSword.GetComponent<BoxCollider>().enabled = false; }
+        if (greatSword != null) { greatSword.GetComponent<BoxCollider>().enabled = false; }
+        if (shield != null) { shield.GetComponent<BoxCollider>().enabled = false; }
     }
 
     protected virtual bool KnockBack(Character source)
@@ -286,7 +298,7 @@ public class Character : Attributes
         if (inAttack())
         {
             WeaponScript weapon = shortSword;
-            if(attackName == "HeavyAttack1")
+            if(attackName == "P_ShortHeavy")
             {
                 weapon = shield;
             }

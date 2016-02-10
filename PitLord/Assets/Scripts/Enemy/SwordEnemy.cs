@@ -79,11 +79,11 @@ public class SwordEnemy : Enemy
             }
             if(BehaviourRandomize >= 60 && BehaviourRandomize < 90)
             {
-                ChangeState(State.STRAFE);
+                //ChangeState(State.STRAFE);
             }
             if(BehaviourRandomize >= 90 && BehaviourRandomize < 100)
             {
-                ChangeState(State.BACKOFF);
+                //ChangeState(State.BACKOFF);
             }
         }
 
@@ -98,7 +98,7 @@ public class SwordEnemy : Enemy
                     ChangeState(State.ATTACK);
                     break;
                 case -1:
-                    ChangeState(State.BACKOFF);
+                    //ChangeState(State.BACKOFF);
                     break;
             }
 
@@ -123,7 +123,7 @@ public class SwordEnemy : Enemy
             return;
         }
 
-        attackName = "LightAttack1";
+        attackName = "E_SwordCombo01";
         float duration = AnimationLibrary.Get().SearchByName(attackName).duration;
         attacking = duration;
         attackingInv = 0;
