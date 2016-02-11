@@ -129,7 +129,7 @@ public class PlayerController : Character
 
                 if (fallHeight > 5 && falling)
                 {
-                    ApplyDamage((int)Mathf.Round(Mathf.Abs(fallHeight)) - 4, this);
+                    ApplyDamage((int)Mathf.Round(Mathf.Abs(fallHeight)) - 4, 0, this);
                 }
 
                 falling = false;
@@ -498,7 +498,6 @@ public class PlayerController : Character
         else if (Input.GetButtonDown("Interaction"))
         {
             interaction.Execute();
-            interaction = null;
         }
     }
 
@@ -697,7 +696,7 @@ public class PlayerController : Character
         }
     }
 
-    public void SetInteraction( Interaction t )
+    public void SetInteraction(Interaction t)
     {
         interaction = t;
     }
@@ -754,6 +753,14 @@ public class PlayerController : Character
     {
         base.Kill();
     }
+
+    public override void SoftReset()
+    {
+        base.SoftReset();
+        transform.position = spawnPoint;
+        transform.rotation = Quaternion.LookRotation(Vector3.forward);
+    }
+
     protected void SprintSwitch()
     {
         running = !running;

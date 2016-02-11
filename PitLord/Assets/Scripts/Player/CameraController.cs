@@ -151,4 +151,9 @@ public class CameraController : MonoBehaviour {
         transform.RotateAround(CameraTarget.position, Vector3.up, angleH);
         CameraSmooth.RotateAround(CameraTarget.position, Vector3.up, angleH);
     }
+
+    public void ResetCam()
+    {
+        transform.position = -CameraTarget.transform.forward * distance;
+    }
 }

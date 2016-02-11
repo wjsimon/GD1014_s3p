@@ -63,6 +63,7 @@ public class Character : Attributes
     protected override void Update()
     {
         base.Update();
+
         WeaponColliderUpdate();
         RomoUpdate();
         StaminaRegen();
@@ -71,9 +72,9 @@ public class Character : Attributes
     }
 
 
-    public override bool ApplyDamage(int damage, Character source)
+    public override bool ApplyDamage(int healthDmg, int staminaDmg, Character source)
     {
-        if (!base.ApplyDamage(damage, source)) { return false; }
+        if (!base.ApplyDamage(healthDmg,staminaDmg, source)) { return false; }
 
         if (iFrames > 0)
         {
@@ -86,12 +87,12 @@ public class Character : Attributes
 
         if (blocking)
         {
-            currentStamina -= damage * facing;
-            currentHealth -= damage * (1 - facing);
+            currentStamina -= staminaDmg * facing;
+            currentHealth -= healthDmg * (1 - facing);
         }
         else
         {
-            currentHealth -= damage;
+            currentHealth -= healthDmg;
         }
 
         if (currentHealth <= 0)
@@ -99,6 +100,7 @@ public class Character : Attributes
             currentHealth = 0;
             Kill();
         }
+
         else
         {
             if (source != this)
@@ -111,7 +113,7 @@ public class Character : Attributes
                     {
                         GetComponent<Animator>().SetInteger("HitInt", 0);
                         SetAnimTrigger("Hit");
-                        DisableHitbox(0.5f);
+                        SetInvincibility(0.5f);
                     }
                 }
 
@@ -120,7 +122,7 @@ public class Character : Attributes
                     //Set BlockHit Int for blockhit
                     GetComponent<Animator>().SetInteger("HitInt", 1);
                     SetAnimTrigger("Hit");
-                    DisableHitbox(0.1f);
+                    SetInvincibility(0.1f);
                 }
             }
         }
@@ -139,12 +141,13 @@ public class Character : Attributes
 
     protected override void Kill()
     {
-        DisableHitbox(0.5f);
+        base.Kill();
+        SetInvincibility(0.5f);
+        CancelAttack();
+
         cc.enabled = false;
-        enabled = false;
         blocking = false;
         targettable = false;
-
         SetAnimTrigger("Death");
         //Destroy(gameObject, 10.0f);
     }
@@ -184,8 +187,7 @@ public class Character : Attributes
 
         attacking = duration;
         attackingInv = 0;
-        Debug.Log(Time.time+"StartAttack() " + attackingInv);
-
+        Debug.Log(Time.time+ "StartAttack() " + attackingInv);
 
         SetRomo(duration, AnimationLibrary.Get().SearchByName(attackName).romoLength);
     }
@@ -223,7 +225,7 @@ public class Character : Attributes
         return true;
     }
 
-    protected virtual void DisableHitbox( float dur )
+    protected virtual void SetInvincibility( float dur )
     {
         iFrames = dur;
     }

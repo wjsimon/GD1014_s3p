@@ -35,5 +35,7 @@ public class PotionRefillObject : MonoBehaviour {
     {
         PlayerController p = GameManager.instance.player;
         p.heals = p.maxHeals;
+
+        GameManager.instance.StartRespawn();
     }
 }

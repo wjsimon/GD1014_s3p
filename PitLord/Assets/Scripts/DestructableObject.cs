@@ -16,10 +16,10 @@ public class DestructableObject : Attributes
     {
     }
 
-    public override bool ApplyDamage( int damage, Character source )
+    public override bool ApplyDamage(int healthDmg, int staminaDmg, Character source )
     {
-        if (!base.ApplyDamage(damage, source)) { return false; }
-        currentHealth -= damage;
+        if (!base.ApplyDamage(healthDmg, staminaDmg, source)) { return false; }
+        currentHealth -= healthDmg;
 
         if (currentHealth <= 0)
         {

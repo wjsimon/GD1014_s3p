@@ -33,6 +33,7 @@ public class LockedObject : MonoBehaviour
             {
                 //GameManager.instance.inventory.RemoveKey(GameManager.instance.inventory.keys[i]);
                 Disable();
+                GameManager.instance.player.SetInteraction(null);
                 //Play Sound, Animation, w/e?
                 break;
             }
@@ -52,7 +53,6 @@ public class LockedObject : MonoBehaviour
         GetComponent<MeshRenderer>().enabled = false;
         GetComponent<NavMeshObstacle>().enabled = false;
         /**/
-        enabled = false;
         disabled = true;
         prompt.TogglePrompt(false);
 

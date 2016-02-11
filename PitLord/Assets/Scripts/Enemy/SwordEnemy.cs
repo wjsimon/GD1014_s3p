@@ -22,6 +22,7 @@ public class SwordEnemy : Enemy
     // Update is called once per frame
     protected override void Update()
     {
+        if (isDead()) { return; }
         base.Update();
 
         if (deactivate)
@@ -39,8 +40,8 @@ public class SwordEnemy : Enemy
 
         if(inAttack())
         {
-            //if(attacking >= AnimationLibrary.Get().SearchByName(attackName).colStart);
-            if (attackingInv <= 0.8f)
+            if (attackingInv <= AnimationLibrary.Get().SearchByName(attackName).colStart)
+            //if (attackingInv <= 0.8f)
             {
                 LookAtTarget();
             }
@@ -149,7 +150,7 @@ public class SwordEnemy : Enemy
         else
         {
             animator.SetInteger("AttackId", 0);
-            combo = 3;
+            combo = 2; //combo = hit count - 1
         }
 
         animator.SetTrigger("Attack");
@@ -172,6 +173,18 @@ public class SwordEnemy : Enemy
                 combo -= 1;
             }
         }
+    }
+
+    protected override void CancelAttack()
+    {
+        base.CancelAttack();
+        combo = 0;
+    }
+    protected override void Kill()
+    {
+        Debug.Log("SWORDENEMY KILL");
+        base.Kill();
+        combo = 0;
     }
 
     protected override void RegisterObject()

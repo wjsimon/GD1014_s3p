@@ -37,7 +37,7 @@ public class Attributes : MonoBehaviour
     protected virtual void Update()
     {
     }
-    public virtual bool ApplyDamage( int damage, Character source)
+    public virtual bool ApplyDamage( int healthDmg, int staminaDmg, Character source )
     {
         bool selfIsPlayer = this is PlayerController;
         bool selfIsEnemy = this is Enemy;

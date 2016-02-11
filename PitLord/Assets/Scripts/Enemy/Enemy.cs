@@ -156,7 +156,7 @@ public class Enemy : Character
         agent.speed = 6;
         SetNavPosition(spawnPoint);
 
-        if ((transform.position-spawnPoint).magnitude < 0.1f)
+        if ((transform.position - spawnPoint).magnitude < 0.1f)
         {
             ChangeState(State.IDLE);
         }
@@ -366,9 +366,9 @@ public class Enemy : Character
         }
     }
 
-    protected override void DisableHitbox( float dur )
+    protected override void SetInvincibility( float dur )
     {
-        base.DisableHitbox(dur);
+        base.SetInvincibility(dur);
         GetComponent<Enemy>().weapon.GetComponent<BoxCollider>().enabled = false;
     }
 
@@ -379,6 +379,15 @@ public class Enemy : Character
         ChangeState(State.IDLE);
         agent.Warp(spawnPoint);
         alerted = false;
+    }
+    protected override void Kill()
+    {
+        base.Kill();
+    }
+
+    protected override void CancelAttack()
+    {
+        base.CancelAttack();
     }
 
     protected virtual void SwitchNavMesh( bool enable )

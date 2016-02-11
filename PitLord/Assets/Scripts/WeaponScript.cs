@@ -4,7 +4,8 @@ using System.Collections;
 public class WeaponScript : MonoBehaviour {
 
     Vector3 lastPos;
-    public int damage;
+    public int healthDmg;
+    public int staminaDmg;
     public Character owner;
     public Vector3 hitDirection;
 
@@ -32,7 +33,7 @@ public class WeaponScript : MonoBehaviour {
 
             //Debug.LogWarning("Player hit");
             CalcHitDirection();
-            enemy.ApplyDamage(damage, owner);
+            enemy.ApplyDamage(healthDmg, staminaDmg, owner);
         }
     }
 

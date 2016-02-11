@@ -21,7 +21,7 @@ public class ProjectileScript : MonoBehaviour {
         //Debug.Log(other.gameObject.name);
         if (source.gameObject.tag == "Enemy" && other.gameObject.tag == "Player")
         {
-            other.gameObject.GetComponent<Attributes>().ApplyDamage(2, source);
+            other.gameObject.GetComponent<Attributes>().ApplyDamage(2, 0, source);
         }
     }
 }
