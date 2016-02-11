@@ -68,6 +68,7 @@ public class Character : Attributes
         RomoUpdate();
         StaminaRegen();
         iFrames -= Time.deltaTime;
+        stunned -= Time.deltaTime;
         //DamageUpdate();
     }
 
@@ -93,6 +94,7 @@ public class Character : Attributes
         else
         {
             currentHealth -= healthDmg;
+            stunned = 0.2f;
         }
 
         if (currentHealth <= 0)
@@ -129,10 +131,13 @@ public class Character : Attributes
 
         if (currentStamina <= 0)
         {
+            //BLOCK BREAK
             blocking = false;
             GetComponent<Animator>().SetInteger("HitInt", 2);
             SetAnimTrigger("Hit");
-            //BlockBreak animation;
+
+            stunned = 1.5f;
+            regenCounter = -2.5f;
             currentStamina = 0;
         }
 
@@ -187,7 +192,6 @@ public class Character : Attributes
 
         attacking = duration;
         attackingInv = 0;
-        Debug.Log(Time.time+ "StartAttack() " + attackingInv);
 
         SetRomo(duration, AnimationLibrary.Get().SearchByName(attackName).romoLength);
     }

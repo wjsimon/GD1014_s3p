@@ -188,9 +188,8 @@ public class PlayerController : Character
         }
 
         //Still a problem with the speed getting affected by camera angle??
-        if (inRoll() || inHeal())
+        if (inRoll() || inHeal() || isDead() || inStun())
         {
-            animator.SetBool("Block", blocking);
             return;
         }
         if (inAttack() && !(inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).cancel))
@@ -295,7 +294,9 @@ public class PlayerController : Character
 
     void CombatUpdate()
     {
-        if (inHeal())
+        animator.SetBool("Block", blocking);
+
+        if (inHeal() || inWeaponSwitch() || inStun() || isDead())
         {
             return;
         }
@@ -334,7 +335,6 @@ public class PlayerController : Character
 
                         StartAttack("P_GreatLight01");
 
-                        animator.SetInteger("AttackId", 1);
                         animator.SetTrigger("Attack");
                     }
                 }
@@ -362,7 +362,6 @@ public class PlayerController : Character
                     {
                     }
 
-                    Debug.Log(Time.time + "CombatUpdate() " + attackingInv);
                     StartAttack(attackName);
 
                     animator.SetTrigger("Attack");
@@ -401,7 +400,6 @@ public class PlayerController : Character
 
                         StartAttack("P_ShortHeavy");
 
-                        animator.SetInteger("AttackId", 0);
                         animator.SetTrigger("HeavyAttack");
 
                         if (inRoll())
@@ -419,7 +417,6 @@ public class PlayerController : Character
 
                         StartAttack("P_GreatHeavy01");
 
-                        animator.SetInteger("AttackId", 1);
                         animator.SetTrigger("HeavyAttack");
                     }
                 }
@@ -521,6 +518,12 @@ public class PlayerController : Character
 
     void TargettingUpdate()
     {
+        if(lockOnTarget != null && !lockOnTarget.GetComponent<Character>().targettable)
+        {
+            lockOnTarget = null;
+            return;
+        }
+
         if (Input.GetButtonDown("LockOn"))
         {
             if (lockOnTarget == null)
@@ -579,8 +582,17 @@ public class PlayerController : Character
         newWeaponMode = (WeaponMode)(((int)currentWeaponMode + 1) % (int)WeaponMode.COUNT);
 
         //Play Animation
-        switchWeaponTimer = 1.0f;
+        switchWeaponTimer = 2.5f;
         animator.SetTrigger("WeaponSwitch");
+
+        if(newWeaponMode == WeaponMode.ONEHANDED)
+        {
+            animator.SetInteger("MovesetId", 0);
+        }
+        else if (newWeaponMode == WeaponMode.TWOHANDED)
+        {
+            animator.SetInteger("MovesetId", 1);
+        }
     }
 
     void UpdateWeaponMode()
@@ -744,7 +756,7 @@ public class PlayerController : Character
     {
         blocking = false;
         //AnimationLibrary / Variables?, prolly not worth though bud
-        healTrigger = 1.5f;
+        healTrigger = 1.0f;
         healDuration = 2.5f;
         healed = false;
     }
@@ -758,7 +770,7 @@ public class PlayerController : Character
 
         heals -= 1;
         currentHealth += healAmount;
-        GameObject.Find("HealItemDisplay").GetComponent<HealItemDisplay>().UpdateDisplay();
+        //GameObject.Find("HealItemDisplay").GetComponent<HealItemDisplay>().UpdateDisplay();
 
         if (currentHealth > maxHealth)
         {
