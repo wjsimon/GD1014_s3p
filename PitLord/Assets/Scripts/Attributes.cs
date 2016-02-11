@@ -106,4 +106,9 @@ public class Attributes : MonoBehaviour
     {
         return false;
     }
+
+    public virtual bool isDead()
+    {
+        return currentHealth <= 0;
+    }
 }

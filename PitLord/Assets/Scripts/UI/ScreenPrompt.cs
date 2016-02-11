@@ -14,9 +14,9 @@ public class ScreenPrompt : MonoBehaviour {
 	void Update () {
 	}
 
-    public void TogglePrompt()
+    public void TogglePrompt(bool show)
     {
-        showPrompt = !showPrompt;
+        showPrompt = show;
         transform.FindChild("Prompt").gameObject.SetActive(showPrompt);
     }
 }

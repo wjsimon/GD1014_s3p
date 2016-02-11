@@ -18,7 +18,7 @@ public class PotionRefillObject : MonoBehaviour {
         if (other.GetComponent<PlayerController>() != null)
         {
             GameManager.instance.player.SetInteraction(new InteractionPotionRefill(this));
-            prompt.TogglePrompt();
+            prompt.TogglePrompt(true);
         }
     }
 
@@ -27,7 +27,7 @@ public class PotionRefillObject : MonoBehaviour {
         if (other.GetComponent<PlayerController>() != null)
         {
             GameManager.instance.player.SetInteraction(null);
-            prompt.TogglePrompt();
+            prompt.TogglePrompt(false);
         }
     }
 

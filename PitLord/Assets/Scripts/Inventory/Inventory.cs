@@ -1,49 +1,81 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+[System.Serializable]
 public class Inventory {
 
-    public List<Item> itemList = new List<Item>();
-    public List<Key> keys = new List<Key>();
+    public List<string> items = new List<string>();
+    public List<string> keys = new List<string>();
+
+    public Dictionary<string, string> displayNames = new Dictionary<string, string>()
+    {
+        {"name", "displayname"},
+        {"test", "testDisplay"},
+    };
 
 	// Use this for initialization
-	void Start () {
+	public void Start () {
+        //Load();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	}
 
-    public void AddItem(Item t)
+    public void AddItem(string t )
     {
-        itemList.Add(t);
+        items.Add(t);
+        //Save();
     }
-    public void AddItem(string name, string desc, Texture2D tex)
+    public void RemoveItem( string t )
     {
-        itemList.Add(new Item(name, desc, tex));
+        items.Remove(t);
+        //Save();
     }
 
-    public void RemoveItem(Item t)
+    /*
+    public void Save()
     {
-        itemList.Remove(t);
-    }
-    public void RemoveItem(string name)
-    {
-        for(int i = 0; i < itemList.Count; i++)
+        string keyNames = "";
+        string itemNames = "";
+
+        for (int i = 0; i < keys.Count; i++)
         {
-            if(itemList[i].name == name)
-            {
-                RemoveItem(itemList[i]);
-            }
+            keyNames += keys[i].name + ",";
+        }
+        for (int i = 0; i < items.Count; i++)
+        {
+            itemNames += items[i].name + ",";
+        }
+
+        PlayerPrefs.SetString("keys", keyNames);
+        PlayerPrefs.SetString("items", itemNames);
+        PlayerPrefs.Save();
+    }
+    /**/
+
+    /*
+    public void Load()
+    {
+        string keyNames = PlayerPrefs.GetString("keys");
+        string itemNames = PlayerPrefs.GetString("items");
+
+        Debug.Log(itemNames);
+
+        string[] keyArray = keyNames.Split(new string[]{","}, System.StringSplitOptions.RemoveEmptyEntries);
+        string[] itemArray = itemNames.Split(new string[] { "," }, System.StringSplitOptions.RemoveEmptyEntries);
+
+        keys = new List<Key>();
+        for(int i = 0; i < keyArray.Length; i++)
+        {
+            keys.Add(new Key(keyArray[i]));
+        }
+
+        items = new List<Item>();
+        for (int i = 0; i < itemArray.Length; i++)
+        {
+            items.Add(new Item(itemArray[i]));
         }
     }
-    public void AddKey(Key t)
-    {
-        keys.Add(t);
-    }
-    public void RemoveKey(Key t)
-    {
-        keys.Remove(t);
-    }
+    /**/
 }

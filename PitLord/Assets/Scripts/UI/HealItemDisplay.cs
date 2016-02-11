@@ -14,11 +14,6 @@ public class HealItemDisplay : MonoBehaviour {
         image = GetComponent<Image>();
         sprites = Resources.LoadAll<Sprite>("UI/placeholder/HealItemDisplay");
         UpdateDisplay();
-        
-        for(int i = 0; i < sprites.Length; i++)
-        {
-            Debug.Log(sprites[i].name);
-        }
         /**/
 	}
 	
@@ -31,7 +26,6 @@ public class HealItemDisplay : MonoBehaviour {
     {
         int heals = GameManager.instance.player.heals > 0 ? GameManager.instance.player.heals : 5;
         Sprite current;
-        Debug.Log(sprites.Length + " " + heals);
         current = sprites[heals-1];
         image.sprite = current;
     }

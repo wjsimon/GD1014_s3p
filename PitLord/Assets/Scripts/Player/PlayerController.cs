@@ -45,7 +45,6 @@ public class PlayerController : Character
     protected override void Start()
     {
         //Debug
-        GameManager.instance.inventory.AddKey(new Key("test"));
         currentWeaponMode = WeaponMode.ONEHANDED;
 
         base.Start();
@@ -754,7 +753,6 @@ public class PlayerController : Character
     protected override void Kill()
     {
         base.Kill();
-        //GameManager.instance.GameOver();
     }
     protected void SprintSwitch()
     {

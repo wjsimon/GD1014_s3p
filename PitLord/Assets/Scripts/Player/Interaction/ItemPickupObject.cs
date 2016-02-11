@@ -3,11 +3,16 @@ using System.Collections;
 
 public class ItemPickupObject : MonoBehaviour {
 
-    public Item item;
+    public string item;
     ScreenPrompt prompt;
 	// Use this for initialization
 	void Start () {
         prompt = GameObject.Find("ScreenPrompt").GetComponent<ScreenPrompt>();
+
+        if((PlayerPrefs.GetInt("ItemPickup/" + item) == 1))
+        {
+            PickUp();
+        }
 	}
 	
 	// Update is called once per frame
@@ -21,9 +26,12 @@ public class ItemPickupObject : MonoBehaviour {
             GameManager.instance.inventory.AddItem(item);
         }
 
+        PlayerPrefs.SetInt("ItemPickup/" + item, 1);
+        PlayerPrefs.Save();
+
         GameManager.instance.player.SetInteraction(null);
-        prompt.TogglePrompt();
-        Destroy(gameObject);
+        prompt.TogglePrompt(false);
+        gameObject.SetActive(false);
     }
 
     void OnTriggerEnter( Collider other )
@@ -31,7 +39,7 @@ public class ItemPickupObject : MonoBehaviour {
         if (other.GetComponent<PlayerController>() != null)
         {
             GameManager.instance.player.SetInteraction(new InteractionItemPickup(this));
-            prompt.TogglePrompt();
+            prompt.TogglePrompt(true);
         }
     }
     void OnTriggerExit( Collider other )
@@ -39,7 +47,7 @@ public class ItemPickupObject : MonoBehaviour {
         if (other.GetComponent<PlayerController>() != null)
         {
             GameManager.instance.player.SetInteraction(null);
-            prompt.TogglePrompt();
+            prompt.TogglePrompt(false);
         }
     }
 }

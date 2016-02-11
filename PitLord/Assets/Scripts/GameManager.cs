@@ -15,8 +15,25 @@ public class GameManager : MonoBehaviour {
 
     float playGameOver;
 
+    public GameState currentGameState;
+    public enum GameState
+    {
+        MAINMENU,
+        INGAME,
+        GAMEOVER
+    }
+
     public GameManager()
     {
+        if(instance != null)
+        {
+            Destroy(this);
+
+            instance.inventory = inventory;
+
+            return;
+        }
+
         instance = this;
     }
 
@@ -26,22 +43,8 @@ public class GameManager : MonoBehaviour {
     // Use this for initialization
     void Start () 
     {
-        //Time.timeScale = 0.1f;
-        /*
-        GameObject[] collector;
-        collector = GameObject.FindGameObjectsWithTag("Enemy");
-        for (int i = 0; i < collector.Length; i++)
-        {
-            enemyList.Add(collector[i]);
-        }
-
-        /*
-        collector = GameObject.FindGameObjectsWithTag("DesObj");
-        for (int i = 0; i < collector.Length; i++)
-        {
-            objectsList.Add(collector[i]);
-        }
-        /**/
+        inventory.Start();
+        currentGameState = GameState.INGAME;
     }
 
     // Update is called once per frame
@@ -51,9 +54,18 @@ public class GameManager : MonoBehaviour {
         {
             SoftReset();
         }
+        if (Input.GetButtonDown("GameOver"))
+        {
+            GameOver();
+        }
+
+        if(player.isDead() && currentGameState == GameState.INGAME)
+        {
+            RespawnPlayer();
+        }
     }
 
-    public void SpawnPlayer()
+    public void RespawnPlayer()
     {
         //Spawns Player, Resets Positions (usually on Death) <- Scene Reload pretty much
         SoftReset();
@@ -86,14 +98,11 @@ public class GameManager : MonoBehaviour {
     public void AddEnemy(Enemy obj)
     {
         enemyList.Add(obj);
-
-        //Debug.LogWarning(enemyList.Count);
     }
     public void RemoveEnemy(Enemy obj )
     {
         enemyList.Remove(obj);
     }
-
     public void AddObject(DestructableObject obj)
     {
         objectsList.Add(obj);
@@ -113,7 +122,10 @@ public class GameManager : MonoBehaviour {
 
     public void GameOver()
     {
+        currentGameState = GameState.GAMEOVER;
         playGameOver = 5.0f;
-        SpawnPlayer();
+
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
     }
 }
