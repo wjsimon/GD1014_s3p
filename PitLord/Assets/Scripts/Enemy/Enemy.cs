@@ -109,7 +109,7 @@ public class Enemy : Character
 
     protected void LookAtTarget()
     {
-        transform.LookAt(target, Vector3.up);
+        transform.forward = Vector3.Lerp(transform.forward, target.position-transform.position, Time.deltaTime);
     }
 
     protected virtual void Tracking()
