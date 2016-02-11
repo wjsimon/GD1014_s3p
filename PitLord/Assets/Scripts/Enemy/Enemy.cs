@@ -53,6 +53,7 @@ public class Enemy : Character
     {
         behavCooldown = 0;
         currentState = State.IDLE;
+        targettable = true;
 
         agent = gameObject.GetComponent<NavMeshAgent>();
         agent.destination = target.position;
@@ -170,28 +171,16 @@ public class Enemy : Character
     {
         SwitchNavMesh(false);
 
-        /*
-        if ((Vector3.Distance(target.position, transform.position) > detectionRange || (Vector3.Distance(target.position, transform.position) < combatRange)))
-        {
-            behavCooldown = 0;
-            return;
-        }
-        /**/
-
         //Debug.LogWarning("strafing");
 
         animator.SetFloat("X", -direction);
         animator.SetFloat("Y", 0);
-
-        //transform.RotateAround(target.position, Vector3.up, (Mathf.Sign(direction) * 8 * Time.deltaTime));
-
 
         Vector3 lookAt = target.transform.position;
         lookAt.y = transform.position.y;
         transform.LookAt(lookAt);
 
         agent.Move(-transform.right * direction * Time.deltaTime);
-        //GetComponent<CharacterController>().Move((Mathf.Sign(animator.GetFloat("X")) * transform.right) * Time.deltaTime * agent.speed / 3);
     }
 
     public void ForwardMovement()
@@ -246,8 +235,6 @@ public class Enemy : Character
         animator.SetFloat("X", 0);
         animator.SetFloat("Y", -1);
 
-        //float step = agent.speed * Time.deltaTime;
-        //transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((target.position - transform.position).normalized, Vector3.up), Time.deltaTime * agent.angularSpeed * 2);
         transform.LookAt(target);
         agent.Move(-transform.forward * Time.deltaTime);
     }

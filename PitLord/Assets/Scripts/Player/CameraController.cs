@@ -76,7 +76,12 @@ public class CameraController : MonoBehaviour {
 
         if (Physics.Raycast(CameraTarget.position, (transform.position - CameraTarget.transform.position), out hitInfo, distance,~(1<<LayerMask.NameToLayer("NoCameraRaycast"))))
         {
-            transform.position = hitInfo.point - (transform.position - CameraTarget.transform.position).normalized;
+            transform.position = hitInfo.point - (transform.position - CameraTarget.transform.position).normalized * 1.0f;
+            float fDist=(transform.position - CameraTarget.position).magnitude;
+            if (fDist < 3.0f)
+            {
+                transform.position = hitInfo.point - (transform.position - CameraTarget.transform.position).normalized * fDist/3;
+            }
         }
     }
 

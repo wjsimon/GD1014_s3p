@@ -596,6 +596,7 @@ public class PlayerController : Character
         {
             currentDir = (lockOnTarget.transform.FindChild("RayCastTarget").transform.position - Camera.main.transform.position).normalized;
         }
+
         Quaternion quat = new Quaternion();
         quat.SetLookRotation(currentDir, Vector3.up);
         quat = Quaternion.Inverse(quat);
@@ -691,7 +692,10 @@ public class PlayerController : Character
 
                     if (dot > 0.3f)
                     {
-                        targetList.Add(enemy);
+                        if(enemy.targettable)
+                        {
+                            targetList.Add(enemy);
+                        }
                     }
                 }
             }
