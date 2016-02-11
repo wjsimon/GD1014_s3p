@@ -9,7 +9,7 @@ public class Attributes : MonoBehaviour
 
 
     //[HideInInspector]
-    public GameObject spawnPoint;
+    public Vector3 spawnPoint;
 
     public int currentHealth;
     public int maxHealth = 10;
@@ -32,6 +32,7 @@ public class Attributes : MonoBehaviour
     protected virtual void Start()
     {
         currentHealth = maxHealth;
+        CreateSpawnPoint();
     }
     protected virtual void Update()
     {
@@ -75,6 +76,8 @@ public class Attributes : MonoBehaviour
         ani.SetTrigger(anim);
     }
 
+
+
     protected virtual void Kill()
     {
     }
@@ -87,12 +90,14 @@ public class Attributes : MonoBehaviour
     {
         //Alternative; Spawn prefab of enemy instead of reusing same - can't forget resetting values that way, may prevent bugs ?
         currentHealth = maxHealth;
-        transform.position = spawnPoint.transform.position;
-        enabled = true;
-
         SetAnimTrigger("Reset");
     }
-
+    protected void CreateSpawnPoint()
+    {
+        //Sets the spawnpoint by creating a new GameObject a playerpos
+        //StoreTransform temp = new StoreTransform(transform.position, transform.rotation, transform.localScale);
+        spawnPoint = transform.position;
+    }
     protected virtual void RegisterObject()
     {
     }

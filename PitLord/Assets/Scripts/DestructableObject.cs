@@ -8,14 +8,6 @@ public class DestructableObject : Attributes
     protected override void Start()
     {
         base.Start();
-
-        StoreTransform temp = new StoreTransform(transform.position, transform.rotation, transform.localScale);
-        spawnPoint = new GameObject(gameObject.name + "_Spawn");
-        spawnPoint.transform.parent = gameObject.transform;
-        spawnPoint.transform.position = temp.position;
-        spawnPoint.transform.rotation = temp.rotation;
-        spawnPoint.transform.localScale = temp.localScale;
-
         RegisterObject();
     }
 

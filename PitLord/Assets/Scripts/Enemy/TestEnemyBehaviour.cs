@@ -82,7 +82,7 @@ public class TestEnemyBehaviour : Enemy
         }
 
         //Retreats rapidly to spawnPoint when player is out of leashing Range
-        if (Vector3.Distance(spawnPoint.transform.position, transform.position) > leashingRange)
+        if (Vector3.Distance(spawnPoint, transform.position) > leashingRange)
         {
             ChangeState(State.RETREAT); //Retreat
             return;

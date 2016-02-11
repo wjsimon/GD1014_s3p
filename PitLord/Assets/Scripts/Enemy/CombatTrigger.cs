@@ -9,6 +9,7 @@ public class CombatTrigger : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        GameManager.instance.AddCombatTrigger(this);
 	}
 	
 	// Update is called once per frame

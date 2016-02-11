@@ -154,12 +154,11 @@ public class Enemy : Character
         alerted = false;
 
         agent.speed = 6;
-        target = spawnPoint.transform;
-        SetNavPosition(spawnPoint.transform.position);
+        SetNavPosition(spawnPoint);
 
-        if (transform.position == spawnPoint.transform.position)
+        if ((transform.position-spawnPoint).magnitude < 0.1f)
         {
-            ChangeState(0);
+            ChangeState(State.IDLE);
         }
     }
 
@@ -373,6 +372,15 @@ public class Enemy : Character
         GetComponent<Enemy>().weapon.GetComponent<BoxCollider>().enabled = false;
     }
 
+    public override void SoftReset()
+    {
+        base.SoftReset();
+        agent.Stop();
+        ChangeState(State.IDLE);
+        agent.Warp(spawnPoint);
+        alerted = false;
+    }
+
     protected virtual void SwitchNavMesh( bool enable )
     {
         if (!enable)
@@ -404,11 +412,5 @@ public class Enemy : Character
     {
         alerted = true;
         ChangeState(State.APPROACH);
-    }
-
-    public override void SoftReset()
-    {
-        base.SoftReset();
-        alerted = false;
     }
 }

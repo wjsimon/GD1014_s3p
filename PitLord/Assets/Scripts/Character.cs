@@ -33,6 +33,14 @@ public class Character : Attributes
     public WeaponScript shortSword;
     public WeaponScript shield;
     public WeaponScript greatSword;
+    public WeaponMode currentWeaponMode;
+    public WeaponMode newWeaponMode;
+    public enum WeaponMode
+    {
+        ONEHANDED,
+        TWOHANDED,
+        COUNT,
+    }
 
     //Animation Control - RoMo
     public float romoStartTime;
@@ -49,7 +57,6 @@ public class Character : Attributes
 
         cc = GetComponent<CharacterController>();
         currentStamina = maxStamina;
-        CreateSpawnPoint();
     }
 
     // Update is called once per frame
@@ -63,16 +70,6 @@ public class Character : Attributes
         //DamageUpdate();
     }
 
-    protected void CreateSpawnPoint()
-    {
-        //Sets the spawnpoint by creating a new GameObject a playerpos
-        StoreTransform temp = new StoreTransform(transform.position, transform.rotation, transform.localScale);
-        spawnPoint = new GameObject(gameObject.name + "_Spawn");
-        spawnPoint.transform.parent = gameObject.transform;
-        spawnPoint.transform.position = temp.position;
-        spawnPoint.transform.rotation = temp.rotation;
-        spawnPoint.transform.localScale = temp.localScale;
-    }
 
     public override bool ApplyDamage(int damage, Character source)
     {
@@ -187,6 +184,8 @@ public class Character : Attributes
 
         attacking = duration;
         attackingInv = 0;
+        Debug.Log(Time.time+"StartAttack() " + attackingInv);
+
 
         SetRomo(duration, AnimationLibrary.Get().SearchByName(attackName).romoLength);
     }
@@ -301,6 +300,11 @@ public class Character : Attributes
             if(attackName == "P_ShortHeavy")
             {
                 weapon = shield;
+            }
+
+            if(currentWeaponMode == WeaponMode.TWOHANDED)
+            {
+                weapon = greatSword;
             }
 
             if ((attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart) && (attackingInv <= AnimationLibrary.Get().SearchByName(attackName).colEnd))

@@ -32,8 +32,6 @@ public class PlayerController : Character
     public float switchWeaponTimer;
 
     public Interaction interaction;
-    public WeaponMode currentWeaponMode;
-    public WeaponMode newWeaponMode;
     bool triggerPressed;
 
     enum TargetCycle
@@ -41,13 +39,6 @@ public class PlayerController : Character
         ANY,
         LEFT,
         RIGHT,
-    }
-
-    public enum WeaponMode
-    {
-        ONEHANDED,
-        TWOHANDED,
-        COUNT,
     }
 
     // Use this for initialization
@@ -203,8 +194,7 @@ public class PlayerController : Character
             animator.SetBool("Block", blocking);
             return;
         }
-
-        if (inAttack() && !(inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).cancel + 0.1f))
+        if (inAttack() && !(inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).cancel))
         {
             if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart)
             {
@@ -357,16 +347,22 @@ public class PlayerController : Character
                     blocking = false;
                     SprintSwitch();
                     //CancelAttack();
-
-                    if (attackName == "P_ShortLight01")
+                    if (currentWeaponMode == WeaponMode.ONEHANDED)
                     {
-                        attackName = "P_ShortLight02";
+                        if (attackName == "P_ShortLight01")
+                        {
+                            attackName = "P_ShortLight02";
+                        }
+                        else if (attackName == "P_ShortLight02")
+                        {
+                            attackName = "P_ShortLight01";
+                        }
                     }
-                    else if (attackName == "P_ShortLight02")
+                    else if (currentWeaponMode == WeaponMode.TWOHANDED)
                     {
-                        attackName = "P_ShortLight01";
                     }
 
+                    Debug.Log(Time.time + "CombatUpdate() " + attackingInv);
                     StartAttack(attackName);
 
                     animator.SetTrigger("Attack");
