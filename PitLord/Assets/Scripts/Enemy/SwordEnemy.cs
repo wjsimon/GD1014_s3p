@@ -182,7 +182,6 @@ public class SwordEnemy : Enemy
     }
     protected override void Kill()
     {
-        Debug.Log("SWORDENEMY KILL");
         base.Kill();
         combo = 0;
     }

@@ -27,7 +27,7 @@ public class SoundTrigger : MonoBehaviour {
 
         if(other.tag == "Player")
         {
-            SoundManager.GetComponent<SoundManager>().PlayNextNew(clip);
+            SoundManager.GetComponent<Narrator>().PlayNextNew(clip);
             played = true;
         }
     }

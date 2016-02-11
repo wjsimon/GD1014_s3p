@@ -10,8 +10,6 @@ public class SoundManager : MonoBehaviour {
 
     public AudioSource[] AudioPlayers;
 
-    AudioSource clipPlayer = new AudioSource();
-
     [HideInInspector]
     public AudioClip current;
 
@@ -48,21 +46,5 @@ public class SoundManager : MonoBehaviour {
             }
         }
 
-    }
-
-    public void PlayNextNew(AudioClip clip)
-    {
-        clipPlayer.Stop();
-        //Cuts current audio
-        clipPlayer.clip = clip;
-        clipPlayer.Play();
-    }
-
-    public void PlayNextOverride(AudioClip clip)
-    {
-        AudioSource newPlayer = new AudioSource();
-
-        newPlayer.clip = clip;
-        newPlayer.Play();
     }
 }

@@ -8,7 +8,7 @@ public class CozyZone : MonoBehaviour {
 	void Start () {
         if(manager == null)
         {
-            manager = GameObject.Find("Narrator").GetComponent<SoundManager>();
+            manager = GameObject.Find("BGM").GetComponent<SoundManager>();
         }
     }
 	
@@ -21,7 +21,6 @@ public class CozyZone : MonoBehaviour {
     {
         if(other.GetComponent<PlayerController>() != null)
         {
-            Debug.Log("Enter cozy");
             manager.EnterCozy();
         }
     }
@@ -30,7 +29,6 @@ public class CozyZone : MonoBehaviour {
     {
         if (other.GetComponent<PlayerController>() != null)
         {
-            Debug.Log("Exit cozy");
             manager.ExitCozy();
         }
     }
