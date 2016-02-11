@@ -248,7 +248,7 @@ public class PlayerController : Character
         if (move.magnitude > 0.01)
         {
             cc.Move(move * Time.deltaTime);
-            if (inAttack() && (v > 0.7 || h > 0.7))
+            if (inAttack() && (Mathf.Abs(v) > 0.7 || Mathf.Abs(h) > 0.7))
             {
                 animator.SetBool("MoveTransition", true);
                 CancelAttack();
@@ -313,7 +313,7 @@ public class PlayerController : Character
         {
             if (!(inAttack() || inRoll()))
             {
-                if(currentWeaponMode == WeaponMode.ONEHANDED)
+                if (currentWeaponMode == WeaponMode.ONEHANDED)
                 {
                     if (StaminaCost(gameObject, "LightAttack"))
                     {
@@ -325,7 +325,7 @@ public class PlayerController : Character
                         animator.SetTrigger("Attack");
                     }
                 }
-                else if(currentWeaponMode == WeaponMode.TWOHANDED)
+                else if (currentWeaponMode == WeaponMode.TWOHANDED)
                 {
                     if (StaminaCost(gameObject, "LightAttack"))
                     {
@@ -334,6 +334,7 @@ public class PlayerController : Character
 
                         StartAttack("P_GreatLight01");
 
+                        animator.SetInteger("AttackId", 1);
                         animator.SetTrigger("Attack");
                     }
                 }
@@ -391,18 +392,35 @@ public class PlayerController : Character
             triggerPressed = true;
             if (!inAttack())
             {
-                if (StaminaCost(gameObject, "HeavyAttack"))
+                if (currentWeaponMode == WeaponMode.ONEHANDED)
                 {
-                    blocking = false;
-                    SprintSwitch();
-
-                    StartAttack("P_ShortHeavy");
-
-                    animator.SetTrigger("HeavyAttack");
-
-                    if (inRoll())
+                    if (StaminaCost(gameObject, "HeavyAttack"))
                     {
-                        rollDuration = rollStorage;
+                        blocking = false;
+                        SprintSwitch();
+
+                        StartAttack("P_ShortHeavy");
+
+                        animator.SetInteger("AttackId", 0);
+                        animator.SetTrigger("HeavyAttack");
+
+                        if (inRoll())
+                        {
+                            rollDuration = rollStorage;
+                        }
+                    }
+                }
+                else if (currentWeaponMode == WeaponMode.TWOHANDED)
+                {
+                    if (StaminaCost(gameObject, "LightAttack"))
+                    {
+                        blocking = false;
+                        SprintSwitch();
+
+                        StartAttack("P_GreatHeavy01");
+
+                        animator.SetInteger("AttackId", 1);
+                        animator.SetTrigger("HeavyAttack");
                     }
                 }
             }
@@ -562,7 +580,7 @@ public class PlayerController : Character
 
         //Play Animation
         switchWeaponTimer = 1.0f;
-        animator.SetTrigger("Heal");
+        animator.SetTrigger("WeaponSwitch");
     }
 
     void UpdateWeaponMode()
@@ -686,7 +704,7 @@ public class PlayerController : Character
 
                     if (dot > 0.3f)
                     {
-                        if(enemy.targettable)
+                        if (enemy.targettable)
                         {
                             targetList.Add(enemy);
                         }
@@ -696,7 +714,7 @@ public class PlayerController : Character
         }
     }
 
-    public void SetInteraction(Interaction t)
+    public void SetInteraction( Interaction t )
     {
         interaction = t;
     }

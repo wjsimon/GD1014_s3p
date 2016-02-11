@@ -27,7 +27,10 @@ public class AnimationLibrary
         AddAnimation(new AnimationWrapper("P_ShortLight01", 0.3f, 0.9f, 1.34f, 1.66f).RomoLength(0.818f));
         AddAnimation(new AnimationWrapper("P_ShortLight02", 0.3f, 1.2f, 1.5f, 1.5f).RomoLength(0.500f));
         AddAnimation(new AnimationWrapper("P_ShortHeavy", 1.0f, 1.5f, 1.8f, 2.0f).RomoLength(0.477f));//.Knockback(2f, 2f));
-        AddAnimation(new AnimationWrapper("P_GreatLight01", 0.3f, 0.9f, 1.34f, 1.66f).RomoLength(0.477f));//.Knockback(2f, 2f));
+        AddAnimation(new AnimationWrapper("P_GreatLight01", 0.55f, 0.8f, 2.08f, 2.60f).RomoLength(0.646f));
+        AddAnimation(new AnimationWrapper("P_GreatLight02", 0.3f, 0.9f, 1.34f, 1.66f).RomoLength(0.477f));//.Knockback(2f, 2f));
+        AddAnimation(new AnimationWrapper("P_GreatHeavy01", 0.8f, 1.4f, 2.0f, 3.0f).RomoLength(0.710f));//.Knockback(2f, 2f));
+
         AddAnimation(new AnimationWrapper("E_SwordCombo01", 0.0f, 3.6f, 3.6f, 3.6f).RomoLength(0.197f));
         AddAnimation(new AnimationWrapper("E_SwordCombo02", 0.0f, 1.67f, 1.67f, 1.67f).RomoLength(0.499f));
         AddAnimation(new AnimationWrapper("E_SwordCombo03", 0.0f, 2.0f, 2.0f, 2.0f).RomoLength(0.372f));
