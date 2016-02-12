@@ -308,7 +308,7 @@ ModelImporter:
       name: Hit
       takeName: Hit
       firstFrame: 0
-      lastFrame: 60
+      lastFrame: 30
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

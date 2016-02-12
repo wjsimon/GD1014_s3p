@@ -34,7 +34,11 @@ public class AnimationLibrary
         AddAnimation(new AnimationWrapper("E_SwordCombo01", 0.0f, 3.6f, 3.6f, 3.6f).RomoLength(0.197f));
         AddAnimation(new AnimationWrapper("E_SwordCombo02", 0.0f, 1.67f, 1.67f, 1.67f).RomoLength(0.499f));
         AddAnimation(new AnimationWrapper("E_SwordCombo03", 0.0f, 2.0f, 2.0f, 2.0f).RomoLength(0.372f));
-        AddAnimation(new AnimationWrapper("E_SwordHeavy", 0.0f, 5.17f, 5.17f, 5.17f).RomoLength(0.188f));
+        AddAnimation(new AnimationWrapper("E_SwordHeavy01", 0.0f, 5.17f, 5.17f, 5.17f).RomoLength(0.188f));
+
+        AddAnimation(new AnimationWrapper("E_SpearLight01", 0.0f, 3.6f, 3.6f, 3.6f).RomoLength(0.197f));
+        AddAnimation(new AnimationWrapper("E_SpearLight02", 0.0f, 1.67f, 1.67f, 1.67f).RomoLength(0.499f));
+        AddAnimation(new AnimationWrapper("E_SpearHeavy01", 0.0f, 2.0f, 2.0f, 2.0f).RomoLength(0.372f));
     }
 
 

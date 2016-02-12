@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SwordEnemy : Enemy
+public class SpearEnemy : Enemy
 {
     //Use this for initialization
 
-    public int combo;
     protected override void Start()
     {
         base.Start();
@@ -60,9 +59,9 @@ public class SwordEnemy : Enemy
         {
             return;
         }
-        //Retreats rapidly to spawnPoint when player is out of leashing Range
+        //Retreats rapidly to spawnPoint when character is out of leashing Range
         /*
-        if (Vector3.Distance(spawnPoint.transform.position, transform.position) > leashingRange)
+        if (Vector3.Distance(spawnPoint, transform.position) > leashingRange)
         {
             ChangeState(State.RETREAT); //Retreat
             return;
@@ -74,12 +73,12 @@ public class SwordEnemy : Enemy
         {
             BehaviourRandomize = Random.Range(0, 100);
 
-            if (BehaviourRandomize >= 0 && BehaviourRandomize < 60)
+            if (BehaviourRandomize >= 0 && BehaviourRandomize < 30)
             {
                 ChangeState(State.APPROACH);
                 behavCooldown = Random.Range(0, 4) + 1;
             }
-            if(BehaviourRandomize >= 60 && BehaviourRandomize < 90)
+            if(BehaviourRandomize >= 30 && BehaviourRandomize < 80)
             {
                 if (!Physics.Raycast(transform.position, transform.right, 1) || !Physics.Raycast(transform.position, -transform.right, 1))
                 {
@@ -87,7 +86,7 @@ public class SwordEnemy : Enemy
                     behavCooldown = Random.Range(0, 4) + 1;
                 }
             }
-            if(BehaviourRandomize >= 90 && BehaviourRandomize < 100)
+            if(BehaviourRandomize >= 80 && BehaviourRandomize < 100)
             {
                 ChangeState(State.BACKOFF);
                 behavCooldown = Random.Range(0, 4) + 1;
@@ -122,7 +121,7 @@ public class SwordEnemy : Enemy
     {
         base.Attack();
 
-        if(!inAttack() && combo <= 0)
+        if(!inAttack())
         {
             ChangeState(State.IDLE);
         }
@@ -132,26 +131,27 @@ public class SwordEnemy : Enemy
             return;
         }
 
-        int attackIndex = Random.Range(0, 4);
+        Debug.Log("ATTACK");
+        /*
+        int attackIndex = Random.Range(0,3);
 
-        if(attackIndex < 3)
+        if(attackIndex <= 0)
         {
-            StartAttack("E_SwordCombo01");
-        }
-        if(attackIndex == 3)
-        {
-            StartAttack("E_SwordHeavy01");
-        }
-
-        if(attackName == "E_SwordHeavy01")
-        {
-            animator.SetInteger("AttackId", 1);
-        }
-        else
-        {
+            StartAttack("E_SpearLight01");
             animator.SetInteger("AttackId", 0);
-            combo = 2; //combo = hit count - 1
         }
+        if(attackIndex == 1)
+        {
+            StartAttack("E_SpearLight02");
+            animator.SetInteger("AttackId", 1);
+
+        }
+        if(attackIndex >= 2)
+        {
+            StartAttack("E_SpearHeavy01");
+            animator.SetInteger("AttackId", 2);
+        }
+        /**/
 
         animator.SetTrigger("Attack");
     }
@@ -159,46 +159,41 @@ public class SwordEnemy : Enemy
     protected override void CombatUpdate()
     {
         base.CombatUpdate();
-
-        if(combo > 0 && !inAttack())
-        {
-            if (attackName == "E_SwordCombo01")
-            {
-                StartAttack("E_SwordCombo02");
-                combo -= 1;
-            }
-            else if (attackName == "E_SwordCombo02")
-            {
-                StartAttack("E_SwordCombo03");
-                combo -= 1;
-            }
-        }
+        /* 
+         * Need?
+        /**/
     }
 
     protected override void CancelAttack()
     {
         base.CancelAttack();
-        combo = 0;
+        /* 
+         * Need?
+        /**/
     }
+
     protected override void Kill()
     {
         base.Kill();
-        combo = 0;
+        /* 
+         * Need?
+        /**/
     }
 
     protected override void Blocking()
     {
         base.Blocking();
+
         if (blockCooldown <= 0)
         {
             blockCooldown = 5.0f;
-            int rng = Random.Range(0, 5);
+            int rng = Random.Range(0, 2);
             Debug.Log(rng);
             if (rng == 0)
             {
-                if (!inAttack())
+                if (!inAttack() || !blocking)
                 {
-                    blockDuration = Random.Range(2, 5);
+                    blockDuration = Random.Range(5, 20);
                 }
             }
         }

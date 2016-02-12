@@ -64,6 +64,8 @@ public class Enemy : Character
     // Update is called once per frame
     protected override void Update()
     {
+        Blocking();
+        animator.SetBool("Block", blocking);
         base.Update();
 
         Debug.DrawLine(transform.position, agent.destination, Color.red);
@@ -128,25 +130,24 @@ public class Enemy : Character
 
     public void Approach()//1
     {
+        SetNavPosition(target.position);
+
         alerted = true;
 
         animator.SetFloat("X", 0);
-        animator.SetFloat("Y", 1);
+        animator.SetFloat("Y", Mathf.Clamp01(agent.velocity.magnitude));
         SwitchNavMesh(true);
-
-        SetNavPosition(target.position);
     }
 
     protected void SetNavPosition( Vector3 pos )
     {
-        if((pos-curNavPos).magnitude < 2) { return; }
-        if (navMeshTimer > 0) { return; }
-
-        //Debug.Log("go");
-        agent.SetDestination(pos);
-        agent.Resume();
-        curNavPos = pos;
-        navMeshTimer = 1.0f;
+        if ((pos - curNavPos).magnitude > 2 || navMeshTimer <= 0)
+        {
+            agent.SetDestination(pos);
+            agent.Resume();
+            curNavPos = pos;
+            navMeshTimer = 1.0f;
+        }
     }
 
     public void Retreat() //2
@@ -306,6 +307,8 @@ public class Enemy : Character
     {
         if (!alerted) { return; }
 
+        SetNavPosition(target.position);
+
         if (inAttack())
         {
             attacking -= Time.deltaTime;
@@ -325,7 +328,6 @@ public class Enemy : Character
                 weapon.GetComponent<BoxCollider>().enabled = false;
             }
         }
-
         Blocking();
     }
 
@@ -334,27 +336,13 @@ public class Enemy : Character
         //Works, needs tuning big time
         blocking = blockDuration > 0;
         blockCooldown -= Time.deltaTime;
+        animator.SetBool("Block", blocking);
 
         if(blocking)
         {
             blockDuration -= Time.deltaTime;
         }
 
-        if(blockCooldown <= 0)
-        {
-            blockCooldown = 5.0f;
-            int rng = Random.Range(0, 5);
-
-            if(rng == 0)
-            {
-                if(!inAttack())
-                {
-                    blockDuration = Random.Range(2, 5);
-                }
-            }
-        }
-
-        animator.SetBool("Block", blocking);
     }
 
     protected override void StaminaRegen()
