@@ -16,12 +16,15 @@ public class Enemy : Character
     [HideInInspector]
     protected NavMeshAgent agent;
     public Transform target;
-    public GameObject weapon;
+    public WeaponScript weapon;
     public bool alerted;
 
     public int BehaviourRandomize;
     public float blockCooldown = 5.0f;
     public float blockDuration = 0.0f;
+
+    public float leashingRange;
+    public float combatRange;
 
     public Vector3 curNavPos;
     public float navMeshTimer;
@@ -57,6 +60,11 @@ public class Enemy : Character
 
         agent = gameObject.GetComponent<NavMeshAgent>();
         agent.destination = target.position;
+
+        if(weapon == null)
+        {
+            weapon = gameObject.transform.FindChild("Sword").gameObject.GetComponent<WeaponScript>();
+        }
 
         RegisterObject();
     }

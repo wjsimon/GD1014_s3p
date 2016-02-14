@@ -6,6 +6,7 @@ public class CameraController : MonoBehaviour {
     public PlayerController player;
     public Transform CameraSmooth;
     public Transform CameraTarget;
+    public Transform dummy;
     public float distance = 6;
     public float angleV;
     public float angleDiffH;
@@ -19,6 +20,26 @@ public class CameraController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+        if(player == null)
+        {
+            player = GameObject.Find("Player").GetComponent<PlayerController>();
+        }
+        if(dummy == null)
+        {
+            GameObject dummyObj = new GameObject();
+            dummyObj.transform.SetParent(this.transform);
+            dummy = dummyObj.transform;      
+        }       
+        if(CameraSmooth == null)
+        {
+            CameraSmooth = GameObject.Find("CameraSmooth").transform;
+        }
+        if (CameraTarget == null)
+        {
+            CameraTarget = player.transform.FindChild("CameraTarget").transform;
+        }
+
         angleV = transform.rotation.eulerAngles.x;
         CameraSmooth.transform.position = transform.position;
         CameraSmooth.transform.rotation = transform.rotation;
@@ -61,7 +82,6 @@ public class CameraController : MonoBehaviour {
         moveTarget.Normalize();
         moveTarget *= distance;
 
-        Transform dummy = transform.GetChild(0);
         dummy.position = CameraTarget.position+moveTarget;
         dummy.RotateAround(CameraTarget.position, transform.right, angleV);
         moveTarget = dummy.position;

@@ -18,10 +18,6 @@ public class Attributes : MonoBehaviour
     public List<AudioClip> onHit;
     public List<AudioClip> onDeath;
 
-    public float leashingRange;
-    public float detectionRange;
-    public float combatRange;
-
     protected float gravity = 9.81f;
     protected float fallSpeed = 0;
     protected bool falling;
