@@ -68,7 +68,6 @@ public class Enemy : Character
     // Update is called once per frame
     protected override void Update()
     {
-        Blocking();
         animator.SetBool("Block", blocking);
         base.Update();
 
@@ -89,6 +88,7 @@ public class Enemy : Character
     protected void Behaviour( State state )
     {
         //Debug.Log("behaviour state " + state);
+        if (inStun()) { return; }
 
         switch (state)
         {
@@ -116,7 +116,7 @@ public class Enemy : Character
 
     protected virtual void LookAtTarget()
     {
-        transform.forward = Vector3.Lerp(transform.forward, target.position-transform.position, Time.deltaTime);
+        transform.forward = Vector3.Lerp(transform.forward, target.position-transform.position, Time.deltaTime * turnSpeed);
     }
 
     protected virtual void Tracking()
@@ -310,6 +310,7 @@ public class Enemy : Character
     protected virtual void CombatUpdate()
     {
         if (!alerted) { return; }
+        if (inStun()) { return; }
 
         SetNavPosition(target.position);
 
@@ -377,9 +378,11 @@ public class Enemy : Character
     public override void SoftReset()
     {
         base.SoftReset();
+
         agent.Stop();
         ChangeState(State.IDLE);
         agent.Warp(spawnPoint);
+        weapon.GetComponent<BoxCollider>().enabled = false;
         alerted = false;
     }
     protected override void Kill()

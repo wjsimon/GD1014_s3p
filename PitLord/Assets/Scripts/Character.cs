@@ -30,6 +30,8 @@ public class Character : Attributes
     public bool running;
     public float stunned;
 
+    public bool colliderSwitch;
+
     public WeaponScript shortSword;
     public WeaponScript shield;
     public WeaponScript greatSword;
@@ -73,13 +75,13 @@ public class Character : Attributes
     }
 
 
-    public override bool ApplyDamage(int healthDmg, int staminaDmg, Character source)
+    public override bool ApplyDamage( int healthDmg, int staminaDmg, Character source )
     {
-        if (!base.ApplyDamage(healthDmg,staminaDmg, source)) { return false; }
+        if (!base.ApplyDamage(healthDmg, staminaDmg, source)) { return false; }
 
         if (iFrames > 0)
         {
-            Debug.Log("INVINCIBLE");
+            //Debug.Log("INVINCIBLE");
             return false;
         }
 
@@ -94,9 +96,8 @@ public class Character : Attributes
         else
         {
             currentHealth -= healthDmg;
-            stunned = 0.2f;
 
-            if(currentHealth > 0)
+            if (currentHealth > 0)
             {
                 OnHit();
             }
@@ -108,35 +109,8 @@ public class Character : Attributes
             Kill();
         }
 
-        else
+        if (blocking && currentStamina <= 0)
         {
-            if (source != this)
-            {
-                if (blocking == false)
-                {
-                    CancelAttack();
-                    //Set BlockHit Int for hit
-                    if (!KnockBack(source))
-                    {
-                        GetComponent<Animator>().SetInteger("HitInt", 0);
-                        SetAnimTrigger("Hit");
-                        SetInvincibility(0.5f);
-                    }
-                }
-
-                if (blocking == true && currentStamina > 0)
-                {
-                    //Set BlockHit Int for blockhit
-                    GetComponent<Animator>().SetInteger("HitInt", 1);
-                    SetAnimTrigger("Hit");
-                    SetInvincibility(0.1f);
-                }
-            }
-        }
-
-        if (currentStamina <= 0)
-        {
-            //BLOCK BREAK
             blocking = false;
             GetComponent<Animator>().SetInteger("HitInt", 2);
             SetAnimTrigger("Hit");
@@ -180,23 +154,23 @@ public class Character : Attributes
         }
     }
 
-    protected virtual void SetRomo(float duration, float length)
+    protected virtual void SetRomo( float duration, float length )
     {
-        if (length == 0) return;
+        if (length == 0)
+            return;
 
         romoStartTime = Time.time;
         romoDuration = duration;
         romoDirection = length;
     }
 
-    protected virtual void StartAttack(string name)
+    protected virtual void StartAttack( string name )
     {
         attackName = name;
-
         float duration = AnimationLibrary.Get().SearchByName(attackName).duration;
-
         attacking = duration;
         attackingInv = 0;
+        colliderSwitch = true;
 
         SetRomo(duration, AnimationLibrary.Get().SearchByName(attackName).romoLength);
     }
@@ -207,6 +181,7 @@ public class Character : Attributes
         attackName = "default";
         attacking = 0;
         attackingInv = 0;
+        colliderSwitch = false;
 
         romoDuration = 0;
         romoStartTime = 0;
@@ -216,10 +191,10 @@ public class Character : Attributes
         if (shield != null) { shield.GetComponent<BoxCollider>().enabled = false; }
     }
 
-    protected virtual bool KnockBack(Character source)
+    protected virtual bool KnockBack( Character source )
     {
         float duration = AnimationLibrary.Get().SearchByName(source.attackName).koboDuration;
-        if(duration <= 0) { return false; }
+        if (duration <= 0) { return false; }
 
         Vector3 dir = (transform.position - source.transform.position);
         dir.y = 0;
@@ -250,7 +225,8 @@ public class Character : Attributes
 
     public virtual void OnHit()
     {
-
+        stunned = 0.5f;
+        CancelAttack();
     }
 
     public virtual void LaunchProjectile()
@@ -310,7 +286,7 @@ public class Character : Attributes
 
     protected virtual void WeaponColliderUpdate()
     {
-        if(shortSword == null && greatSword == null && shield == null)
+        if (shortSword == null && greatSword == null && shield == null)
         {
             return;
         }
@@ -318,30 +294,47 @@ public class Character : Attributes
         if (inAttack())
         {
             WeaponScript weapon = shortSword;
-            if(attackName == "P_ShortHeavy")
+            if (attackName == "P_ShortHeavy")
             {
                 weapon = shield;
             }
 
-            if(currentWeaponMode == WeaponMode.TWOHANDED)
+            if (currentWeaponMode == WeaponMode.TWOHANDED)
             {
                 weapon = greatSword;
             }
 
             if ((attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart) && (attackingInv <= AnimationLibrary.Get().SearchByName(attackName).colEnd))
             {
-                weapon.GetComponent<BoxCollider>().enabled = true;
+                EnableWeaponCollider(weapon);
             }
             else
             {
-                weapon.GetComponent<BoxCollider>().enabled = false;
+                DisableWeaponCollider(weapon);
             }
         }
         else
         {
-            if (shortSword != null)shortSword.GetComponent<BoxCollider>().enabled = false;
-            if (shield != null)shield.GetComponent<BoxCollider>().enabled = false;
-            if (greatSword != null)greatSword.GetComponent<BoxCollider>().enabled = false;
+            if (shortSword != null)
+                shortSword.GetComponent<BoxCollider>().enabled = false;
+            if (shield != null)
+                shield.GetComponent<BoxCollider>().enabled = false;
+            if (greatSword != null)
+                greatSword.GetComponent<BoxCollider>().enabled = false;
         }
+    }
+
+    protected virtual void EnableWeaponCollider( WeaponScript weapon )
+    {
+        if (colliderSwitch)
+        {
+            weapon.GetComponent<BoxCollider>().enabled = true;
+            colliderSwitch = false;
+        }
+    }
+    protected virtual void DisableWeaponCollider( WeaponScript weapon )
+    {
+        weapon.GetComponent<BoxCollider>().enabled = false;
+        colliderSwitch = true;
     }
 }

@@ -391,7 +391,7 @@ ModelImporter:
       name: Combo01
       takeName: Combo01
       firstFrame: 360
-      lastFrame: 470
+      lastFrame: 425
       wrapMode: 0
       orientationOffsetY: 14.9200001
       level: 0
@@ -760,7 +760,7 @@ ModelImporter:
       name: Combo02
       takeName: Combo02
       firstFrame: 580
-      lastFrame: 630
+      lastFrame: 600
       wrapMode: 0
       orientationOffsetY: -9.15999985
       level: 0
@@ -1129,7 +1129,7 @@ ModelImporter:
       name: Combo03
       takeName: Combo03
       firstFrame: 530
-      lastFrame: 590
+      lastFrame: 560
       wrapMode: 0
       orientationOffsetY: -4.73999977
       level: 0

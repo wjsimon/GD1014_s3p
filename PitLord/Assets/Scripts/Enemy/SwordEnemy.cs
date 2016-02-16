@@ -193,7 +193,7 @@ public class SwordEnemy : Enemy
         {
             blockCooldown = 5.0f;
             int rng = Random.Range(0, 5);
-            Debug.Log(rng);
+            //Debug.Log(rng);
             if (rng == 0)
             {
                 if (!inAttack())

@@ -123,6 +123,7 @@ public class SpearEnemy : Enemy
 
     protected override void Attack()
     {
+        //BLOCKING CONDITIONS
         base.Attack();
 
         if(!inAttack())
@@ -134,8 +135,6 @@ public class SpearEnemy : Enemy
         {
             return;
         }
-
-        Debug.Log("ATTACK");
         
         int attackIndex = Random.Range(0,3);
 
@@ -156,7 +155,7 @@ public class SpearEnemy : Enemy
             animator.SetInteger("AttackId", 2);
         }
         /**/
-
+        Debug.Log(attackName);
         behavCooldown = AnimationLibrary.Get().SearchByName(attackName).duration;
         animator.SetTrigger("Attack");
     }
@@ -193,7 +192,7 @@ public class SpearEnemy : Enemy
         {
             blockCooldown = 5.0f;
             int rng = Random.Range(0, 4);
-            Debug.Log(rng);
+            //Debug.Log(rng);
             if (rng != 0)
             {
                 if (!inAttack() || !blocking)

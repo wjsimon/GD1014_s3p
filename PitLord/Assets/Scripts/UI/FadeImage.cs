@@ -34,13 +34,11 @@ public class FadeImage : MonoBehaviour
 
     public void FadeIn()
     {
-        Debug.Log("FadeIN");
         fadeIn = true;
     }
 
     public void FadeOut()
     {
-        Debug.Log("FadeOUT");
         fadeIn = false;
     }
     float FakeLerp( float n, float target, float a )

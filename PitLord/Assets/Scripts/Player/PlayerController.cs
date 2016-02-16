@@ -45,7 +45,10 @@ public class PlayerController : Character
     protected override void Start()
     {
         //Debug
-        currentWeaponMode = WeaponMode.ONEHANDED;
+        int mode = PlayerPrefs.GetInt("WeaponMode");
+        newWeaponMode = mode == 0 ? WeaponMode.ONEHANDED : WeaponMode.TWOHANDED;
+        switchWeaponTimer = 0.01f;
+        animator.SetInteger("MovesetId", mode);
 
         base.Start();
 
@@ -53,8 +56,6 @@ public class PlayerController : Character
         rollStorage = rollDuration;
         rollDuration = rollDelay;
         heals = maxHeals;
-
-        //lockOnTarget = GameObject.Find("TestEnemy").transform;
 
         cc = GetComponent<CharacterController>();
     }
@@ -192,13 +193,11 @@ public class PlayerController : Character
         {
             return;
         }
-        if (inAttack() && !(inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).cancel))
+
+        if (inAttack())
         {
-            if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart)
-            {
-                //return;
-            }
-            else
+            //!(inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).cancel)
+            if (attackingInv <= AnimationLibrary.Get().SearchByName(attackName).colStart && lockOnTarget == null)
             {
                 Vector3 traceDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                 if (traceDir.magnitude > 0.1f)
@@ -515,7 +514,7 @@ public class PlayerController : Character
 
     void TargettingUpdate()
     {
-        if(lockOnTarget != null && !lockOnTarget.GetComponent<Character>().targettable)
+        if (lockOnTarget != null && !lockOnTarget.GetComponent<Character>().targettable)
         {
             lockOnTarget = null;
             return;
@@ -582,13 +581,17 @@ public class PlayerController : Character
         switchWeaponTimer = 2.5f;
         animator.SetTrigger("WeaponSwitch");
 
-        if(newWeaponMode == WeaponMode.ONEHANDED)
+        if (newWeaponMode == WeaponMode.ONEHANDED)
         {
             animator.SetInteger("MovesetId", 0);
+            PlayerPrefs.SetInt("WeaponMode", 0);
+            PlayerPrefs.Save();
         }
         else if (newWeaponMode == WeaponMode.TWOHANDED)
         {
             animator.SetInteger("MovesetId", 1);
+            PlayerPrefs.SetInt("WeaponMode", 1);
+            PlayerPrefs.Save();
         }
     }
 

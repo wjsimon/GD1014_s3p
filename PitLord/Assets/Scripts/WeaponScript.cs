@@ -33,7 +33,14 @@ public class WeaponScript : MonoBehaviour {
 
             //Debug.LogWarning("Player hit");
             CalcHitDirection();
-            enemy.ApplyDamage(healthDmg, staminaDmg, owner);
+            bool hit = enemy.ApplyDamage(healthDmg, staminaDmg, owner);
+
+            if (hit) 
+            {
+                GetComponent<BoxCollider>().enabled = false;
+                owner.colliderSwitch = false;
+                Debug.Log("script " + GetComponent<BoxCollider>().enabled);
+            }
         }
     }
 
