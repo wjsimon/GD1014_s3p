@@ -43,8 +43,9 @@ public class Narrator : MonoBehaviour
         clipPlayer.Play();
     }
 
-    public void PlayNextOverride(AudioClip clip)
+    public void PlayNextParallel(AudioClip clip)
     {
+        //Second Player instead of newing one
         AudioSource newPlayer = new AudioSource();
 
         newPlayer.clip = clip;

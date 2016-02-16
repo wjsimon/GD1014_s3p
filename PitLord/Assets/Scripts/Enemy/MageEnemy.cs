@@ -82,46 +82,6 @@ public class MageEnemy : Enemy
         //StartWarp();
         //StartDamageSpell();
         //StartHeal();
-
-        //Retreats rapidly to spawnPoint when character is out of leashing Range
-        /*
-        if (Vector3.Distance(spawnPoint, transform.position) > leashingRange)
-        {
-            ChangeState(State.RETREAT); //Retreat
-            return;
-        }
-        /**/
-
-        /*
-        //Within detection Range, enemy approaches the player
-        if (Vector3.Distance(target.position, transform.position) > combatRange && (behavCooldown <= 0) && !inAttack())
-        {
-            ChangeState(State.APPROACH);
-            behavCooldown = Random.Range(0, 4) + 1;
-        }
-
-        //Within Combat Range, the enemy decides to attack, backoff or strafe around player
-        if (Vector3.Distance(target.position, transform.position) <= combatRange && !inAttack())
-        {
-            //Attack, BackOff, Strafe for Combat
-            BehaviourRandomize = (Random.Range(0, 3));
-
-            if (BehaviourRandomize == 0)
-            {
-                ChangeState(State.ATTACK);
-            }
-            if (BehaviourRandomize == 1)
-            {
-                ChangeState(State.STRAFE);
-                behavCooldown = Random.Range(0, 4) + 1;
-            }
-            if (BehaviourRandomize == 2)
-            {
-                ChangeState(State.BACKOFF);
-                behavCooldown = Random.Range(0, 4) + 1;
-            }
-        }
-        /**/
     }
 
     protected override void CombatUpdate()
@@ -240,7 +200,6 @@ public class MageEnemy : Enemy
         int rng = Random.Range(0, locations.Count);
         agent.Warp(locations[rng].position);
         lastPort = locations[rng];
-        //agent.Warp(target.position);
 
         animator.SetTrigger("Warp");
     }
