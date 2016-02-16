@@ -340,7 +340,7 @@ public class PlayerController : Character
                 }
 
             }
-            else if (inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart)
+            else if (inAttack() && attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colEnd)
             {
                 if (StaminaCost(gameObject, "LightAttack"))
                 {
@@ -357,9 +357,6 @@ public class PlayerController : Character
                         {
                             attackName = "P_ShortLight01";
                         }
-                    }
-                    else if (currentWeaponMode == WeaponMode.TWOHANDED)
-                    {
                     }
 
                     StartAttack(attackName);

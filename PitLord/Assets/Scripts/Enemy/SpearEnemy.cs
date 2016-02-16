@@ -47,6 +47,11 @@ public class SpearEnemy : Enemy
         }
     }
 
+    protected override void LookAtTarget()
+    {
+        transform.forward = Vector3.Lerp(transform.forward, target.position - transform.position, Time.deltaTime * turnSpeed);
+    }
+
     void BehaviourSwitch()
     {
         //ChangeState(4);
@@ -102,7 +107,6 @@ public class SpearEnemy : Enemy
             {
                 case 1:
                     ChangeState(State.ATTACK);
-                    behavCooldown = Random.Range(0, 4) + 1;
                     break;
                 case -1:
                     ChangeState(State.BACKOFF);
@@ -125,14 +129,14 @@ public class SpearEnemy : Enemy
         {
             ChangeState(State.IDLE);
         }
-        //animationLock = true;
+
         if (inAttack())
         {
             return;
         }
 
         Debug.Log("ATTACK");
-        /*
+        
         int attackIndex = Random.Range(0,3);
 
         if(attackIndex <= 0)
@@ -153,6 +157,7 @@ public class SpearEnemy : Enemy
         }
         /**/
 
+        behavCooldown = AnimationLibrary.Get().SearchByName(attackName).duration;
         animator.SetTrigger("Attack");
     }
 
@@ -187,20 +192,15 @@ public class SpearEnemy : Enemy
         if (blockCooldown <= 0)
         {
             blockCooldown = 5.0f;
-            int rng = Random.Range(0, 2);
+            int rng = Random.Range(0, 4);
             Debug.Log(rng);
-            if (rng == 0)
+            if (rng != 0)
             {
                 if (!inAttack() || !blocking)
                 {
-                    blockDuration = Random.Range(5, 20);
+                    blockDuration = Random.Range(10, 21);
                 }
             }
         }
-    }
-
-    protected override void RegisterObject()
-    {
-        GameObject.Find("GameManager").GetComponent<GameManager>().AddEnemy(GetComponent<Enemy>());
     }
 }

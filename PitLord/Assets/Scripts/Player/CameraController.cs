@@ -7,6 +7,7 @@ public class CameraController : MonoBehaviour {
     public Transform CameraSmooth;
     public Transform CameraTarget;
     public Transform dummy;
+    public LayerMask cameraIgnore;
     public float distance = 6;
     public float angleV;
     public float angleDiffH;
@@ -94,7 +95,7 @@ public class CameraController : MonoBehaviour {
         RaycastHit hitInfo;
         //Debug.DrawRay(CameraTarget.position, (transform.position - CameraTarget.transform.position), Color.green);
 
-        if (Physics.Raycast(CameraTarget.position, (transform.position - CameraTarget.transform.position), out hitInfo, distance,~(1<<LayerMask.NameToLayer("NoCameraRaycast"))))
+        if (Physics.Raycast(CameraTarget.position, (transform.position - CameraTarget.transform.position), out hitInfo, distance, ~cameraIgnore))
         {
             transform.position = hitInfo.point - (transform.position - CameraTarget.transform.position).normalized * 1.0f;
             float fDist=(transform.position - CameraTarget.position).magnitude;
@@ -120,7 +121,7 @@ public class CameraController : MonoBehaviour {
         Debug.DrawRay(charRight, (camRight - CameraTarget.transform.position), Color.red);
         Debug.DrawRay(charLeft, (camLeft - CameraTarget.transform.position), Color.green);
 
-        if (Physics.Raycast(charRight, (camRight - CameraTarget.transform.position), out hitInfo, distance, ~(1 << LayerMask.NameToLayer("Character"))))
+        if (Physics.Raycast(charRight, (camRight - CameraTarget.transform.position), out hitInfo, distance, ~cameraIgnore))
         {
             float colDistance = (CameraTarget.position - hitInfo.point).magnitude;
 
@@ -129,7 +130,7 @@ public class CameraController : MonoBehaviour {
                 minDistance = colDistance;
             }
         }
-        if (Physics.Raycast(charLeft, (camLeft - CameraTarget.transform.position), out hitInfo, distance, ~(1 << LayerMask.NameToLayer("Character"))))
+        if (Physics.Raycast(charLeft, (camLeft - CameraTarget.transform.position), out hitInfo, distance, ~cameraIgnore))
         {
             float colDistance = (CameraTarget.position - hitInfo.point).magnitude;
 

@@ -22,6 +22,7 @@ public class Enemy : Character
     public int BehaviourRandomize;
     public float blockCooldown = 5.0f;
     public float blockDuration = 0.0f;
+    public float turnSpeed = 360;
 
     public float leashingRange;
     public float combatRange;
@@ -60,11 +61,6 @@ public class Enemy : Character
 
         agent = gameObject.GetComponent<NavMeshAgent>();
         agent.destination = target.position;
-
-        if(weapon == null)
-        {
-            weapon = gameObject.transform.FindChild("Sword").gameObject.GetComponent<WeaponScript>();
-        }
 
         RegisterObject();
     }
@@ -118,7 +114,7 @@ public class Enemy : Character
         }
     }
 
-    protected void LookAtTarget()
+    protected virtual void LookAtTarget()
     {
         transform.forward = Vector3.Lerp(transform.forward, target.position-transform.position, Time.deltaTime);
     }
@@ -243,7 +239,7 @@ public class Enemy : Character
         animator.SetFloat("X", 0);
         animator.SetFloat("Y", -1);
 
-        transform.LookAt(target);
+        transform.forward = Vector3.Lerp(transform.forward, target.position - transform.position, Time.deltaTime * turnSpeed);
         agent.Move(-transform.forward * Time.deltaTime);
     }
 
@@ -336,6 +332,7 @@ public class Enemy : Character
                 weapon.GetComponent<BoxCollider>().enabled = false;
             }
         }
+
         Blocking();
     }
 
@@ -349,6 +346,11 @@ public class Enemy : Character
         if(blocking)
         {
             blockDuration -= Time.deltaTime;
+            turnSpeed = 90;
+        }
+        else
+        {
+            turnSpeed = 360;
         }
 
     }
@@ -365,7 +367,11 @@ public class Enemy : Character
     protected override void SetInvincibility( float dur )
     {
         base.SetInvincibility(dur);
-        GetComponent<Enemy>().weapon.GetComponent<BoxCollider>().enabled = false;
+
+        if(weapon != null)
+        {
+            GetComponent<Enemy>().weapon.GetComponent<BoxCollider>().enabled = false;
+        }
     }
 
     public override void SoftReset()
@@ -413,7 +419,7 @@ public class Enemy : Character
         GameManager.instance.AddEnemy(GetComponent<Enemy>());
     }
 
-    public void Alert()
+    public virtual void Alert()
     {
         alerted = true;
         ChangeState(State.APPROACH);

@@ -95,6 +95,11 @@ public class Character : Attributes
         {
             currentHealth -= healthDmg;
             stunned = 0.2f;
+
+            if(currentHealth > 0)
+            {
+                OnHit();
+            }
         }
 
         if (currentHealth <= 0)
@@ -243,7 +248,12 @@ public class Character : Attributes
         return stunned > 0;
     }
 
-    public void LaunchProjectile()
+    public virtual void OnHit()
+    {
+
+    }
+
+    public virtual void LaunchProjectile()
     {
         //can be changed to random, can be overridden in specific enemies;
         ProjectileScript projectile = projectiles[0];
@@ -300,6 +310,11 @@ public class Character : Attributes
 
     protected virtual void WeaponColliderUpdate()
     {
+        if(shortSword == null && greatSword == null && shield == null)
+        {
+            return;
+        }
+
         if (inAttack())
         {
             WeaponScript weapon = shortSword;

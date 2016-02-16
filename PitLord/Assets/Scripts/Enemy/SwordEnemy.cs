@@ -103,7 +103,6 @@ public class SwordEnemy : Enemy
             {
                 case 1:
                     ChangeState(State.ATTACK);
-                    behavCooldown = Random.Range(0, 4) + 1;
                     break;
                 case -1:
                     ChangeState(State.BACKOFF);
@@ -153,6 +152,7 @@ public class SwordEnemy : Enemy
             combo = 2; //combo = hit count - 1
         }
 
+        behavCooldown = AnimationLibrary.Get().SearchByName(attackName).duration;
         animator.SetTrigger("Attack");
     }
 
@@ -202,10 +202,5 @@ public class SwordEnemy : Enemy
                 }
             }
         }
-    }
-
-    protected override void RegisterObject()
-    {
-        GameObject.Find("GameManager").GetComponent<GameManager>().AddEnemy(GetComponent<Enemy>());
     }
 }
