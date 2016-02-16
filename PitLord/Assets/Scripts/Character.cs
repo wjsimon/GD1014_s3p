@@ -335,6 +335,5 @@ public class Character : Attributes
     protected virtual void DisableWeaponCollider( WeaponScript weapon )
     {
         weapon.GetComponent<BoxCollider>().enabled = false;
-        colliderSwitch = true;
     }
 }

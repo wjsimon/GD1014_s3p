@@ -17,6 +17,7 @@ public class WeaponScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         lastPos = transform.position;
+        Debug.Log(owner.colliderSwitch);
 	}
 
     void OnTriggerEnter(Collider other)
@@ -32,11 +33,11 @@ public class WeaponScript : MonoBehaviour {
             /**/
 
             //Debug.LogWarning("Player hit");
-            CalcHitDirection();
             bool hit = enemy.ApplyDamage(healthDmg, staminaDmg, owner);
 
             if (hit) 
             {
+                CalcHitDirection();
                 GetComponent<BoxCollider>().enabled = false;
                 owner.colliderSwitch = false;
                 Debug.Log("script " + GetComponent<BoxCollider>().enabled);
