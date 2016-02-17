@@ -1,15 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SoundTrigger : MonoBehaviour {
 
-    public GameObject SoundManager;
-    public AudioClip clip;
+    public static bool allAlpacas;
+    public bool unique;
+    public Narrator narrator;
+    public AudioClip uniqueClip;
+    public List<AudioClip> randomClips;
     bool played;
 
 	// Use this for initialization
 	void Start () {
-        SoundManager = GameObject.Find("Narrator");
+        narrator = GameObject.Find("Narrator").GetComponent<Narrator>();
         played = false;
 	}
 	
@@ -25,10 +29,38 @@ public class SoundTrigger : MonoBehaviour {
             return;
         }
 
-        if(other.tag == "Player")
+        if(other.GetComponent<PlayerController>() != null)
         {
-            SoundManager.GetComponent<Narrator>().PlayNextNew(clip);
-            played = true;
+            //Trigger Sound
         }
+    }
+
+    public void TriggerSound()
+    {
+        if(played) { return; }
+        if(uniqueClip == null && randomClips.Count == 0) { return; }
+
+        played = true;
+
+        if(allAlpacas)
+        {
+            Debug.Log("Playing All Alpacas Dead Line");
+            narrator.clipPlayer.PlayOneShot(new AudioClip());
+            enabled = false;
+            return;
+        }
+
+        if(unique && uniqueClip != null)
+        {
+            Debug.Log("Playing unique/first time Line");
+            narrator.clipPlayer.PlayOneShot(uniqueClip);
+            unique = false;
+            return;
+        }
+
+        Debug.Log("Playing Random Trigger Line");
+        int rng = Random.Range(0, randomClips.Count);
+        narrator.clipPlayer.PlayOneShot(randomClips[rng]);
+        randomClips.Remove(randomClips[rng]);
     }
 }

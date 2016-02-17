@@ -17,7 +17,7 @@ public class WeaponScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         lastPos = transform.position;
-        Debug.Log(owner.colliderSwitch);
+        //Debug.Log(owner.colliderSwitch);
 	}
 
     void OnTriggerEnter(Collider other)

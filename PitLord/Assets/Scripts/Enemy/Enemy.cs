@@ -7,6 +7,20 @@ public class Enemy : Character
     bool blending = true;
     float animationBlend;
 
+    [HideInInspector]
+    public CombatTrigger combatTrigger;
+
+    public enum EnemyType
+    {
+        SWORDENEMY,
+        SPEARENEMY,
+        BOWENEMY,
+        MAGENEMY,
+        COUNT
+    }
+
+    protected EnemyType type;
+
     /*
     public string currentAnimation;
     public float animationCooldown;
@@ -388,6 +402,8 @@ public class Enemy : Character
     protected override void Kill()
     {
         base.Kill();
+
+        combatTrigger.active -= 1;
     }
 
     protected override void CancelAttack()
@@ -410,6 +426,7 @@ public class Enemy : Character
         }
     }
 
+
     protected override void RegisterObject()
     {
         base.RegisterObject();
@@ -425,6 +442,7 @@ public class Enemy : Character
     public virtual void Alert()
     {
         alerted = true;
+        combatTrigger.active += 1;
         ChangeState(State.APPROACH);
     }
 }

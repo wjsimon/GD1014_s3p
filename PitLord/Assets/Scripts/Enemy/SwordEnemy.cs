@@ -6,6 +6,11 @@ public class SwordEnemy : Enemy
     //Use this for initialization
 
     public int combo;
+    public LayerMask targetLayer;
+
+    public static bool encountered;
+    float encounterUpdate;
+
     protected override void Start()
     {
         base.Start();
@@ -16,6 +21,9 @@ public class SwordEnemy : Enemy
             return;
         }
 
+        encountered = PlayerPrefs.GetInt("SwordEnemy/encountered/") > 0;
+        encounterUpdate = 0;
+        type = EnemyType.SWORDENEMY;
         ChangeState(0);
     }
 
@@ -32,6 +40,9 @@ public class SwordEnemy : Enemy
 
         BehaviourSwitch();
         Tracking();
+
+
+        FirstEncounterCheck();
     }
 
     protected override void Tracking()
@@ -202,5 +213,59 @@ public class SwordEnemy : Enemy
                 }
             }
         }
+    }
+
+
+    //Problems getting this thing to work with Inheritance... copied it into all individual enemies.
+    protected virtual void FirstEncounterCheck()
+    {
+        if (encountered) { return; }
+        encounterUpdate += Time.deltaTime;
+
+        if (encounterUpdate >= 3.0f)
+        {
+            encounterUpdate = 0;
+
+            if (Vector3.Distance(target.position, transform.position) >= 20f)
+            {
+                return;
+            }
+
+            Vector3 yA = Camera.main.transform.forward;
+            Vector3 yB = transform.position - Camera.main.transform.position;
+
+            yA.y = 0;
+            yB.y = 0;
+
+            yA.Normalize();
+            yB.Normalize();
+
+            float dot = Vector3.Dot(yA, yB);
+            //Debug.Log(name + " " + dot);
+            if (dot < 0.7f) { return; }
+
+            RaycastHit hitInfo;
+            Transform origin = transform.FindChild("RayCastTarget");
+            Transform rayTarget = target.FindChild("CameraTarget");
+
+            //Debug.DrawRay(origin.position, rayTarget.position - origin.position, Color.cyan, 30);
+            if (Physics.Raycast(origin.position, rayTarget.position - origin.position, out hitInfo, targetLayer))
+            {
+                if (hitInfo.transform.GetComponent<PlayerController>() != null)
+                {
+                    FirstEncounterSoundTrigger();
+                }
+            }
+        }
+    }
+
+    public void FirstEncounterSoundTrigger()
+    {
+        if(encountered) { return; }
+
+        encountered = true;
+        PlayerPrefs.SetInt("SwordEnemy/encountered/", 1);
+        PlayerPrefs.Save();
+        GameManager.instance.narrator.PlayUniqueEncounter(type);
     }
 }
