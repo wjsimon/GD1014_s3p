@@ -80,6 +80,8 @@ public class Enemy : Character
         encounterUpdate = 0;
 
         agent = gameObject.GetComponent<NavMeshAgent>();
+        //agent.updateRotation = false;
+        
         agent.destination = target.position;
 
         RegisterObject();
@@ -137,9 +139,11 @@ public class Enemy : Character
 
     protected virtual void LookAtTarget()
     {
-        transform.forward = Vector3.Lerp(transform.forward, target.position-transform.position, Time.deltaTime * turnSpeed);
+        Vector3 fo = Vector3.Lerp(transform.forward, target.position - transform.position, Time.deltaTime * turnSpeed);
+        fo.y = 0;
+        fo.Normalize();
+        transform.forward = fo;
     }
-
     protected virtual void Tracking()
     {
 

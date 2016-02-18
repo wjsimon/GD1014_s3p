@@ -138,7 +138,7 @@ public class Character : Attributes
         SetInvincibility(0.5f);
         CancelAttack();
 
-        cc.enabled = false;
+        if (cc != null) { cc.enabled = false; }
         blocking = false;
         targettable = false;
         SetAnimTrigger("Death");
@@ -254,7 +254,7 @@ public class Character : Attributes
         currentStamina = maxStamina;
         blocking = false;
         targettable = true;
-        cc.enabled = true;
+        if (cc != null) { cc.enabled = true; }
     }
 
     protected virtual bool StaminaCost( GameObject source, string action )
