@@ -336,7 +336,6 @@ public class Character : Attributes
     {
         if (colliderSwitch)
         {
-            Debug.Log("collider true");
             weapon.GetComponent<BoxCollider>().enabled = true;
             colliderSwitch = false;
         }

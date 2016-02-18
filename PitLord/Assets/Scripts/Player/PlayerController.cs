@@ -48,7 +48,7 @@ public class PlayerController : Character
         int mode = PlayerPrefs.GetInt("WeaponMode");
         newWeaponMode = mode == 0 ? WeaponMode.ONEHANDED : WeaponMode.TWOHANDED;
         switchWeaponTimer = 0.01f;
-        animator.SetInteger("MovesetId", mode);
+        animator.SetFloat("MovesetId", mode);
 
         base.Start();
 
@@ -209,6 +209,15 @@ public class PlayerController : Character
                     transform.forward = Vector3.Lerp(transform.forward, traceDir, 0.07f);
                 }
             }
+            if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).cancel && (Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0.7 || Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0.7))
+            {
+                animator.SetBool("MoveTransition", true);
+                CancelAttack();
+            }
+            else
+            {
+                animator.SetBool("MoveTransition", false);
+            }
 
             return;
         }
@@ -246,16 +255,6 @@ public class PlayerController : Character
         if (move.magnitude > 0.01)
         {
             cc.Move(move * Time.deltaTime);
-            if (inAttack() && (Mathf.Abs(v) > 0.7 || Mathf.Abs(h) > 0.7))
-            {
-                animator.SetBool("MoveTransition", true);
-                CancelAttack();
-            }
-            else
-            {
-                animator.SetBool("MoveTransition", false);
-            }
-
 
             if (Input.GetAxis("Sprint") > 0)
             {
@@ -583,13 +582,13 @@ public class PlayerController : Character
 
         if (newWeaponMode == WeaponMode.ONEHANDED)
         {
-            animator.SetInteger("MovesetId", 0);
+            animator.SetFloat("MovesetId", 0);
             PlayerPrefs.SetInt("WeaponMode", 0);
             PlayerPrefs.Save();
         }
         else if (newWeaponMode == WeaponMode.TWOHANDED)
         {
-            animator.SetInteger("MovesetId", 1);
+            animator.SetFloat("MovesetId", 1);
             PlayerPrefs.SetInt("WeaponMode", 1);
             PlayerPrefs.Save();
         }
