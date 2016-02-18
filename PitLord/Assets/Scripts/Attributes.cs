@@ -38,11 +38,13 @@ public class Attributes : MonoBehaviour
         bool selfIsPlayer = this is PlayerController;
         bool selfIsEnemy = this is Enemy;
         bool selfIsDesObj = this is DestructableObject;
+        bool selfIsAlpaca = this is Alpaca;
         bool sourceIsPlayer = source is PlayerController;
         bool sourceIsEnemy = source is Enemy;
 
         if (selfIsPlayer && sourceIsPlayer) { return false; }
         if (selfIsEnemy && sourceIsEnemy) { return false; }
+        if (selfIsAlpaca && sourceIsEnemy) { return false; }
         //if (selfIsDesObj && sourceIsEnemy) { return false; }
 
         return true;

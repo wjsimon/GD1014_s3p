@@ -40,17 +40,16 @@ public class CombatTrigger : MonoBehaviour {
 
         if(enemies.Count <= 0) { return; }
 
-        if(other.gameObject.tag == "Player")
+        if(other.GetComponent<PlayerController>() != null)
         {
             for (int i = 0; i < enemies.Count; i++)
             {
                 enemies[i].Alert();
             }
 
+            triggered = true;
             GameManager.instance.EnterCombat();
         }
-
-        triggered = true;
     }
 
     public void SoftReset()

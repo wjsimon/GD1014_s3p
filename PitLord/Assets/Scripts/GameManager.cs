@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public List<Enemy> enemyList = new List<Enemy>();
     public List<CombatTrigger> triggerList = new List<CombatTrigger>();
     public List<DestructableObject> objectsList = new List<DestructableObject>();
-    public List<Character> alpacaList = new List<Character>();
+    public List<Alpaca> alpacaList = new List<Alpaca>();
 
     float playGameOver;
     public float respawnTimer;

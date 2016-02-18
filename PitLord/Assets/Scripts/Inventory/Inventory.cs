@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+
 [System.Serializable]
 public class Inventory {
 
     public List<string> items = new List<string>();
     public List<string> keys = new List<string>();
+    public List<string> upgrades = new List<string>();
 
     public Dictionary<string, string> displayNames = new Dictionary<string, string>()
     {

@@ -9,7 +9,9 @@ public class Enemy : Character
 
     [HideInInspector]
     public CombatTrigger combatTrigger;
+    float encounterUpdate;
 
+    public static bool[] encountered = new bool[(int)EnemyType.COUNT];
     public enum EnemyType
     {
         SWORDENEMY,
@@ -73,6 +75,10 @@ public class Enemy : Character
         currentState = State.IDLE;
         targettable = true;
 
+        Debug.Log(type.ToString());
+        encountered[(int)type] = PlayerPrefs.GetInt(type.ToString() + "/encountered/") > 0;
+        encounterUpdate = 0;
+
         agent = gameObject.GetComponent<NavMeshAgent>();
         agent.destination = target.position;
 
@@ -96,6 +102,7 @@ public class Enemy : Character
         navMeshTimer -= Time.deltaTime;
 
         Behaviour(currentState);
+        FirstEncounterCheck();
         /**/
     }
 
@@ -444,5 +451,60 @@ public class Enemy : Character
         alerted = true;
         combatTrigger.active += 1;
         ChangeState(State.APPROACH);
+    }
+
+    protected virtual void FirstEncounterCheck()
+    {
+        if (encountered[(int)type]) { return; }
+
+        encounterUpdate += Time.deltaTime;
+
+        if (encounterUpdate >= 3.0f)
+        {
+            encounterUpdate = 0;
+
+            if (Vector3.Distance(target.position, transform.position) >= 20f)
+            {
+                return;
+            }
+
+            Vector3 yA = Camera.main.transform.forward;
+            Vector3 yB = transform.position - Camera.main.transform.position;
+
+            yA.y = 0;
+            yB.y = 0;
+
+            yA.Normalize();
+            yB.Normalize();
+
+            float dot = Vector3.Dot(yA, yB);
+            //Debug.Log(name + " " + dot);
+            if (dot < 0.7f) { return; }
+
+            RaycastHit hitInfo;
+            Transform origin = transform.FindChild("RayCastTarget");
+            Transform rayTarget = target.FindChild("CameraTarget");
+
+            Debug.DrawRay(origin.position, rayTarget.position - origin.position, Color.cyan, 30);
+            //Physics.DefaultRaycastLayers
+
+            if (Physics.Raycast(origin.position, rayTarget.position - origin.position, out hitInfo, Mathf.Infinity, ~(1 << LayerMask.NameToLayer("Trigger"))))
+            {
+                if (hitInfo.transform.GetComponent<PlayerController>() != null)
+                {
+                    FirstEncounterSoundTrigger();
+                }
+            }
+        }
+    }
+
+    public void FirstEncounterSoundTrigger()
+    {
+        if (encountered[(int)type]) { return; }
+
+        encountered[(int)type] = true;
+        PlayerPrefs.SetInt(type.ToString() +"/encountered/", 1);
+        PlayerPrefs.Save();
+        GameManager.instance.narrator.PlayUniqueEncounter(type);
     }
 }

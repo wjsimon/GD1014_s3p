@@ -1,23 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class DestructableObject : Attributes
+public class Alpaca : Attributes
 {
     // Use this for initialization
-    protected override void Start()
+    void Start()
     {
-        base.Start();
-        RegisterObject();
+        currentHealth = 1;
     }
 
     // Update is called once per frame
-    protected override void Update()
+    void Update()
     {
+
     }
 
-    public override bool ApplyDamage(int healthDmg, int staminaDmg, Character source )
+    public override bool ApplyDamage( int healthDmg, int staminaDmg, Character source )
     {
         if (!base.ApplyDamage(healthDmg, staminaDmg, source)) { return false; }
+
         currentHealth -= healthDmg;
 
         if (currentHealth <= 0)
@@ -28,16 +30,11 @@ public class DestructableObject : Attributes
 
         return true;
     }
+
     protected override void Kill()
     {
         base.Kill();
-        Destroy(gameObject);
 
-        SetAnimTrigger("Death");
-    }
-
-    protected override void OnDestroy()
-    {
         if (onDeath.Count > 0)
         {
             AudioSource player = new AudioSource();
@@ -45,11 +42,15 @@ public class DestructableObject : Attributes
             player.Play();
         }
 
-        GameManager.instance.RemoveObject(GetComponent<DestructableObject>());
+        //Play Sting in BGM
+        //Add Upgrade to Player
+
+        //SetAnimTrigger("Death");
+        Destroy(gameObject);
     }
 
     protected override void RegisterObject()
     {
-        GameObject.Find("GameManager").GetComponent<GameManager>().AddObject(GetComponent<DestructableObject>());
+        GameManager.instance.alpacaList.Add(this);
     }
 }
