@@ -131,6 +131,7 @@ public class BowEnemy : Enemy
 
             if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart && attackingInv <= AnimationLibrary.Get().SearchByName(attackName).colEnd)
             {
+                Debug.Log("collider true");
                 weapon.GetComponent<BoxCollider>().enabled = true;
             }
             else

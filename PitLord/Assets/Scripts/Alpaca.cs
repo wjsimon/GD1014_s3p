@@ -4,13 +4,20 @@ using System.Collections.Generic;
 
 public class Alpaca : Attributes
 {
-    // Use this for initialization
+    public string upgradeName;
+
     void Start()
     {
+
         currentHealth = 1;
+
+        if(PlayerPrefs.GetInt("Alpaca/" + upgradeName) != 0)
+        {
+            currentHealth = 0;
+            Deactivate();
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
 
@@ -41,11 +48,19 @@ public class Alpaca : Attributes
             player.clip = onDeath[Random.Range(0, onDeath.Count)];
             player.Play();
         }
-
         //Play Sting in BGM
-        //Add Upgrade to Player
 
+        Deactivate();
+    }
+
+    public void Deactivate()
+    {
+        //Add Upgrade to Player
         //SetAnimTrigger("Death");
+        PlayerPrefs.SetInt("Alpaca/" + upgradeName, 1);
+        PlayerPrefs.Save();
+
+        //Temp
         Destroy(gameObject);
     }
 

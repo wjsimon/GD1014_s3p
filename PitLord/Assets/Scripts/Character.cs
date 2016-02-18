@@ -67,7 +67,7 @@ public class Character : Attributes
         base.Update();
 
         WeaponColliderUpdate();
-        RomoUpdate();
+        //RomoUpdate();
         StaminaRegen();
         iFrames -= Time.deltaTime;
         stunned -= Time.deltaTime;
@@ -86,38 +86,47 @@ public class Character : Attributes
         }
 
         Vector3 dir = (source.transform.position - transform.position).normalized;
-        int facing = (int)Mathf.Clamp01(Mathf.Sign(Vector3.Dot(transform.forward, dir)));
+        //int facing = (int)Mathf.Clamp01(Mathf.Sign(Vector3.Dot(transform.forward, dir)));
+        int facing = Vector3.Dot(transform.forward, dir) >= 0 ? 1 : 0;
 
         if (blocking)
         {
             currentStamina -= staminaDmg * facing;
             currentHealth -= healthDmg * (1 - facing);
+
+            if (currentStamina <= 0)
+            {
+                blocking = false;
+                GetComponent<Animator>().SetInteger("HitInt", 2);
+                SetAnimTrigger("Hit");
+
+                stunned = 1.5f;
+                regenCounter = -2.5f;
+                currentStamina = 0;
+            }
+            else
+            {
+                GetComponent<Animator>().SetInteger("HitInt", 1);
+                SetAnimTrigger("Hit");
+            }
         }
         else
         {
             currentHealth -= healthDmg;
-
-            if (currentHealth > 0)
-            {
-                OnHit();
-            }
+            stunned = 0.5f;
+            GetComponent<Animator>().SetInteger("HitInt", 0);
+            SetAnimTrigger("Hit");
         }
 
-        if (currentHealth <= 0)
+        if (currentHealth > 0)
+        {
+            OnHit();
+        }
+        else
         {
             currentHealth = 0;
             Kill();
-        }
-
-        if (blocking && currentStamina <= 0)
-        {
-            blocking = false;
-            GetComponent<Animator>().SetInteger("HitInt", 2);
-            SetAnimTrigger("Hit");
-
-            stunned = 1.5f;
-            regenCounter = -2.5f;
-            currentStamina = 0;
+            return true;
         }
 
         return true;
@@ -225,7 +234,6 @@ public class Character : Attributes
 
     public virtual void OnHit()
     {
-        stunned = 0.5f;
         CancelAttack();
     }
 
@@ -328,6 +336,7 @@ public class Character : Attributes
     {
         if (colliderSwitch)
         {
+            Debug.Log("collider true");
             weapon.GetComponent<BoxCollider>().enabled = true;
             colliderSwitch = false;
         }

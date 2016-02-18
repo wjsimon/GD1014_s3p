@@ -4,17 +4,23 @@ using System.Collections.Generic;
 
 public class SoundTrigger : MonoBehaviour {
 
-    public static bool allAlpacas;
-    public bool unique;
+    public bool uniquePlayed;
+    public bool alpacaPlayed;
+
     public Narrator narrator;
     public AudioClip uniqueClip;
     public List<AudioClip> randomClips;
-    bool played;
+
+    bool randomPlayed;
 
 	// Use this for initialization
 	void Start () {
         narrator = GameObject.Find("Narrator").GetComponent<Narrator>();
-        played = false;
+
+        alpacaPlayed = PlayerPrefs.GetInt("SoundTrigger/alpacaPlayed") != 0;
+        uniquePlayed = PlayerPrefs.GetInt("SoundTrigger/uniquePlayed") != 0;
+
+        randomPlayed = false;
 	}
 	
 	// Update is called once per frame
@@ -24,7 +30,7 @@ public class SoundTrigger : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (played)
+        if (randomPlayed)
         {
             return;
         }
@@ -37,28 +43,34 @@ public class SoundTrigger : MonoBehaviour {
 
     public void TriggerSound()
     {
-        if(played) { return; }
+        if (alpacaPlayed) { return; }
+
         if(uniqueClip == null && randomClips.Count == 0) { return; }
 
-        played = true;
-
-        if(allAlpacas)
+        if(GameManager.instance.AllAlpacasDead())
         {
             Debug.Log("Playing All Alpacas Dead Line");
             narrator.clipPlayer.PlayOneShot(new AudioClip());
-            enabled = false;
+            alpacaPlayed = true;
+            PlayerPrefs.SetInt("SoundTrigger/alpacaPlayed", 1);
+            PlayerPrefs.Save();
             return;
         }
 
-        if(unique && uniqueClip != null)
+        if(!uniquePlayed && uniqueClip != null)
         {
             Debug.Log("Playing unique/first time Line");
             narrator.clipPlayer.PlayOneShot(uniqueClip);
-            unique = false;
+            uniquePlayed = true;
+            PlayerPrefs.SetInt("SoundTrigger/uniquePlayed", 1);
+            PlayerPrefs.Save();
             return;
         }
 
+
+        if (randomPlayed) { return; }
         Debug.Log("Playing Random Trigger Line");
+        randomPlayed = true;
         int rng = Random.Range(0, randomClips.Count);
         narrator.clipPlayer.PlayOneShot(randomClips[rng]);
         randomClips.Remove(randomClips[rng]);

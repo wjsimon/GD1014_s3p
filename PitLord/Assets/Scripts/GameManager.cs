@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -101,6 +102,11 @@ public class GameManager : MonoBehaviour
         {
             idleTimer = 0;
         }
+
+        if(Input.GetButtonDown("PlayIdle"))
+        {
+            narrator.PlayIdle();
+        }
     }
 
     public void CheckInCombat()
@@ -185,6 +191,13 @@ public class GameManager : MonoBehaviour
 
         player.SoftReset();
         Camera.main.GetComponent<CameraController>().ResetCam();
+    }
+
+    public bool AllAlpacasDead()
+    {
+        int cnt=0;
+        alpacaList.ForEach(al => { cnt += al.isDead() ? 1 : 0; });
+        return cnt==alpacaList.Count;
     }
 
     public void AddEnemy(Enemy obj)

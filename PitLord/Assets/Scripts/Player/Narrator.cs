@@ -7,23 +7,31 @@ public class Narrator : MonoBehaviour
     public AudioSource clipPlayer;
 
     //Need uniques + Environmental stuff in Narrator, all trigger based into SoundTrigger?
-    List<AudioClip> uniques_player;
-    List<AudioClip> uniques_enemies;
+    public List<AudioClip> uniques_player;
+    public List<AudioClip> uniques_enemies;
 
-    List<AudioClip> introduction;
-    List<AudioClip> onIdle;
-    List<AudioClip> onReset;
+    public AudioClip introduction;
 
-    List<AudioClip> inCombat;
-    List<AudioClip> onCombatWin;
-    List<AudioClip> inCombatBoss;
+    public List<AudioClip> onIdle;
+    public int onIdleIndex;
 
-    List<AudioClip> alpacaKill;
+    public List<AudioClip> onReset;
+
+    public List<AudioClip> inCombat;
+    public List<AudioClip> onCombatWin;
+    public List<AudioClip> inCombatBoss;
+
+    public List<AudioClip> alpacaKill;
 
     bool playIntroduction;
     // Use this for initialization
     void Start()
     {
+        //Debug.Log(onIdle[0].name);
+
+        onIdleIndex = PlayerPrefs.GetInt("Narrator/OnIdleIndex", 0);
+        if (onIdleIndex >= onIdle.Count) { onIdle.Shuffle(); }
+
         if (clipPlayer == null)
         {
             clipPlayer = GetComponent<AudioSource>();
@@ -35,15 +43,18 @@ public class Narrator : MonoBehaviour
     {
     }
 
-    public void PlayNextNew(AudioClip clip)
+    public void PlayNextNew( AudioClip clip )
     {
+        if (clip == null) { return; }
+        Debug.Log(clip.name);
+
         clipPlayer.Stop();
         //Cuts current audio
         clipPlayer.clip = clip;
         clipPlayer.Play();
     }
 
-    public void PlayNextParallel(AudioClip clip)
+    public void PlayNextParallel( AudioClip clip )
     {
         //Second Player instead of newing one
         AudioSource newPlayer = new AudioSource();
@@ -51,11 +62,41 @@ public class Narrator : MonoBehaviour
         newPlayer.clip = clip;
         newPlayer.Play();
     }
-    
-    public void PlayIdle() { Debug.Log("Playing Idle Line..."); }
+
+    public AudioClip GetNextClip(List<AudioClip> list, ref int index, string name)
+    {
+        while (list.Count > 0)
+        {
+            if(index != 0 && index%list.Count == 0)
+            {
+                list.Shuffle();
+            }
+
+            AudioClip entry = list[index % list.Count];
+            index++;
+
+            if(entry.name.StartsWith("seq_") && index >= list.Count)
+            {
+                continue;
+            }
+
+            PlayerPrefs.SetInt("Narrator/" + name, index);
+            PlayerPrefs.Save();
+            return entry;
+        }
+
+        return null;
+    }
+
+    public void PlayIdle()
+    {
+        Debug.Log("Playing Idle Line...");
+
+        PlayNextNew(GetNextClip(onIdle, ref onIdleIndex, "OnIdleIndex"));
+    }
     public void PlayDeath() { Debug.Log("Playing Revival Line..."); }
     public void PlayInCombat() { Debug.Log("Playing inCombat Line..."); }
     public void PlayOnCombatWin() { Debug.Log("Playing CombatWin Line..."); }
-    public void PlayUniqueEncounter(Enemy.EnemyType type) { Debug.Log("Playing Unique Encounter Line for..." + type.ToString()); }
+    public void PlayUniqueEncounter( Enemy.EnemyType type ) { Debug.Log("Playing Unique Encounter Line for..." + type.ToString()); }
     public void PlayIntroduction() { }
 }

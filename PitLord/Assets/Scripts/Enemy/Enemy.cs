@@ -345,14 +345,17 @@ public class Enemy : Character
                 SwitchNavMesh(false);
             }
 
+            /*
             if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart && attackingInv <= AnimationLibrary.Get().SearchByName(attackName).colEnd)
             {
+                Debug.Log("collider true");
                 weapon.GetComponent<BoxCollider>().enabled = true;
             }
             else
             {
                 weapon.GetComponent<BoxCollider>().enabled = false;
             }
+            /**/
         }
 
         Blocking();
