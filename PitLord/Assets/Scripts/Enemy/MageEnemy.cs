@@ -9,8 +9,9 @@ public class MageEnemy : Enemy
     public float warping;
     public float healing;
 
-    public int healthDmg;
-    public int staminaDmg;
+    public int healthDmg = 9;
+    public int staminaDmg = 9;
+
     bool aoe;
 
     // Use this for initialization
@@ -32,6 +33,7 @@ public class MageEnemy : Enemy
             combatRange = 20;
         }
 
+        type = EnemyType.MAGENEMY;
         ChangeState(State.IDLE);
     }
 

@@ -39,7 +39,7 @@ public class WeaponScript : MonoBehaviour {
         {"E_SpearHeavy01", new DamageWrapper(5,5)},
 
         {"E_BowLight01", new DamageWrapper(2,1)},
-        {"E_MageSpell01", new DamageWrapper(9,9)},
+        {"E_MageSpell01", new DamageWrapper(9,9)}, //Not in use
     };
 
     public Character owner;
@@ -81,11 +81,14 @@ public class WeaponScript : MonoBehaviour {
                 if (hit)
                 {
                     CalcHitDirection();
-                    GetComponent<BoxCollider>().enabled = false;
-                    owner.colliderSwitch = false;
+
+                    if(owner.GetComponent<PlayerController>() == null)
+                    {
+                        GetComponent<BoxCollider>().enabled = false;
+                        owner.colliderSwitch = false;
+                    }
                 }
             }
-
         }
     }
 

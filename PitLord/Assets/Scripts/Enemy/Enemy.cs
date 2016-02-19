@@ -3,7 +3,6 @@ using System.Collections;
 
 public class Enemy : Character
 {
-    public Animator animator;
     bool blending = true;
     float animationBlend;
 
@@ -21,7 +20,8 @@ public class Enemy : Character
         COUNT
     }
 
-    protected EnemyType type;
+    [HideInInspector]
+    public EnemyType type;
 
     /*
     public string currentAnimation;
@@ -48,8 +48,8 @@ public class Enemy : Character
     //THIS TIMER IS FOR TESTING ONLY, USE SEPERATE TIMERS FOR NON-TEMPORARY STUFF
     float timer;
 
-    protected State currentState;
-    protected enum State
+    public State currentState;
+    public enum State
     {
         IDLE,
         APPROACH,
@@ -75,7 +75,6 @@ public class Enemy : Character
         currentState = State.IDLE;
         targettable = true;
 
-        Debug.Log(type.ToString());
         encountered[(int)type] = PlayerPrefs.GetInt(type.ToString() + "/encountered/") > 0;
         encounterUpdate = 0;
 
@@ -146,7 +145,7 @@ public class Enemy : Character
     }
     protected virtual void Tracking()
     {
-
+        if (!alerted) { return; }
     }
 
     public void Idle() //0
@@ -410,14 +409,24 @@ public class Enemy : Character
         agent.Stop();
         ChangeState(State.IDLE);
         agent.Warp(spawnPoint);
-        weapon.GetComponent<BoxCollider>().enabled = false;
+
+        if (weapon != null && weapon.GetComponent<BoxCollider>() != null)
+        {
+            weapon.GetComponent<BoxCollider>().enabled = false;
+        }
+
         alerted = false;
     }
     protected override void Kill()
     {
         base.Kill();
 
-        combatTrigger.active -= 1;
+        if(combatTrigger != null)
+        {
+            combatTrigger.active -= 1;
+        }
+
+        GetComponent<CapsuleCollider>().enabled = false;
     }
 
     protected override void CancelAttack()
@@ -492,7 +501,6 @@ public class Enemy : Character
             Transform origin = transform.FindChild("RayCastTarget");
             Transform rayTarget = target.FindChild("CameraTarget");
 
-            Debug.DrawRay(origin.position, rayTarget.position - origin.position, Color.cyan, 30);
             //Physics.DefaultRaycastLayers
 
             if (Physics.Raycast(origin.position, rayTarget.position - origin.position, out hitInfo, Mathf.Infinity, ~(1 << LayerMask.NameToLayer("Trigger"))))

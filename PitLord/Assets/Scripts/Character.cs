@@ -4,7 +4,9 @@ using System.Collections.Generic;
 
 public class Character : Attributes
 {
+    [HideInInspector]
     public CharacterController cc;
+    public Animator animator;
 
     public float currentStamina;
     public float maxStamina = 10;
@@ -55,6 +57,7 @@ public class Character : Attributes
     // Use this for initialization
     protected override void Start()
     {
+        //SetAnimTrigger("Death");
         base.Start();
 
         cc = GetComponent<CharacterController>();
@@ -81,7 +84,7 @@ public class Character : Attributes
 
         if (iFrames > 0)
         {
-            //Debug.Log("INVINCIBLE");
+            Debug.Log("INVINCIBLE");
             return false;
         }
 
@@ -113,16 +116,17 @@ public class Character : Attributes
         else
         {
             currentHealth -= healthDmg;
-            stunned = 0.5f;
-            GetComponent<Animator>().SetInteger("HitInt", 0);
-            SetAnimTrigger("Hit");
         }
 
         if (currentHealth > 0)
         {
-            OnHit();
+            //OnHit();
+            GetComponent<Animator>().SetInteger("HitInt", 0);
+            SetAnimTrigger("Hit");
+            stunned = 0.9f;
         }
-        else
+
+        if(currentHealth <= 0)
         {
             currentHealth = 0;
             Kill();
@@ -135,13 +139,13 @@ public class Character : Attributes
     protected override void Kill()
     {
         base.Kill();
-        SetInvincibility(0.5f);
-        CancelAttack();
 
         if (cc != null) { cc.enabled = false; }
         blocking = false;
         targettable = false;
+        //SetAnimTrigger("Death");
         SetAnimTrigger("Death");
+        CancelAttack();
         //Destroy(gameObject, 10.0f);
     }
 
@@ -181,6 +185,10 @@ public class Character : Attributes
         attackingInv = 0;
         colliderSwitch = true;
 
+        animator.SetFloat("X", 0);
+        animator.SetFloat("Y", 0);
+
+
         SetRomo(duration, AnimationLibrary.Get().SearchByName(attackName).romoLength);
     }
 
@@ -191,9 +199,6 @@ public class Character : Attributes
         attacking = 0;
         attackingInv = 0;
         colliderSwitch = false;
-
-        romoDuration = 0;
-        romoStartTime = 0;
 
         if (shortSword != null) { shortSword.GetComponent<BoxCollider>().enabled = false; }
         if (greatSword != null) { greatSword.GetComponent<BoxCollider>().enabled = false; }

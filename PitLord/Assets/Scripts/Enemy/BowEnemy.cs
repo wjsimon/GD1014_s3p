@@ -20,11 +20,12 @@ public class BowEnemy : Enemy
             return;
         }
 
-        if(combatRange == 0)
+        if (combatRange == 0)
         {
             combatRange = 20;
         }
 
+        type = EnemyType.BOWENEMY;
         ChangeState(0);
     }
 
@@ -49,7 +50,7 @@ public class BowEnemy : Enemy
 
         if (inAttack())
         {
-            if (attackingInv <= (AnimationLibrary.Get().SearchByName(attackName).duration*0.8f))
+            if (attackingInv <= (AnimationLibrary.Get().SearchByName(attackName).duration * 0.8f))
             //if (attackingInv <= 0.8f)
             {
                 LookAtTarget();
@@ -64,7 +65,7 @@ public class BowEnemy : Enemy
         //Idle until Detection of Player
         behavCooldown -= Time.deltaTime;
 
-        //Not working?? - Slides around during attack animation a lot
+        //Not working??
         if (inAttack() || !alerted)
         {
             return;
@@ -80,31 +81,45 @@ public class BowEnemy : Enemy
         /**/
 
         //Within detection Range, enemy approaches the player
-        if (Vector3.Distance(target.position, transform.position) > combatRange && (behavCooldown <= 0) && !inAttack())
+        if (Vector3.Distance(target.position, transform.position) > combatRange)
         {
-                ChangeState(State.APPROACH);
-                behavCooldown = Random.Range(0, 4) + 1;
+            ChangeState(State.APPROACH);
+            behavCooldown = Random.Range(0, 4) + 1;
         }
 
         //Within Combat Range, the enemy decides to attack, backoff or strafe around player
+
         if (Vector3.Distance(target.position, transform.position) <= combatRange && !inAttack())
         {
-            //Attack, BackOff, Strafe for Combat
-            BehaviourRandomize = (Random.Range(0,3));
+            RaycastHit rayInfo;
+            Vector3 rayCastTarget = (rayTarget.transform.position - projectileSource.transform.position);
 
-            if(BehaviourRandomize == 0)
+            //Debug.DrawRay(projectileSource.transform.position, rayCastTarget, Color.red, 20, false);
+            if (Physics.Raycast(projectileSource.transform.position, rayCastTarget, out rayInfo)) //transform.position needs to be projectileSource
             {
-                ChangeState(State.ATTACK);
-            }
-            if (BehaviourRandomize == 1)
-            {
-                ChangeState(State.STRAFE);
-                behavCooldown = Random.Range(0, 4) + 1;
-            }
-            if (BehaviourRandomize == 2)
-            {
-                ChangeState(State.BACKOFF);
-                behavCooldown = Random.Range(0, 4) + 1;
+                //Debug.Log(Vector3.Distance(target.position, transform.position));
+                //Debug.Log(rayInfo.collider.gameObject.name + " " + rayInfo.collider.gameObject.tag + " " + rayInfo.collider.gameObject.layer);
+                if (rayInfo.collider.gameObject.GetComponent<PlayerController>())
+                {
+                    //Attack, BackOff, Strafe for Combat
+                    BehaviourRandomize = (Random.Range(0, 3));
+
+                    if (BehaviourRandomize == 0)
+                    {
+                        ChangeState(State.ATTACK);
+                    }
+                    if (BehaviourRandomize == 1)
+                    {
+                        ChangeState(State.STRAFE);
+                        behavCooldown = Random.Range(0, 4) + 1;
+                    }
+                    if (BehaviourRandomize == 2)
+                    {
+                        ChangeState(State.BACKOFF);
+                        behavCooldown = Random.Range(0, 4) + 1;
+                    }
+                }
+
             }
         }
         /**/
@@ -120,6 +135,7 @@ public class BowEnemy : Enemy
 
         if (inAttack())
         {
+            behavCooldown = attacking;
             attacking -= Time.deltaTime;
             attackingInv += Time.deltaTime;
             //transform.Rotate(new Vector3(0, 10, 0));
@@ -127,16 +143,6 @@ public class BowEnemy : Enemy
             {
                 SwitchNavMesh(false);
                 LaunchProjectile();
-            }
-
-            if (attackingInv >= AnimationLibrary.Get().SearchByName(attackName).colStart && attackingInv <= AnimationLibrary.Get().SearchByName(attackName).colEnd)
-            {
-                Debug.Log("collider true");
-                weapon.GetComponent<BoxCollider>().enabled = true;
-            }
-            else
-            {
-                weapon.GetComponent<BoxCollider>().enabled = false;
             }
         }
     }
@@ -170,23 +176,15 @@ public class BowEnemy : Enemy
             return;
         }
 
-        RaycastHit rayInfo;
-        Vector3 rayCastTarget = (rayTarget.transform.position - projectileSource.transform.position);
-
-        Debug.DrawRay(projectileSource.transform.position, rayCastTarget, Color.red, 20, false);
-        if (Physics.Raycast(projectileSource.transform.position, rayCastTarget, out rayInfo, 100, ~projectileLayer)) //transform.position needs to be projectileSource
+        if (!inAttack())
         {
-            Debug.Log(rayInfo.collider.gameObject.name + " " + rayInfo.collider.gameObject.tag + " " + rayInfo.collider.gameObject.layer);
-            if (rayInfo.collider.gameObject.tag == "Player")
-            {
-                StartAttack("E_BowLight01");
-                behavCooldown = AnimationLibrary.Get().SearchByName(attackName).duration;
-                canAttack = true;
-                animator.SetTrigger("Attack");
-
-                Debug.Log("ATTACK");
-            }
+            ChangeState(State.IDLE);
         }
+
+        StartAttack("E_BowLight01");
+        //behavCooldown = AnimationLibrary.Get().SearchByName(attackName).duration;
+        canAttack = true;
+        animator.SetTrigger("Attack");
     }
 
     /*

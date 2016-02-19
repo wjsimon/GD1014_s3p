@@ -68,13 +68,12 @@ public class Attributes : MonoBehaviour
     }
     /**/
 
-    public void SetAnimTrigger( string anim )
+    public string SetAnimTrigger( string anim )
     {
         Animator ani = GetComponent<Animator>();
         ani.SetTrigger(anim);
+        return anim;
     }
-
-
 
     protected virtual void Kill()
     {

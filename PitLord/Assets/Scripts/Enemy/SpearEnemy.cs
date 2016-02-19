@@ -15,6 +15,7 @@ public class SpearEnemy : Enemy
             return;
         }
 
+        type = EnemyType.SPEARENEMY;
         ChangeState(0);
     }
 
@@ -81,25 +82,25 @@ public class SpearEnemy : Enemy
             if (BehaviourRandomize >= 0 && BehaviourRandomize < 30)
             {
                 ChangeState(State.APPROACH);
-                behavCooldown = Random.Range(0, 4) + 1;
+                behavCooldown = Random.Range(1, 5) + 1;
             }
             if(BehaviourRandomize >= 30 && BehaviourRandomize < 80)
             {
                 if (!Physics.Raycast(transform.position, transform.right, 1) || !Physics.Raycast(transform.position, -transform.right, 1))
                 {
                     ChangeState(State.STRAFE);
-                    behavCooldown = Random.Range(0, 4) + 1;
+                    behavCooldown = Random.Range(1, 3) + 1;
                 }
             }
             if(BehaviourRandomize >= 80 && BehaviourRandomize < 100)
             {
                 ChangeState(State.BACKOFF);
-                behavCooldown = Random.Range(0, 4) + 1;
+                behavCooldown = Random.Range(1, 3);
             }
         }
 
         //Within Combat Range, the enemy decides to attack, backoff or strafe around player
-        if (Vector3.Distance(target.position, transform.position) <= combatRange && !inAttack())
+        if (Vector3.Distance(target.position, transform.position) <= combatRange && !inAttack() && !blocking)
         {
             BehaviourRandomize = (int)Mathf.Sign(Random.Range(-2, 5));
 
@@ -155,7 +156,7 @@ public class SpearEnemy : Enemy
             animator.SetInteger("AttackId", 2);
         }
         /**/
-        Debug.Log(attackName);
+        //Debug.Log(attackName);
         behavCooldown = AnimationLibrary.Get().SearchByName(attackName).duration;
         animator.SetTrigger("Attack");
     }
@@ -190,14 +191,14 @@ public class SpearEnemy : Enemy
 
         if (blockCooldown <= 0)
         {
-            blockCooldown = 5.0f;
-            int rng = Random.Range(0, 4);
+            int rng = Random.Range(0, 3);
             //Debug.Log(rng);
             if (rng != 0)
             {
                 if (!inAttack() || !blocking)
                 {
-                    blockDuration = Random.Range(10, 21);
+                    blockDuration = Random.Range(5, 10);
+                    blockCooldown = 3.0f;
                 }
             }
         }

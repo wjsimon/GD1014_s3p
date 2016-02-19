@@ -9,7 +9,6 @@ public class PlayerController : Character
     public Transform lockOnTarget;
     public List<Enemy> targetList;
     public LayerMask targetLayer;
-    public Animator animator;
 
     public float walkSpeed = 4;
     public float runSpeed = 8;
