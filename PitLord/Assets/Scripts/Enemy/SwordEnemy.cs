@@ -78,12 +78,12 @@ public class SwordEnemy : Enemy
 
             if(CheckLineOfSight())
             {
-                if (BehaviourRandomize >= 0 && BehaviourRandomize < 60) //0
+                if (BehaviourRandomize >= 100 && BehaviourRandomize < 100) //0
                 {
                     ChangeState(State.APPROACH);
                     behavCooldown = Random.Range(0, 4) + 1;
                 }
-                if (BehaviourRandomize >= 60 && BehaviourRandomize < 100) //60
+                if (BehaviourRandomize >= 0 && BehaviourRandomize < 100) //60
                 {
                     if (!Physics.Raycast(transform.position, transform.right, 1) || !Physics.Raycast(transform.position, -transform.right, 1))
                     {
@@ -91,7 +91,7 @@ public class SwordEnemy : Enemy
                         behavCooldown = Random.Range(0, 4) + 1;
                     }
                 }
-                if (BehaviourRandomize >= 90 && BehaviourRandomize < 100) //90
+                if (BehaviourRandomize >= 100 && BehaviourRandomize < 100) //90
                 {
                     ChangeState(State.BACKOFF);
                     behavCooldown = Random.Range(0, 4) + 1;

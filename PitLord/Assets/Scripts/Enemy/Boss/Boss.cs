@@ -11,9 +11,7 @@ public class Boss : Attributes {
 
 
     public float speed;
-
-    IBossBehaviour currentBehaviour;
-
+    public IBossBehaviour currentBehaviour;
     public bool active;
 
 	void Start () {
@@ -45,31 +43,32 @@ public class Boss : Attributes {
         {
             if(!currentBehaviour.Execute())
             {
-                //currentBehaviour.Finish();
+                currentBehaviour.Finish();
                 currentBehaviour = null;
             }
         }
 
         if(currentBehaviour == null)
         {
-            float rng = Random.Range(0, 5);
+            float rng = Random.Range(0.0f, 3.0f);
+            Debug.Log(rng);
 
             if(rng <= 1)
             {
-                //
+                SetBehaviour(new BossBehaviourIdle(this));
             }
             else if(rng <= 3)
             {
-                //
+                SetBehaviour(new BossBehaviourSpawnTurret(this));
             }
-
-            SetBehaviour(new BossBehaviourSpawnTurret(this));
         }
     }
 
     public void SetBehaviour(IBossBehaviour newBehaviour)
     {
         currentBehaviour = newBehaviour;
+        currentBehaviour.Init();
+        Debug.Log("setBehaviour " + currentBehaviour.ToString());
     }
     public IBossBehaviour GetBehaviour()
     {

@@ -33,9 +33,9 @@ public class LockedObject : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < GameManager.instance.inventory.keys.Count; i++)
+        for (int i = 0; i < GameManager.instance.inventory.items.Count; i++)
         {
-            if (GameManager.instance.inventory.keys[i] == keyName)
+            if (GameManager.instance.inventory.items[i] == keyName)
             {
                 //GameManager.instance.inventory.RemoveKey(GameManager.instance.inventory.keys[i]);
                 Disable();
@@ -56,8 +56,9 @@ public class LockedObject : MonoBehaviour
             colliders[i].enabled = false;
         }
 
-        GetComponent<MeshRenderer>().enabled = false;
-        GetComponent<NavMeshObstacle>().enabled = false;
+        if (GetComponent<MeshRenderer>() != null) { GetComponent<MeshRenderer>().enabled = false; }
+        if (GetComponent<NavMeshObstacle>() != null) { GetComponent<NavMeshObstacle>().enabled = false; }
+
         /**/
         disabled = true;
         prompt.TogglePrompt(false);

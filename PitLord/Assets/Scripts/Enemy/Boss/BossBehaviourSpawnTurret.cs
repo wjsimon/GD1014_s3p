@@ -32,7 +32,7 @@ public class BossBehaviourSpawnTurret : IBossBehaviour
         boss.animator.SetTrigger("Attack");
     }
 
-    public bool Execute()
+    public override bool Execute()
     {
         stateTimer -= Time.deltaTime;
 

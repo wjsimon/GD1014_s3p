@@ -212,14 +212,14 @@ public class Enemy : Character
         Vector3 origin = transform.FindChild("RayCastTarget").position;
         Debug.DrawRay(origin, (transform.right * -direction), Color.green);
         //Debug.Log((1 << LayerMask.NameToLayer("Geometry")));
-        if (Physics.Raycast(origin, transform.right * direction, out hitInfo, 1.0f))//, (1 << LayerMask.NameToLayer("Geometry"))))
+
+        if (Physics.Raycast(origin, transform.right * -direction, out hitInfo, 1.0f, (1 << LayerMask.NameToLayer("Geometry"))))
         {
             Debug.Log(hitInfo.collider.gameObject.name + " Strafe blocked by Geometry");
             ChangeState(State.APPROACH);
             behavCooldown = 3.0f;
             return;
         }
-
 
         SwitchNavMesh(false);
 

@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
     {
         inventory.Start();
         currentGameState = GameState.INGAME;
+
         if (player == null) { player = GameObject.Find("Player").GetComponent<PlayerController>(); }
         if (narrator == null) { narrator = GameObject.Find("Narrator").GetComponent<Narrator>(); }
     }

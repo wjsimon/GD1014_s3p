@@ -8,6 +8,9 @@ public class DestructableObject : Attributes
     {
         base.Start();
         RegisterObject();
+
+        maxHealth = 1;
+        currentHealth = 1;
     }
 
     // Update is called once per frame
@@ -33,7 +36,7 @@ public class DestructableObject : Attributes
         base.Kill();
         Destroy(gameObject);
 
-        SetAnimTrigger("Death");
+        //SetAnimTrigger("Death");
     }
 
     protected override void OnDestroy()

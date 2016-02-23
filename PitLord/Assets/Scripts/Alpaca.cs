@@ -8,7 +8,6 @@ public class Alpaca : Attributes
 
     void Start()
     {
-
         currentHealth = 1;
 
         if(PlayerPrefs.GetInt("Alpaca/" + upgradeName) != 0)
@@ -16,6 +15,8 @@ public class Alpaca : Attributes
             currentHealth = 0;
             Deactivate();
         }
+
+        RegisterObject();
     }
 
     void Update()

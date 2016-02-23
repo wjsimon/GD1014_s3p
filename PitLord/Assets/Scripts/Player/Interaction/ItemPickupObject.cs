@@ -5,6 +5,7 @@ public class ItemPickupObject : MonoBehaviour {
 
     public string item;
     ScreenPrompt prompt;
+
 	// Use this for initialization
 	void Start () {
         prompt = GameObject.Find("ScreenPrompt").GetComponent<ScreenPrompt>();

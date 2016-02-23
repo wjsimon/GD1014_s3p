@@ -24,8 +24,8 @@ public class AnimationLibrary
 
         //PlaceHolder
         AddAnimation(new AnimationWrapper("default", 0.0f, 0.0f, 0.0f, 0.0f));
-        AddAnimation(new AnimationWrapper("P_ShortLight01", 0.3f, 0.7f, 1.2f, 1.66f).RomoLength(0.818f));
-        AddAnimation(new AnimationWrapper("P_ShortLight02", 0.3f, 0.6f, 1.2f, 1.5f).RomoLength(0.500f));
+        AddAnimation(new AnimationWrapper("P_ShortLight01", 0.3f, 0.9f, 1.2f, 1.66f).RomoLength(0.818f));
+        AddAnimation(new AnimationWrapper("P_ShortLight02", 0.3f, 0.8f, 1.2f, 1.5f).RomoLength(0.500f));
         AddAnimation(new AnimationWrapper("P_ShortHeavy", 1.0f, 1.5f, 1.8f, 2.0f).RomoLength(0.477f));
         AddAnimation(new AnimationWrapper("P_GreatLight01", 0.55f, 0.8f, 2.08f, 2.60f));
         AddAnimation(new AnimationWrapper("P_GreatLight02", 0.3f, 0.9f, 1.34f, 1.66f).RomoLength(0.477f));

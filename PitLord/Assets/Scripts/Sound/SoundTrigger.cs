@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class SoundTrigger : MonoBehaviour {
-
+public class SoundTrigger : MonoBehaviour
+{
     public bool uniquePlayed;
     public bool alpacaPlayed;
 
@@ -13,31 +13,33 @@ public class SoundTrigger : MonoBehaviour {
 
     bool randomPlayed;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         narrator = GameObject.Find("Narrator").GetComponent<Narrator>();
 
         alpacaPlayed = PlayerPrefs.GetInt("SoundTrigger/alpacaPlayed") != 0;
         uniquePlayed = PlayerPrefs.GetInt("SoundTrigger/uniquePlayed") != 0;
 
         randomPlayed = false;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    }
 
-    void OnTriggerEnter(Collider other)
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    void OnTriggerEnter( Collider other )
     {
         if (randomPlayed)
         {
             return;
         }
 
-        if(other.GetComponent<PlayerController>() != null)
+        if (other.GetComponent<PlayerController>() != null)
         {
-            //Trigger Sound
+            TriggerSound();
         }
     }
 
@@ -45,9 +47,10 @@ public class SoundTrigger : MonoBehaviour {
     {
         if (alpacaPlayed) { return; }
 
-        if(uniqueClip == null && randomClips.Count == 0) { return; }
+        if (uniqueClip == null && randomClips.Count == 0) { return; }
+        if (uniquePlayed && randomClips.Count == 0) { return; }
 
-        if(GameManager.instance.AllAlpacasDead())
+        if (GameManager.instance.AllAlpacasDead())
         {
             Debug.Log("Playing All Alpacas Dead Line");
             narrator.clipPlayer.PlayOneShot(new AudioClip());
@@ -57,7 +60,7 @@ public class SoundTrigger : MonoBehaviour {
             return;
         }
 
-        if(!uniquePlayed && uniqueClip != null)
+        if (!uniquePlayed && uniqueClip != null)
         {
             Debug.Log("Playing unique/first time Line");
             narrator.clipPlayer.PlayOneShot(uniqueClip);
@@ -66,7 +69,6 @@ public class SoundTrigger : MonoBehaviour {
             PlayerPrefs.Save();
             return;
         }
-
 
         if (randomPlayed) { return; }
         Debug.Log("Playing Random Trigger Line");
