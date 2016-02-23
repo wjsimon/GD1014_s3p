@@ -32,7 +32,7 @@ public class AnimationLibrary
         AddAnimation(new AnimationWrapper("P_GreatHeavy01", 0.8f, 1.4f, 2.0f, 3.0f).RomoLength(0.710f));
 
         AddAnimation(new AnimationWrapper("E_SwordCombo01", 1.0f, 1.5f, 2.1f, 2.1f));
-        AddAnimation(new AnimationWrapper("E_SwordCombo02", 0.27f, 0.52f, 0.67f, 0.67f));
+        AddAnimation(new AnimationWrapper("E_SwordCombo02", 0.10f, 0.52f, 0.67f, 0.67f));
         AddAnimation(new AnimationWrapper("E_SwordCombo03", 0.24f, 0.64f, 1.0f, 1.0f));
         AddAnimation(new AnimationWrapper("E_SwordHeavy01", 1.37f, 2.17f, 3.5f, 3.5f));
 

@@ -94,10 +94,7 @@ public class Enemy : Character
 
         Debug.DrawLine(transform.position, agent.destination, Color.red);
 
-        if (deactivate)
-        {
-            return;
-        }
+        if (deactivate) { return; }
 
         CombatUpdate();
         navMeshTimer -= Time.deltaTime;
@@ -138,6 +135,8 @@ public class Enemy : Character
 
     protected virtual void LookAtTarget()
     {
+        if(!alerted) { return; }
+
         Vector3 fo = Vector3.Lerp(transform.forward, target.position - transform.position, Time.deltaTime * turnSpeed);
         fo.y = 0;
         fo.Normalize();
@@ -193,10 +192,34 @@ public class Enemy : Character
 
     public void BackOff() //3
     {
+        RaycastHit hitInfo;
+        Vector3 origin = transform.FindChild("RayCastTarget").position;
+        Debug.DrawRay(origin, -transform.forward, Color.green);
+        if (Physics.Raycast(origin, -transform.forward, out hitInfo, 1.0f, (1<<LayerMask.NameToLayer("Geometry"))))
+        {
+            Debug.Log(hitInfo.collider.gameObject.name + " Backoff blocked by Geometry");
+            ChangeState(State.APPROACH);
+            behavCooldown = 3.0f;
+            return;
+        }
+
         BackwardsMovement();
     }
     public void Strafe( int direction ) //4
     {
+        RaycastHit hitInfo;
+        Vector3 origin = transform.FindChild("RayCastTarget").position;
+        Debug.DrawRay(origin, (transform.right * -direction), Color.green);
+        //Debug.Log((1 << LayerMask.NameToLayer("Geometry")));
+        if (Physics.Raycast(origin, transform.right * direction, out hitInfo, 1.0f, (1 << LayerMask.NameToLayer("Geometry"))))
+        {
+            Debug.Log(hitInfo.collider.gameObject.name + " Strafe blocked by Geometry");
+            ChangeState(State.APPROACH);
+            behavCooldown = 3.0f;
+            return;
+        }
+
+
         SwitchNavMesh(false);
 
         //Debug.LogWarning("strafing");
@@ -475,7 +498,7 @@ public class Enemy : Character
 
         encounterUpdate += Time.deltaTime;
 
-        if (encounterUpdate >= 3.0f)
+        if (encounterUpdate >= 1.0f)
         {
             encounterUpdate = 0;
 
@@ -499,7 +522,7 @@ public class Enemy : Character
 
             RaycastHit hitInfo;
             Transform origin = transform.FindChild("RayCastTarget");
-            Transform rayTarget = target.FindChild("CameraTarget");
+            Transform rayTarget = target.FindChild("RayCastTarget");
 
             //Physics.DefaultRaycastLayers
 
@@ -517,9 +540,33 @@ public class Enemy : Character
     {
         if (encountered[(int)type]) { return; }
 
+
+        Debug.Log(type.ToString() + " " + (int)type);
         encountered[(int)type] = true;
         PlayerPrefs.SetInt(type.ToString() +"/encountered/", 1);
         PlayerPrefs.Save();
         GameManager.instance.narrator.PlayUniqueEncounter(type);
+    }
+
+    public bool CheckLineOfSight()
+    {
+        RaycastHit hitInfo;
+
+        Transform losOrigin = transform.FindChild("RayCastTarget");
+        Transform losTarget = target.transform.FindChild("RayCastTarget");
+        Vector3 rayCastDirection = (losTarget.position - losOrigin.position);
+
+        
+        Debug.DrawRay(losOrigin.position, rayCastDirection, Color.magenta);
+        if (Physics.Raycast(losOrigin.position, rayCastDirection, out hitInfo, Mathf.Infinity, ~(1<<LayerMask.NameToLayer("Trigger"))))
+        {
+            Debug.Log("draw" + hitInfo.collider.name);
+            if (hitInfo.collider.gameObject.GetComponent<PlayerController>())
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

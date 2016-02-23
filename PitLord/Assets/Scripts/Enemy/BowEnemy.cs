@@ -12,6 +12,7 @@ public class BowEnemy : Enemy
     // Use this for initialization
     protected override void Start()
     {
+        type = EnemyType.BOWENEMY;
         base.Start();
 
         if (deactivate)
@@ -25,7 +26,6 @@ public class BowEnemy : Enemy
             combatRange = 20;
         }
 
-        type = EnemyType.BOWENEMY;
         ChangeState(0);
     }
 
@@ -50,7 +50,7 @@ public class BowEnemy : Enemy
 
         if (inAttack())
         {
-            if (attackingInv <= (AnimationLibrary.Get().SearchByName(attackName).duration * 0.8f))
+            if (attackingInv <= (AnimationLibrary.Get().SearchByName(attackName).colStart))
             //if (attackingInv <= 0.8f)
             {
                 LookAtTarget();
@@ -92,10 +92,13 @@ public class BowEnemy : Enemy
         if (Vector3.Distance(target.position, transform.position) <= combatRange && !inAttack())
         {
             RaycastHit rayInfo;
-            Vector3 rayCastTarget = (rayTarget.transform.position - projectileSource.transform.position);
+            Vector3 rayCastDirection = (rayTarget.transform.position - projectileSource.transform.position);
 
             //Debug.DrawRay(projectileSource.transform.position, rayCastTarget, Color.red, 20, false);
-            if (Physics.Raycast(projectileSource.transform.position, rayCastTarget, out rayInfo)) //transform.position needs to be projectileSource
+            Debug.DrawRay(projectileSource.transform.position, rayCastDirection, Color.cyan);
+
+            //Debug.Log(projectileLayer.value + " " + ~(1 << LayerMask.NameToLayer("Trigger")));
+            if (Physics.Raycast(projectileSource.transform.position, rayCastDirection, out rayInfo, Mathf.Infinity, ~(1 << LayerMask.NameToLayer("Trigger")))) //transform.position needs to be projectileSource
             {
                 //Debug.Log(Vector3.Distance(target.position, transform.position));
                 //Debug.Log(rayInfo.collider.gameObject.name + " " + rayInfo.collider.gameObject.tag + " " + rayInfo.collider.gameObject.layer);
@@ -120,7 +123,14 @@ public class BowEnemy : Enemy
                     }
                 }
 
+                else
+                {
+                    ChangeState(State.APPROACH);
+                    behavCooldown = Random.Range(1, 3);
+                }
+
             }
+            /**/
         }
         /**/
 

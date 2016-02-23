@@ -9,6 +9,7 @@ public class SwordEnemy : Enemy
 
     protected override void Start()
     {
+        type = EnemyType.SWORDENEMY;
         base.Start();
 
         if (deactivate)
@@ -17,7 +18,6 @@ public class SwordEnemy : Enemy
             return;
         }
 
-        type = EnemyType.SWORDENEMY;
         ChangeState(0);
     }
 
@@ -76,24 +76,35 @@ public class SwordEnemy : Enemy
         {
             BehaviourRandomize = Random.Range(0, 100);
 
-            if (BehaviourRandomize >= 0 && BehaviourRandomize < 60)
+            bool debug = CheckLineOfSight();
+            Debug.Log(debug);
+            if(debug)
+            {
+                if (BehaviourRandomize >= 100 && BehaviourRandomize < 60) //0
+                {
+                    ChangeState(State.APPROACH);
+                    behavCooldown = Random.Range(0, 4) + 1;
+                }
+                if (BehaviourRandomize >= 0 && BehaviourRandomize < 100) //60
+                {
+                    if (!Physics.Raycast(transform.position, transform.right, 1) || !Physics.Raycast(transform.position, -transform.right, 1))
+                    {
+                        ChangeState(State.STRAFE);
+                        behavCooldown = Random.Range(0, 4) + 1;
+                    }
+                }
+                if (BehaviourRandomize >= 100 && BehaviourRandomize < 100) //90
+                {
+                    ChangeState(State.BACKOFF);
+                    behavCooldown = Random.Range(0, 4) + 1;
+                }
+            }
+            else
             {
                 ChangeState(State.APPROACH);
                 behavCooldown = Random.Range(0, 4) + 1;
             }
-            if(BehaviourRandomize >= 60 && BehaviourRandomize < 90)
-            {
-                if (!Physics.Raycast(transform.position, transform.right, 1) || !Physics.Raycast(transform.position, -transform.right, 1))
-                {
-                    ChangeState(State.STRAFE);
-                    behavCooldown = Random.Range(0, 4) + 1;
-                }
-            }
-            if(BehaviourRandomize >= 90 && BehaviourRandomize < 100)
-            {
-                ChangeState(State.BACKOFF);
-                behavCooldown = Random.Range(0, 4) + 1;
-            }
+
         }
 
         //Within Combat Range, the enemy decides to attack, backoff or strafe around player

@@ -7,6 +7,7 @@ public class SpearEnemy : Enemy
 
     protected override void Start()
     {
+        type = EnemyType.SPEARENEMY;
         base.Start();
 
         if (deactivate)
@@ -15,7 +16,6 @@ public class SpearEnemy : Enemy
             return;
         }
 
-        type = EnemyType.SPEARENEMY;
         ChangeState(0);
     }
 

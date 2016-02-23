@@ -17,6 +17,7 @@ public class MageEnemy : Enemy
     // Use this for initialization
     protected override void Start()
     {
+        type = EnemyType.MAGENEMY;
         base.Start();
 
         if (deactivate)
@@ -33,7 +34,6 @@ public class MageEnemy : Enemy
             combatRange = 20;
         }
 
-        type = EnemyType.MAGENEMY;
         ChangeState(State.IDLE);
     }
 

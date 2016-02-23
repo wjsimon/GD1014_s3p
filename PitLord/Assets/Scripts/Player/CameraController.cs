@@ -38,7 +38,7 @@ public class CameraController : MonoBehaviour {
         }
         if (CameraTarget == null)
         {
-            CameraTarget = player.transform.FindChild("CameraTarget").transform;
+            CameraTarget = player.transform.FindChild("RayCastTarget").transform;
         }
 
         angleV = transform.rotation.eulerAngles.x;

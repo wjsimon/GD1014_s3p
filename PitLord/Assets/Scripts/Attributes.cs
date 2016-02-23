@@ -32,6 +32,10 @@ public class Attributes : MonoBehaviour
     }
     protected virtual void Update()
     {
+        if(isDead())
+        {
+            return;
+        }
     }
     public virtual bool ApplyDamage( int healthDmg, int staminaDmg, Character source )
     {
@@ -88,6 +92,12 @@ public class Attributes : MonoBehaviour
         //Alternative; Spawn prefab of enemy instead of reusing same - can't forget resetting values that way, may prevent bugs ?
         currentHealth = maxHealth;
         SetAnimTrigger("Reset");
+
+        Collider[] cols = GetComponents<Collider>();
+        for(int i = 0; i < cols.Length; i++)
+        {
+            cols[i].enabled = true;
+        }
     }
     protected void CreateSpawnPoint()
     {

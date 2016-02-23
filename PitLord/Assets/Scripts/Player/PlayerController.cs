@@ -28,7 +28,8 @@ public class PlayerController : Character
     public float rollSpeed;
     public Vector3 rollAxis;
 
-    public float switchWeaponTimer;
+    float switchWeaponDuration = 1.5f; //same length as Animation
+    public float switchWeaponTime = 0.8f; //point in Animation where weapon models are swapped
 
     public Interaction interaction;
     bool triggerPressed;
@@ -46,7 +47,7 @@ public class PlayerController : Character
         //Debug
         int mode = PlayerPrefs.GetInt("WeaponMode");
         newWeaponMode = mode == 0 ? WeaponMode.ONEHANDED : WeaponMode.TWOHANDED;
-        switchWeaponTimer = 0.01f;
+        switchWeaponDuration = 0.01f;
         animator.SetFloat("MovesetId", mode);
 
         base.Start();
@@ -576,7 +577,7 @@ public class PlayerController : Character
         newWeaponMode = (WeaponMode)(((int)currentWeaponMode + 1) % (int)WeaponMode.COUNT);
 
         //Play Animation
-        switchWeaponTimer = 2.5f;
+        switchWeaponDuration = 1.5f;
         animator.SetTrigger("WeaponSwitch");
 
         if (newWeaponMode == WeaponMode.ONEHANDED)
@@ -595,17 +596,22 @@ public class PlayerController : Character
 
     void UpdateWeaponMode()
     {
-        if (switchWeaponTimer <= 0) { return; }
+        if (switchWeaponDuration <= 0) { return; }
 
-        switchWeaponTimer -= Time.deltaTime;
-        if (switchWeaponTimer <= 0)
+        switchWeaponDuration -= Time.deltaTime;
+
+        if(switchWeaponDuration <= switchWeaponTime)
         {
-            switchWeaponTimer = 0;
             currentWeaponMode = newWeaponMode;
 
             shortSword.gameObject.SetActive(currentWeaponMode == WeaponMode.ONEHANDED);
             shield.gameObject.SetActive(currentWeaponMode == WeaponMode.ONEHANDED);
             greatSword.gameObject.SetActive(currentWeaponMode == WeaponMode.TWOHANDED);
+        }
+
+        if (switchWeaponDuration <= 0)
+        {
+            switchWeaponDuration = 0;
         }
     }
 
@@ -755,8 +761,11 @@ public class PlayerController : Character
         blocking = false;
         //AnimationLibrary / Variables?, prolly not worth though bud
         healTrigger = 1.0f;
-        healDuration = 2.5f;
+        healDuration = 2.1f;
         healed = false;
+
+        animator.SetFloat("X", 0);
+        animator.SetFloat("Y", 0);
     }
 
     public void UseHeal()
@@ -780,6 +789,7 @@ public class PlayerController : Character
     protected override void Kill()
     {
         base.Kill();
+        lockOnTarget = null;
     }
 
     public override void SoftReset()
@@ -862,7 +872,7 @@ public class PlayerController : Character
     }
     bool inWeaponSwitch()
     {
-        return switchWeaponTimer > 0;
+        return switchWeaponDuration > 0;
     }
 
     public bool inputBlock()
