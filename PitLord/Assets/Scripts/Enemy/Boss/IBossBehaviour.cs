@@ -1,3 +1,4 @@
 ﻿public interface IBossBehaviour {
-    void Execute();
+    bool Execute();
+    //void Finish();
 }

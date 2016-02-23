@@ -7,6 +7,8 @@ public class Boss : Attributes {
     public NavMeshAgent agent;
     public Animator animator;
     public Transform target;
+    public BossTurret turret;
+
 
     public float speed;
 
@@ -15,10 +17,11 @@ public class Boss : Attributes {
     public bool active;
 
 	void Start () {
+
         base.Start();
         Init();
-        SetBehaviour(new BossBehaviourApproach(this));
 	}
+
     void Init()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -38,7 +41,30 @@ public class Boss : Attributes {
 
     void Behaviour()
     {
-        currentBehaviour.Execute();
+        if (currentBehaviour != null)
+        {
+            if(!currentBehaviour.Execute())
+            {
+                //currentBehaviour.Finish();
+                currentBehaviour = null;
+            }
+        }
+
+        if(currentBehaviour == null)
+        {
+            float rng = Random.Range(0, 5);
+
+            if(rng <= 1)
+            {
+                //
+            }
+            else if(rng <= 3)
+            {
+                //
+            }
+
+            SetBehaviour(new BossBehaviourSpawnTurret(this));
+        }
     }
 
     public void SetBehaviour(IBossBehaviour newBehaviour)

@@ -45,4 +45,9 @@ public class AnimationWrapper {
 
         return this;
     }
+
+    public float GetAnimationEnd()
+    {
+        return duration - colStart;
+    }
 }

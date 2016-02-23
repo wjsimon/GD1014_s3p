@@ -30,7 +30,7 @@ public class Attributes : MonoBehaviour
             return;
         }
     }
-    public virtual bool ApplyDamage( int healthDmg, int staminaDmg, Character source )
+    public virtual bool ApplyDamage( int healthDmg, int staminaDmg, Attributes source )
     {
         bool selfIsPlayer = this is PlayerController;
         bool selfIsEnemy = this is Enemy;

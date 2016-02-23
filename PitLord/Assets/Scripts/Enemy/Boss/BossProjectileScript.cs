@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BossProjectileScript : MonoBehaviour {
+public class BossProjectileScript : Attributes {
 
     public float speed = 20;
     public float lifeTime = 10.0f;
@@ -46,8 +46,16 @@ public class BossProjectileScript : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
+        if (lifeTime < 0) { return; }
+
         if (other.GetComponent<Boss>() != null) { return; }
         if (other.GetComponent<BossTurret>() != null) { return; }
+        if (other.GetComponent<BossProjectileScript>() != null) { return; }
+
+        if(other.GetComponent<PlayerController>() != null)
+        {
+            other.GetComponent<PlayerController>().ApplyDamage(1, 0, this);
+        }
 
         StartCoroutine(DestroyTimer());
     }
@@ -56,6 +64,10 @@ public class BossProjectileScript : MonoBehaviour {
     {
         lifeTime = -1;
         GetComponentInChildren<Renderer>().enabled = false;
+
+        transform.FindChild("GFX").GetComponent<ParticleSystem>().Stop();
+        transform.FindChild("ExplosionFX").GetComponent<ParticleSystem>().Play();
+
         var trail = GetComponent<Xft.XWeaponTrail>();
 
         trail.StopSmoothly(1.0f);

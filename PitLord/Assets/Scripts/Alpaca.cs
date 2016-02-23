@@ -23,7 +23,7 @@ public class Alpaca : Attributes
 
     }
 
-    public override bool ApplyDamage( int healthDmg, int staminaDmg, Character source )
+    public override bool ApplyDamage( int healthDmg, int staminaDmg, Attributes source )
     {
         if (!base.ApplyDamage(healthDmg, staminaDmg, source)) { return false; }
 

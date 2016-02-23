@@ -42,6 +42,8 @@ public class AnimationLibrary
 
         AddAnimation(new AnimationWrapper("E_BowLight01", 2.1f, 4.0f, 4.0f, 4.0f));
         AddAnimation(new AnimationWrapper("E_MageSpell01", 2.1f, 4.0f, 4.0f, 4.0f));
+
+        AddAnimation(new AnimationWrapper("B_ProjectileSpawn", 1.0f, 1.5f, 2.5f, 2.5f)); //colEnd = duration - start
     }
 
 

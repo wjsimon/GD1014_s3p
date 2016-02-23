@@ -12,6 +12,7 @@ public class BossTurret : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         boss = GameObject.Find("Boss").GetComponent<Boss>();
+        active = true;
         Destroy(gameObject, lifeTime);
 	}
 	

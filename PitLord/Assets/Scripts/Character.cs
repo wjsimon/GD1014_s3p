@@ -83,7 +83,7 @@ public class Character : Attributes
     }
 
 
-    public override bool ApplyDamage(int healthDmg, int staminaDmg, Character source)
+    public override bool ApplyDamage(int healthDmg, int staminaDmg, Attributes source)
     {
         if (!base.ApplyDamage(healthDmg, staminaDmg, source)) { return false; }
 
@@ -93,7 +93,10 @@ public class Character : Attributes
             return false;
         }
 
-        Vector3 dir = (source.transform.position - transform.position).normalized;
+        Vector3 dir = (source.transform.position - transform.position);
+        dir.y = 0;
+        dir.Normalize();
+
         transform.forward = dir;
         //int facing = (int)Mathf.Clamp01(Mathf.Sign(Vector3.Dot(transform.forward, dir)));
         int facing = Vector3.Dot(transform.forward, dir) >= 0 ? 1 : 0;
