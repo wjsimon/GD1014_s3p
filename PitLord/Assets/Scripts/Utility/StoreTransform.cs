@@ -17,3 +17,11 @@ public class StoreTransform {
         localScale = local;
     }
 }
+
+public static class TransformExtension
+{
+    public static Transform GetRayCastTarget(this Transform trans)
+    {
+        return trans.FindChild("RayCastTarget").transform;
+    }
+}

@@ -8,6 +8,11 @@ public class Character : Attributes
     public CharacterController cc;
     public Animator animator;
 
+    protected float gravity = 9.81f;
+    protected float fallSpeed = 0;
+    protected bool falling;
+    protected float fallHeight = 0;
+
     public float currentStamina;
     public float maxStamina = 10;
 
@@ -21,7 +26,7 @@ public class Character : Attributes
     public bool deactivate;
 
     public int weaponIndex;
-    public List<ProjectileScript> projectiles;
+    public List<EnemyProjectileScript> projectiles;
     public float applyKnockback;
 
     //Animation Controls
@@ -256,7 +261,7 @@ public class Character : Attributes
     public virtual void LaunchProjectile()
     {
         //can be changed to random, can be overridden in specific enemies;
-        ProjectileScript projectile = projectiles[0];
+        EnemyProjectileScript projectile = projectiles[0];
         Transform projectileSource = gameObject.transform.FindChild("ProjectileSource");
 
         projectile.source = this;

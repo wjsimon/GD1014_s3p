@@ -21,7 +21,7 @@ namespace Xft
             }
 
 
-            public Element(Vector3 start, Vector3 end)
+            public Element( Vector3 start, Vector3 end )
             {
                 PointStart = start;
                 PointEnd = end;
@@ -123,7 +123,7 @@ namespace Xft
             gameObject.SetActive(true);
             if (mMeshObj != null)
                 mMeshObj.SetActive(true);
-            
+
 
             mFadeT = 1f;
             mIsFading = false;
@@ -153,7 +153,18 @@ namespace Xft
                 mMeshObj.SetActive(false);
         }
 
-        public void StopSmoothly(float fadeTime)
+        public void Destruct()
+        {
+            gameObject.SetActive(false);
+            if (mMeshObj != null)
+            {
+                Destroy(mMeshObj);
+                mMeshObj = null;
+            }
+
+        }
+
+        public void StopSmoothly( float fadeTime )
         {
             mIsFading = true;
             mFadeTime = fadeTime;

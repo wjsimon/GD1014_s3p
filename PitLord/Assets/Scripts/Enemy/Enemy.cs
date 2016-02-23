@@ -157,6 +157,7 @@ public class Enemy : Character
 
     public void Approach()//1
     {
+        if (isDead()) { return; }
         SetNavPosition(target.position);
 
         alerted = true;
@@ -211,7 +212,7 @@ public class Enemy : Character
         Vector3 origin = transform.FindChild("RayCastTarget").position;
         Debug.DrawRay(origin, (transform.right * -direction), Color.green);
         //Debug.Log((1 << LayerMask.NameToLayer("Geometry")));
-        if (Physics.Raycast(origin, transform.right * direction, out hitInfo, 1.0f, (1 << LayerMask.NameToLayer("Geometry"))))
+        if (Physics.Raycast(origin, transform.right * direction, out hitInfo, 1.0f))//, (1 << LayerMask.NameToLayer("Geometry"))))
         {
             Debug.Log(hitInfo.collider.gameObject.name + " Strafe blocked by Geometry");
             ChangeState(State.APPROACH);
@@ -560,7 +561,6 @@ public class Enemy : Character
         Debug.DrawRay(losOrigin.position, rayCastDirection, Color.magenta);
         if (Physics.Raycast(losOrigin.position, rayCastDirection, out hitInfo, Mathf.Infinity, ~(1<<LayerMask.NameToLayer("Trigger"))))
         {
-            Debug.Log("draw" + hitInfo.collider.name);
             if (hitInfo.collider.gameObject.GetComponent<PlayerController>())
             {
                 return true;

@@ -148,7 +148,6 @@ public class SpearEnemy : Enemy
         {
             StartAttack("E_SpearLight02");
             animator.SetInteger("AttackId", 1);
-
         }
         if(attackIndex >= 2)
         {

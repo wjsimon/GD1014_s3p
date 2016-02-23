@@ -18,13 +18,6 @@ public class Attributes : MonoBehaviour
     public List<AudioClip> onHit;
     public List<AudioClip> onDeath;
 
-    protected float gravity = 9.81f;
-    protected float fallSpeed = 0;
-    protected bool falling;
-    protected float fallHeight = 0;
-
-    [HideInInspector]
-
     protected virtual void Start()
     {
         currentHealth = maxHealth;
@@ -93,6 +86,7 @@ public class Attributes : MonoBehaviour
         currentHealth = maxHealth;
         SetAnimTrigger("Reset");
 
+        //Resets ALL colliders on GameObject - Does not include WeaponCollider;
         Collider[] cols = GetComponents<Collider>();
         for(int i = 0; i < cols.Length; i++)
         {

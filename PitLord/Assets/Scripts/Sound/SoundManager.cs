@@ -3,6 +3,8 @@ using UnityEngine.Audio;
 using System.Collections;
 using System.Collections.Generic;
 
+
+//Ambient 158 BPM
 public class SoundManager : MonoBehaviour {
 
     public AudioMixerSnapshot lowlevel;

@@ -3,7 +3,6 @@ using System.Collections;
 
 public class LockedObject : MonoBehaviour
 {
-
     public string keyName;
     public bool disabled;
     ScreenPrompt prompt;
@@ -27,6 +26,13 @@ public class LockedObject : MonoBehaviour
 
     public void Unlock()
     {
+        if(keyName == "")
+        {
+            Disable();
+            GameManager.instance.player.SetInteraction(null);
+            return;
+        }
+
         for (int i = 0; i < GameManager.instance.inventory.keys.Count; i++)
         {
             if (GameManager.instance.inventory.keys[i] == keyName)

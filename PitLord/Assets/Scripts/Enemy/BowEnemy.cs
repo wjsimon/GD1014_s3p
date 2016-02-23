@@ -167,7 +167,7 @@ public class BowEnemy : Enemy
     {
         if (!canAttack) { return; }
 
-        ProjectileScript projectile = projectiles[0];
+        EnemyProjectileScript projectile = projectiles[0];
         Transform projectileSource = gameObject.transform.FindChild("RayCastTarget");
 
         projectile.source = this;

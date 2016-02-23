@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ProjectileScript : MonoBehaviour {
+public class EnemyProjectileScript : MonoBehaviour {
 
     public float speed = 10;
     public int healthDmg;
