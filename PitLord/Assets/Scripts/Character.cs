@@ -17,7 +17,7 @@ public class Character : Attributes
     public float maxStamina = 10;
 
     public float staminaTick = 3.0f;
-    protected float regenCounter = 0;
+    protected float staminaRegenCounter = 0;
     protected float tickRate = 0.01f;
 
     protected Vector3 offMeshPos;
@@ -114,7 +114,6 @@ public class Character : Attributes
                 }
             }
 
-
             if (currentStamina <= 0)
             {
                 blocking = false;
@@ -122,7 +121,7 @@ public class Character : Attributes
                 SetAnimTrigger("Hit");
 
                 stunned = 1.5f;
-                regenCounter = -5.0f;
+                staminaRegenCounter = -5.0f;
                 iFrames = 0.0f;
                 currentStamina = 0;
             }
@@ -302,11 +301,11 @@ public class Character : Attributes
     {
         if (currentStamina < maxStamina)
         {
-            regenCounter += Time.deltaTime;
+            staminaRegenCounter += Time.deltaTime;
 
-            if (regenCounter >= tickRate)
+            if (staminaRegenCounter >= tickRate)
             {
-                regenCounter = 0;
+                staminaRegenCounter = 0;
                 currentStamina += staminaTick * tickRate;
             }
         }

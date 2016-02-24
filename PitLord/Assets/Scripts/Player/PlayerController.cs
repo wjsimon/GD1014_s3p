@@ -20,6 +20,9 @@ public class PlayerController : Character
     public float healTrigger;
     public float healDuration;
 
+    public float healthRegenCounter = 0;
+    public float healthTick = 1.0f;
+
     //ROLLING STUFF
     float rollStorage;
     public float rollDuration;
@@ -600,7 +603,7 @@ public class PlayerController : Character
 
         switchWeaponDuration -= Time.deltaTime;
 
-        if(switchWeaponDuration <= switchWeaponTime)
+        if (switchWeaponDuration <= switchWeaponTime)
         {
             currentWeaponMode = newWeaponMode;
 
@@ -615,7 +618,7 @@ public class PlayerController : Character
         }
     }
 
-    void LockOnTarget( TargetCycle dir )
+    void LockOnTarget(TargetCycle dir)
     {
         CreateLockTargetList();
 
@@ -730,7 +733,7 @@ public class PlayerController : Character
         }
     }
 
-    public void SetInteraction( Interaction t )
+    public void SetInteraction(Interaction t)
     {
         interaction = t;
     }
@@ -740,7 +743,31 @@ public class PlayerController : Character
         base.StaminaRegen();
         if (inAttack() || inRoll() || blocking || running)
         {
-            regenCounter = -0.1f;
+            staminaRegenCounter = -0.1f;
+        }
+    }
+
+    void HealthRegen()
+    {
+        if (!GameManager.instance.inventory.upgrades.Contains("healthregen")) { return; }
+
+        float ceiling = maxHealth / heals;
+
+        if (currentHealth < ceiling)
+        {
+            healthRegenCounter += Time.deltaTime;
+
+            if (healthRegenCounter >= tickRate)
+            {
+                healthRegenCounter = 0;
+                currentHealth += healthTick * tickRate;
+            }
+        }
+
+        //current can overflow by small amounts, this is just for cleanup
+        if (currentHealth >= maxHealth)
+        {
+            currentHealth = maxHealth;
         }
     }
 
@@ -806,23 +833,42 @@ public class PlayerController : Character
 
     public void ApplyUpgrade(string t)
     {
-        if(t == "maxhealth")
+        if (t == "maxhealth")
         {
             maxHealth += 5;
             currentHealth = maxHealth;
         }
-
-        if(t == "death")
+        if (t == "maxstamina")
+        {
+            maxStamina += 10;
+            currentStamina = maxStamina;
+        }
+        if (t == "staminaregen")
+        {
+            staminaTick *= 2;
+            currentStamina = maxStamina;
+        }
+        if (t == "death")
         {
             ApplyDamage(10, 10, null);
         }
     }
     public void RemoveUpgrade(string t)
     {
-        if(t == "maxhealth")
+        if (t == "maxhealth")
         {
             maxHealth -= 5;
             currentHealth = maxHealth;
+        }
+        if (t == "maxstamina")
+        {
+            maxStamina -= 10;
+            currentStamina = maxStamina;
+        }
+        if (t == "staminaregen")
+        {
+            staminaTick /= 2;
+            currentStamina = maxStamina;
         }
     }
 
@@ -831,66 +877,72 @@ public class PlayerController : Character
         running = !running;
     }
 
-    protected override bool StaminaCost( GameObject source, string action )
+    protected override bool StaminaCost(GameObject source, string action)
     {
-        bool pass = false;
+        if(currentStamina <= 0.5f)
+        {
+            return HealthCost(action);
+        }
+
+        if (currentStamina <= 2)
+        {
+            currentStamina = 0;
+            staminaRegenCounter = -1.0f;
+            return false;
+        }
 
         if (action == "LightAttack")
         {
-            if (currentStamina >= 2)
-            {
-                currentStamina -= 2;
-                pass = true;
-            }
-            else
-            {
-                pass = false;
-            }
+            currentStamina -= 2;
         }
-        if (action == "HeavyAttack")
+        else if (action == "HeavyAttack")
         {
-            if (currentStamina >= 4)
-            {
-                currentStamina -= 4;
-                pass = true;
-            }
-            else
-            {
-                pass = false;
-            }
+            currentStamina -= 4;
         }
-        if (action == "Roll")
+        else if (action == "Roll")
         {
-            if (currentStamina >= 3)
-            {
-                currentStamina -= 3;
-                pass = true;
-            }
-            else
-            {
-                pass = false;
-            }
+            currentStamina -= 3;
         }
-        if (action == "Sprint")
+        else if (action == "Sprint")
         {
-            if (currentStamina >= 0)
-            {
-                currentStamina -= (staminaTick * tickRate) * 0.5f;
-                pass = true;
-            }
-            else
-            {
-                pass = false;
-            }
+            currentStamina -= (staminaTick * tickRate) * 0.5f;
         }
 
         if (currentStamina <= 0)
         {
             currentStamina = 0;
-            regenCounter = -.5f;
+            staminaRegenCounter = 1.0f;
         }
 
-        return pass;
+        return true;
+    }
+
+    bool HealthCost(string action)
+    {
+        //Actions on less than 2 stamina cost half their cost in health;
+        if(!GameManager.instance.inventory.upgrades.Contains("healthcost")) { return false; }
+
+        currentStamina = 0;
+        staminaRegenCounter = -1.0f;
+
+        if (action == "LightAttack")
+        {
+            currentHealth -= 1;
+        }
+        else if (action == "HeavyAttack")
+        {
+            currentHealth -= 2;
+        }
+        else if (action == "Roll")
+        {
+            currentHealth -= 1.5f;
+        }
+        else if (action == "Sprint")
+        {
+            currentHealth -= (staminaTick * tickRate) * 0.25f;
+        }
+
+        return true;
     }
 
     bool inHeal()

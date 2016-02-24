@@ -412,7 +412,7 @@ public class Enemy : Character
         base.StaminaRegen();
         if (inAttack() || blocking)
         {
-            regenCounter = -1.5f;
+            staminaRegenCounter = -1.5f;
         }
     }
 

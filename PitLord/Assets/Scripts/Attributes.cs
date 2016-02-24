@@ -11,8 +11,8 @@ public class Attributes : MonoBehaviour
     //[HideInInspector]
     public Vector3 spawnPoint;
 
-    public int currentHealth;
-    public int maxHealth = 10;
+    public float currentHealth;
+    public float maxHealth = 10;
 
     //[HideInInspector]
     public List<AudioClip> onHit;
