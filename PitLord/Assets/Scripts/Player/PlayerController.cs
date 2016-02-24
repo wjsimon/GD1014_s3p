@@ -794,9 +794,9 @@ public class PlayerController : Character
 
     public override void SoftReset()
     {
-        base.SoftReset();
         transform.position = spawnPoint;
         transform.rotation = Quaternion.LookRotation(Vector3.forward);
+        base.SoftReset();
     }
 
     protected void SprintSwitch()

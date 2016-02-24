@@ -20,11 +20,13 @@ public class SoundManager : MonoBehaviour {
 
     public void EnterCozy()
     {
+        //Debug.Log("Enter Cozy");
         cozy.TransitionTo(transitionIn);
         //cozy.TransitionTo(0);
     }
     public void ExitCozy()
     {
+        //Debug.Log("Exit Cozy");
         lowlevel.TransitionTo(transitionOut);
         //lowlevel.TransitionTo(0);
     }

@@ -142,6 +142,8 @@ public class Character : Attributes
                 GetComponent<Animator>().SetInteger("HitInt", 0);
                 SetAnimTrigger("Hit");
                 stunned = 0.9f;
+
+                CancelAttack();
             }
 
             if (currentHealth <= 0)

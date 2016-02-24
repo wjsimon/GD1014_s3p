@@ -198,9 +198,9 @@ public class Enemy : Character
         Debug.DrawRay(origin, -transform.forward, Color.green);
         if (Physics.Raycast(origin, -transform.forward, out hitInfo, 1.0f, (1<<LayerMask.NameToLayer("Geometry"))))
         {
-            Debug.Log(hitInfo.collider.gameObject.name + " Backoff blocked by Geometry");
+            //Debug.Log(hitInfo.collider.gameObject.name + " Backoff blocked by Geometry");
             ChangeState(State.APPROACH);
-            behavCooldown = 3.0f;
+            behavCooldown = 1.0f;
             return;
         }
 
@@ -215,9 +215,9 @@ public class Enemy : Character
 
         if (Physics.Raycast(origin, transform.right * -direction, out hitInfo, 1.0f, (1 << LayerMask.NameToLayer("Geometry"))))
         {
-            Debug.Log(hitInfo.collider.gameObject.name + " Strafe blocked by Geometry");
+            //Debug.Log(hitInfo.collider.gameObject.name + " Strafe blocked by Geometry");
             ChangeState(State.APPROACH);
-            behavCooldown = 3.0f;
+            behavCooldown = 1.0f;
             return;
         }
 
@@ -456,6 +456,7 @@ public class Enemy : Character
     protected override void CancelAttack()
     {
         base.CancelAttack();
+        behavCooldown = stunned > 0 ? stunned : 0;
     }
 
     protected virtual void SwitchNavMesh( bool enable )
@@ -488,6 +489,8 @@ public class Enemy : Character
 
     public virtual void Alert()
     {
+        if (alerted) { return; }
+
         alerted = true;
         combatTrigger.active += 1;
         ChangeState(State.APPROACH);

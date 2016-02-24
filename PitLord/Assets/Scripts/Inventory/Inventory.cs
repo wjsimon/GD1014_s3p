@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 [System.Serializable]
-public class Inventory {
+public class Inventory
+{
 
     public List<string> items = new List<string>();
     public List<string> keys = new List<string>();
@@ -15,16 +16,18 @@ public class Inventory {
         {"test", "testDisplay"},
     };
 
-	// Use this for initialization
-	public void Start () {
+    // Use this for initialization
+    public void Start()
+    {
         //Load();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	}
+    }
 
-    public void AddItem(string t )
+    // Update is called once per frame
+    void Update()
+    {
+    }
+
+    public void AddItem( string t )
     {
         items.Add(t);
         //Save();
@@ -33,6 +36,14 @@ public class Inventory {
     {
         items.Remove(t);
         //Save();
+    }
+    public void AddKey( string t )
+    {
+        keys.Add(t);
+    }
+    public void RemoveKey( string t )
+    {
+        keys.Remove(t);
     }
 
     /*

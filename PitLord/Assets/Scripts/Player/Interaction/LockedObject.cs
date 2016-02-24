@@ -33,9 +33,9 @@ public class LockedObject : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < GameManager.instance.inventory.items.Count; i++)
+        for (int i = 0; i < GameManager.instance.inventory.keys.Count; i++)
         {
-            if (GameManager.instance.inventory.items[i] == keyName)
+            if (GameManager.instance.inventory.keys[i] == keyName)
             {
                 //GameManager.instance.inventory.RemoveKey(GameManager.instance.inventory.keys[i]);
                 Disable();

@@ -2,49 +2,60 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CombatTrigger : MonoBehaviour {
+public class CombatTrigger : MonoBehaviour
+{
 
     public List<Enemy> enemies;
     public bool triggered;
-    public int active;
+    public bool finished;
 
-	// Use this for initialization
-	void Start () {
+    [HideInInspector]
+    public int active; //DEPRECATED
+
+    // Use this for initialization
+    void Start()
+    {
         GameManager.instance.AddCombatTrigger(this);
 
-        for(int i = 0; i < enemies.Count; i++)
+        for (int i = 0; i < enemies.Count; i++)
         {
             enemies[i].combatTrigger = this;
         }
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        if(triggered)
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        if (finished) { return; }
+
+        if (triggered)
         {
-            if (active == 0 && enemies.Count != 0)
+            if (AllEnemiesDead())
             {
-                GameManager.instance.narrator.PlayOnCombatWin();
                 GameManager.instance.ExitCombat();
-                active = -1;
+                finished = true;
             }
         }
-	}
+    }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter( Collider other )
     {
-        if(triggered)
+        if (triggered)
         {
             return;
         }
 
-        if(enemies.Count <= 0) { return; }
+        if (enemies.Count <= 0) { return; }
+        if (AllEnemiesDead()) { triggered = true; return; }
 
-        if(other.GetComponent<PlayerController>() != null)
+        if (other.GetComponent<PlayerController>() != null)
         {
+            if (other.GetComponent<PlayerController>().isDead()) { return; }
+
             for (int i = 0; i < enemies.Count; i++)
             {
-                enemies[i].Alert();
+                if (!enemies[i].isDead()) { enemies[i].Alert(); }
             }
 
             triggered = true;
@@ -52,9 +63,22 @@ public class CombatTrigger : MonoBehaviour {
         }
     }
 
+    bool AllEnemiesDead()
+    {
+        int count = 0;
+
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            if (!enemies[i].isDead()) { count++; }
+        }
+
+        return count <= 0;
+    }
+
     public void SoftReset()
     {
         triggered = false;
+        finished = false;
         active = enemies.Count;
     }
 }

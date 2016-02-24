@@ -1,30 +1,41 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ItemPickupObject : MonoBehaviour {
+public class ItemPickupObject : MonoBehaviour
+{
 
     public string item;
     ScreenPrompt prompt;
 
-	// Use this for initialization
-	void Start () {
+    public enum ItemType
+    {
+        ITEM,
+        KEY,
+        COUNT,
+    }
+
+    public ItemType itemType;
+
+    void Start()
+    {
         prompt = GameObject.Find("ScreenPrompt").GetComponent<ScreenPrompt>();
 
-        if((PlayerPrefs.GetInt("ItemPickup/" + item) == 1))
+        if ((PlayerPrefs.GetInt("ItemPickup/" + item) == 1))
         {
             PickUp();
         }
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	}
+    }
+
+    void Update()
+    {
+    }
 
     public void PickUp()
     {
-        if(item != null)
+        if (item != null)
         {
-            GameManager.instance.inventory.AddItem(item);
+            if (itemType == ItemType.ITEM) { GameManager.instance.inventory.AddItem(item); }
+            if (itemType == ItemType.KEY) { GameManager.instance.inventory.AddKey(item); }
         }
 
         PlayerPrefs.SetInt("ItemPickup/" + item, 1);

@@ -82,8 +82,8 @@ public class GameManager : MonoBehaviour
     public void RespawnPlayer()
     {
         //Spawns Player, Resets Positions (usually on Death) <- Scene Reload pretty much
-        narrator.PlayDeath();
         SoftReset();
+        narrator.PlayDeath();
     }
 
     public void CheckIdle()
@@ -141,6 +141,9 @@ public class GameManager : MonoBehaviour
     {
         inCombat = false;
         inCombatTimer = 0;
+
+        narrator.PlayOnCombatWin();
+
         Debug.Log("Combat exited...");
     }
 
@@ -179,6 +182,7 @@ public class GameManager : MonoBehaviour
 
     public void SoftReset()
     {
+        player.SoftReset();
         //Reset Enemy Positions, Screen Overlay?
         for (int i = 0; i < enemyList.Count; i++)
         {
@@ -190,7 +194,6 @@ public class GameManager : MonoBehaviour
             triggerList[i].GetComponent<CombatTrigger>().SoftReset();
         }
 
-        player.SoftReset();
         Camera.main.GetComponent<CameraController>().ResetCam();
     }
 

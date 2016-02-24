@@ -190,13 +190,13 @@ public class SpearEnemy : Enemy
 
         if (blockCooldown <= 0)
         {
-            int rng = Random.Range(0, 3);
+            int rng = Random.Range(0, 2);
             //Debug.Log(rng);
             if (rng != 0)
             {
                 if (!inAttack() || !blocking)
                 {
-                    blockDuration = Random.Range(5, 10);
+                    blockDuration = Random.Range(2, 5);
                     blockCooldown = 3.0f;
                 }
             }

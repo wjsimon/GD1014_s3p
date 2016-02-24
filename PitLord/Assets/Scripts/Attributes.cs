@@ -98,6 +98,11 @@ public class Attributes : MonoBehaviour
         //Sets the spawnpoint by creating a new GameObject a playerpos
         //StoreTransform temp = new StoreTransform(transform.position, transform.rotation, transform.localScale);
         spawnPoint = transform.position;
+
+        if(GetComponent<PlayerController>() != null)
+        {
+            spawnPoint = GameObject.Find("PlayerSpawn").transform.position;
+        }
     }
     protected virtual void RegisterObject()
     {
