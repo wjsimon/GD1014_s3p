@@ -811,6 +811,11 @@ public class PlayerController : Character
             maxHealth += 5;
             currentHealth = maxHealth;
         }
+
+        if(t == "death")
+        {
+            ApplyDamage(10, 10, null);
+        }
     }
     public void RemoveUpgrade(string t)
     {
