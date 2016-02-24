@@ -56,13 +56,21 @@ public class Alpaca : Attributes
 
     public void Deactivate()
     {
-        //Add Upgrade to Player
+        AddUpgradeToPlayer();
+        GameManager.instance.player.heals = GameManager.instance.player.maxHeals; //PotionRefill
         //SetAnimTrigger("Death");
         PlayerPrefs.SetInt("Alpaca/" + upgradeName, 1);
         PlayerPrefs.Save();
 
-        //Temp
+        //Temp - Switch with anim + timed destroy
         Destroy(gameObject);
+    }
+
+    public void AddUpgradeToPlayer()
+    {
+        if (upgradeName == "") { return; }
+
+        GameManager.instance.inventory.AddUpgrade(upgradeName);
     }
 
     protected override void RegisterObject()

@@ -17,6 +17,9 @@ public class PotionRefillObject : MonoBehaviour {
     {
         if (other.GetComponent<PlayerController>() != null)
         {
+            PlayerPrefs.SetInt("GameManager/newSession", 0);
+            PlayerPrefs.Save();
+
             GameManager.instance.player.SetInteraction(new InteractionPotionRefill(this));
             prompt.TogglePrompt(true);
         }
@@ -33,8 +36,8 @@ public class PotionRefillObject : MonoBehaviour {
 
     public void Refill()
     {
-        PlayerController p = GameManager.instance.player;
-        p.heals = p.maxHeals;
+        //PlayerController p = GameManager.instance.player;
+        //p.heals = p.maxHeals;
 
         GameManager.instance.StartRespawn();
     }

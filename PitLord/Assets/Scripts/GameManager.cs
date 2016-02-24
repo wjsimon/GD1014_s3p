@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public List<Alpaca> alpacaList = new List<Alpaca>();
 
     float playGameOver;
+    public bool newSession;
     public float respawnTimer;
     public float idleTimer;
     public float inCombatTimer;
@@ -56,6 +57,14 @@ public class GameManager : MonoBehaviour
 
         if (player == null) { player = GameObject.Find("Player").GetComponent<PlayerController>(); }
         if (narrator == null) { narrator = GameObject.Find("Narrator").GetComponent<Narrator>(); }
+
+
+        newSession = PlayerPrefs.GetInt("GameManager/newSession", 1) <= 0 ? false : true;
+
+        if(!newSession)
+        {
+            RespawnPlayer();
+        }
     }
 
     // Update is called once per frame
@@ -235,6 +244,7 @@ public class GameManager : MonoBehaviour
         playGameOver = 5.0f;
 
         PlayerPrefs.DeleteAll();
+        PlayerPrefs.SetInt("GameManager/newSession", 1);
         PlayerPrefs.Save();
     }
 }

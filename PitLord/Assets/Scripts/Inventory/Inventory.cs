@@ -45,6 +45,16 @@ public class Inventory
     {
         keys.Remove(t);
     }
+    public void AddUpgrade( string t )
+    {
+        upgrades.Add(t);
+        GameManager.instance.player.ApplyUpgrade(t);
+    }
+    public void RemoveUpgrade( string t )
+    {
+        upgrades.Remove(t);
+        GameManager.instance.player.RemoveUpgrade(t);
+    }
 
     /*
     public void Save()

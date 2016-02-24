@@ -788,6 +788,9 @@ public class PlayerController : Character
     }
     protected override void Kill()
     {
+        PlayerPrefs.SetInt("GameManager/newSession", 0);
+        PlayerPrefs.Save();
+
         base.Kill();
         lockOnTarget = null;
     }
@@ -796,7 +799,26 @@ public class PlayerController : Character
     {
         transform.position = spawnPoint;
         transform.rotation = Quaternion.LookRotation(Vector3.forward);
+
+        GameManager.instance.player.heals = GameManager.instance.player.maxHeals; //PotionRefill
         base.SoftReset();
+    }
+
+    public void ApplyUpgrade(string t)
+    {
+        if(t == "maxhealth")
+        {
+            maxHealth += 5;
+            currentHealth = maxHealth;
+        }
+    }
+    public void RemoveUpgrade(string t)
+    {
+        if(t == "maxhealth")
+        {
+            maxHealth -= 5;
+            currentHealth = maxHealth;
+        }
     }
 
     protected void SprintSwitch()

@@ -37,7 +37,7 @@ public class EnemyProjectileScript : MonoBehaviour {
 
         else if((other.GetComponent<Enemy>() == null) && (other.gameObject.layer != LayerMask.NameToLayer("Trigger")))
         {
-            Debug.Log(other.name);
+            //Debug.Log(other.name);
             stop = true;
             Destroy(gameObject, 0.5f);
         }
