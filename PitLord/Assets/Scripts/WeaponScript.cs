@@ -74,6 +74,20 @@ public class WeaponScript : MonoBehaviour {
             int hD = wrapper.healthDmg;
             int sD = wrapper.StaminaDmg;
 
+            if(GameManager.instance.inventory.upgrades.Contains("rtsr"))
+            {
+                if(owner.GetComponent<PlayerController>() != null)
+                {
+                    PlayerController p = owner.GetComponent<PlayerController>();
+
+                    if(p.currentHealth <= (p.maxHealth * 0.2f))
+                    {
+                        hD *= 2;
+                        sD *= 2;
+                    }
+                }
+            }
+
             if(attackFound)
             {
                 bool hit = enemy.ApplyDamage(hD, sD, owner);
