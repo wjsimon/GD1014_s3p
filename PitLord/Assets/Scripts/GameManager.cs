@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
 
         newSession = PlayerPrefs.GetInt("GameManager/newSession", 1) <= 0 ? false : true;
 
-        /*
+        
         if(!newSession)
         {
             RespawnPlayer();

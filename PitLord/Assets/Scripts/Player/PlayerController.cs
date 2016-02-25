@@ -850,7 +850,7 @@ public class PlayerController : Character
         }
         if (t == "death")
         {
-            ApplyDamage(10, 10, null);
+            ApplyDamage(10, 10, GameManager.instance.player);
         }
     }
     public void RemoveUpgrade(string t)
