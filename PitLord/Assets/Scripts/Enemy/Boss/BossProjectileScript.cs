@@ -4,7 +4,7 @@ using System.Collections;
 public class BossProjectileScript : Attributes {
 
     public float speed = 20;
-    public float lifeTime = 10.0f;
+    public float lifeTime;
     Transform target;
 
 	// Use this for initialization

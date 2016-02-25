@@ -11,7 +11,6 @@ public class MageEnemy : Enemy
 
     public int healthDmg = 9;
     public int staminaDmg = 9;
-
     bool aoe;
 
     // Use this for initialization

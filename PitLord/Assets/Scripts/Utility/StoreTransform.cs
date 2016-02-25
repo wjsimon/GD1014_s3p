@@ -24,4 +24,19 @@ public static class TransformExtension
     {
         return trans.FindChild("RayCastTarget").transform;
     }
+
+    public static Transform FindChildRecursive(this Transform trans, string name)
+    {
+        for(int i = 0; i < trans.childCount; i++)
+        {
+            Transform current = trans.GetChild(i);
+            if (current.name == name)
+                return current;
+
+            Transform next = current.FindChildRecursive(name);
+            if (next != null) { return next; }
+        }
+
+        return null;
+    }
 }

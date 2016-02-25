@@ -3,10 +3,6 @@ using System.Collections;
 
 public class BossBehaviourSpawnTurret : IBossBehaviour
 {
-
-    Boss boss;
-
-    public float navMeshUpdate;
     public float animationDuration = 2.5f;
 
     public enum State
@@ -23,12 +19,10 @@ public class BossBehaviourSpawnTurret : IBossBehaviour
     {
         this.boss = boss;
 
-        navMeshUpdate = 0.5f;
-
         currentState = State.START;
         stateTimer = AnimationLibrary.Get().SearchByName("B_ProjectileSpawn").colStart;
 
-        boss.animator.SetInteger("AttackId", 4);
+        boss.animator.SetInteger("AttackId", 5);
         boss.animator.SetTrigger("Attack");
     }
 
@@ -72,21 +66,5 @@ public class BossBehaviourSpawnTurret : IBossBehaviour
         /**/
 
         return false;
-    }
-
-    void MoveToTarget( Transform target )
-    {
-        if (navMeshUpdate <= 0) { return; }
-
-        navMeshUpdate -= Time.deltaTime;
-
-        if (navMeshUpdate <= 0)
-        {
-            navMeshUpdate = 0.5f;
-            boss.agent.SetDestination(target.position);
-            boss.agent.Resume();
-
-            Debug.DrawRay(boss.transform.position, target.position - boss.transform.position, Color.red, 1.2f);
-        }
     }
 }
