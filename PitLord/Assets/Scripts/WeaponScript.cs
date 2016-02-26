@@ -2,14 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class WeaponScript : MonoBehaviour {
+public class WeaponScript : MonoBehaviour
+{
+
+    public ParticleSystem playerHit;
+    public ParticleSystem enemyHit;
+    public ParticleSystem envHit;
 
     public struct DamageWrapper
     {
         public int healthDmg;
         public int StaminaDmg;
 
-        public DamageWrapper(int hD, int sD)
+        public DamageWrapper( int hD, int sD )
         {
             healthDmg = hD;
             StaminaDmg = sD;
@@ -45,42 +50,49 @@ public class WeaponScript : MonoBehaviour {
     public Character owner;
     public Vector3 hitDirection;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         owner = GetComponentInParent<Character>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        playerHit = Resources.Load<ParticleSystem>("Particles/Prefabs/OnHit/FX_BloodHit_Player");
+        enemyHit = Resources.Load<ParticleSystem>("Particles/Prefabs/OnHit/FX_BloodHit_EnemySlow");
+        envHit = Resources.Load<ParticleSystem>("Particles/Prefabs/OnHit/FX_EnvHit");
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         lastPos = transform.position;
         //Debug.Log(owner.colliderSwitch);
-	}
+    }
 
-    void OnTriggerEnter(Collider other)
+
+    void OnTriggerEnter( Collider other )
     {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Geometry"))
+        {
+            //--
+        }
+
         Attributes enemy = other.GetComponent<Attributes>();
-        if(enemy == null) { return; }
+        if (enemy == null) { return; }
+        if (enemy == owner) { return; }
         //Debug.LogError("COLLISION");
         //if ((owner.gameObject.tag == "Player" && other.gameObject.tag == "Enemy" || other.gameObject.tag == "DesObj") || (owner.gameObject.tag == "Enemy" && other.gameObject.tag == "Player"))
         {
-            /*
-            Vector3 dir = (pos-transform.position).normalized;  
-		    hitDir = Mathf.Sign (Vector3.Dot (transform.forward, dir));
-            /**/
-
             //Debug.LogWarning("Player hit");
             DamageWrapper wrapper;
             bool attackFound = attackNameToDamage.TryGetValue(owner.attackName, out wrapper);
             int hD = wrapper.healthDmg;
             int sD = wrapper.StaminaDmg;
 
-            if(GameManager.instance.inventory.upgrades.Contains("rtsr"))
+            if (GameManager.instance.inventory.upgrades.Contains("rtsr"))
             {
-                if(owner.GetComponent<PlayerController>() != null)
+                if (owner.GetComponent<PlayerController>() != null)
                 {
                     PlayerController p = owner.GetComponent<PlayerController>();
 
-                    if(p.currentHealth <= (p.maxHealth * 0.2f))
+                    if (p.currentHealth <= (p.maxHealth * 0.2f))
                     {
                         hD *= 2;
                         sD *= 2;
@@ -88,7 +100,7 @@ public class WeaponScript : MonoBehaviour {
                 }
             }
 
-            if(attackFound)
+            if (attackFound)
             {
                 bool hit = enemy.ApplyDamage(hD, sD, owner);
 
@@ -96,24 +108,134 @@ public class WeaponScript : MonoBehaviour {
                 {
                     CalcHitDirection();
 
-                    if(owner.GetComponent<PlayerController>() == null)
+                    if (owner.GetComponent<PlayerController>() == null)
                     {
                         GetComponent<BoxCollider>().enabled = false;
                         owner.colliderSwitch = false;
                     }
                 }
             }
+
+            if (other.GetComponent<PlayerController>() != null)
+            {
+                ParticleSystem sys = GameObject.Instantiate<ParticleSystem>(playerHit);
+                SpawnParticle(sys, enemy.transform.FindChildRecursive("RayCastTarget").position, hitDirection);
+            }
+            else if (other.GetComponent<Enemy>() != null)
+            {
+                if (enemy.GetComponent<Enemy>() != null && owner.GetComponent<Enemy>() != null) { return; }
+
+                if (other.GetComponent<Enemy>().blocking)
+                {
+                    //envhit
+                }
+                else
+                {
+                    ParticleSystem sys = GameObject.Instantiate<ParticleSystem>(enemyHit);
+                    SpawnParticle(sys, enemy.transform.FindChildRecursive("RayCastTarget").position, hitDirection);
+                }
+            }
+            else if (other.GetComponent<Boss>() != null)
+            {
+                //enemy slow
+            }
         }
     }
+    /**/
+
+    /*
+    void OnCollisionEnter(Collision col)
+    {
+        Collider other = col.collider;
+      
+        Attributes enemy = other.gameObject.GetComponent<Attributes>();
+        if (enemy == null) { return; }
+        if (enemy == owner) { return; }
+        Debug.Log(col.gameObject.name);
+
+        //Debug.LogError("COLLISION");
+        //if ((owner.gameObject.tag == "Player" && other.gameObject.tag == "Enemy" || other.gameObject.tag == "DesObj") || (owner.gameObject.tag == "Enemy" && other.gameObject.tag == "Player"))
+        {
+            //Debug.LogWarning("Player hit");
+            DamageWrapper wrapper;
+            bool attackFound = attackNameToDamage.TryGetValue(owner.attackName, out wrapper);
+            int hD = wrapper.healthDmg;
+            int sD = wrapper.StaminaDmg;
+
+            if (GameManager.instance.inventory.upgrades.Contains("rtsr"))
+            {
+                if (owner.GetComponent<PlayerController>() != null)
+                {
+                    PlayerController p = owner.GetComponent<PlayerController>();
+
+                    if (p.currentHealth <= (p.maxHealth * 0.2f))
+                    {
+                        hD *= 2;
+                        sD *= 2;
+                    }
+                }
+            }
+
+            if (attackFound)
+            {
+                bool hit = enemy.ApplyDamage(hD, sD, owner);
+
+                if (hit)
+                {
+                    Vector3 hitDir = CalcHitDirection();
+
+                    if (owner.GetComponent<PlayerController>() == null)
+                    {
+                        GetComponent<BoxCollider>().enabled = false;
+                        owner.colliderSwitch = false;
+                    }
+                }
+            }
+
+            if (other.GetComponent<PlayerController>() != null)
+            {
+                //player
+            }
+            else if (other.GetComponent<Enemy>() != null)
+            {
+                if (other.GetComponent<Enemy>().blocking)
+                {
+                    //envhit
+                }
+                else
+                {
+                    Debug.Log("spawn system");
+                    ParticleSystem sys = GameObject.Instantiate<ParticleSystem>(enemyHit);
+                    sys.transform.position = hitDirection;
+                    sys.loop = false;
+                    sys.Play();
+                }
+            }
+            else if (other.GetComponent<Boss>() != null)
+            {
+                //enemy slow
+            }
+            else if (other.gameObject.layer == LayerMask.NameToLayer("Geometry"))
+            {
+                //envHit
+            }
+        }
+    }
+    /**/
 
     void CalcHitDirection()
     {
+        Vector3[] output = new Vector3[2];
         Debug.DrawRay(transform.position, lastPos - transform.position, Color.blue);
         hitDirection = lastPos - transform.position;
     }
 
-    void SpawnParticles()
+    void SpawnParticle( ParticleSystem sys, Vector3 pos, Vector3 dir )
     {
-        //Stuff
+        sys.transform.position = pos;
+        sys.transform.forward = dir;
+        sys.loop = false;
+        sys.Play();
+        Destroy(sys.gameObject, sys.duration);
     }
 }

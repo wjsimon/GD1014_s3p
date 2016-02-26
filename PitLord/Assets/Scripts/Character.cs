@@ -17,7 +17,7 @@ public class Character : Attributes
     public float maxStamina = 10;
 
     public float staminaTick = 3.0f;
-    protected float staminaRegenCounter = 0;
+    public float staminaRegenCounter = 0;
     protected float tickRate = 0.01f;
 
     protected Vector3 offMeshPos;

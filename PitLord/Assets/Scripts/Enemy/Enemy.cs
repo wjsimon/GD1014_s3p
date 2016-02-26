@@ -451,6 +451,11 @@ public class Enemy : Character
         }
 
         GetComponent<CapsuleCollider>().enabled = false;
+
+        AudioClip clip = Resources.Load<AudioClip>("Audio/placeholder/SFX_enemydeath");
+        //GameManager.instance.narrator.PlayNextParallel(clip);
+        GameManager.instance.narrator.PlayNextParallel(clip);
+        agent.Stop();
     }
 
     protected override void CancelAttack()

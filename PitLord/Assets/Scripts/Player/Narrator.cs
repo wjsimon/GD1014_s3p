@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Narrator : MonoBehaviour
 {
     public AudioSource clipPlayer;
+    public AudioSource parallellPlayer;
 
     //Need uniques + Environmental stuff in Narrator, all trigger based into SoundTrigger?
     public List<AudioClip> uniques_player;
@@ -54,13 +55,16 @@ public class Narrator : MonoBehaviour
         clipPlayer.Play();
     }
 
-    public void PlayNextParallel( AudioClip clip )
+    public void PlayNextParallel(AudioClip clip)
     {
         //Second Player instead of newing one
-        AudioSource newPlayer = new AudioSource();
+        if (parallellPlayer == null) { return; }
 
-        newPlayer.clip = clip;
-        newPlayer.Play();
+        AudioSource current = GameObject.Instantiate<AudioSource>(parallellPlayer);
+        //parallellPlayer.transform.position = Camera.main.transform.position;
+        Debug.Log(clip.name);
+        current.clip = clip;
+        current.Play();
     }
 
     public AudioClip GetNextClip(List<AudioClip> list, ref int index, string name)

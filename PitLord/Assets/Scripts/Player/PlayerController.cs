@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -263,20 +264,21 @@ public class PlayerController : Character
             {
                 if (!running && currentStamina > 0)
                 {
-                    SprintSwitch();
+                    running = true;
                 }
             }
             if (Input.GetAxis("Sprint") <= 0)
             {
                 if (running)
                 {
-                    SprintSwitch();
+                    running = false;
                 }
             }
 
             if (running)
             {
                 StaminaCost(gameObject, "Sprint");
+
                 if (currentStamina <= 0)
                 {
                     SprintSwitch();
@@ -813,10 +815,13 @@ public class PlayerController : Character
 
         healed = true;
     }
+
     protected override void Kill()
     {
         PlayerPrefs.SetInt("GameManager/newSession", 0);
         PlayerPrefs.Save();
+
+        GameObject.Find("DeathScreen").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/placeholder/respawn_screen_meme");
 
         base.Kill();
         lockOnTarget = null;
@@ -875,16 +880,22 @@ public class PlayerController : Character
     protected void SprintSwitch()
     {
         running = !running;
+
+        if(running == false)
+        {
+            staminaRegenCounter = 3;
+            healthRegenCounter = 3;
+        }
     }
 
     protected override bool StaminaCost(GameObject source, string action)
     {
-        if(currentStamina <= 0.5f)
+        if(currentStamina <= 0.5f && action != "Sprint")
         {
             return HealthCost(action);
         }
 
-        if (currentStamina <= 2)
+        if (currentStamina <= 2 && action != "Sprint")
         {
             currentStamina = 0;
             staminaRegenCounter = -1.0f;
@@ -920,7 +931,7 @@ public class PlayerController : Character
     bool HealthCost(string action)
     {
         //Actions on less than 2 stamina cost half their cost in health;
-        if(!GameManager.instance.inventory.upgrades.Contains("healthcost")) { return false; }
+        if(!GameManager.instance.inventory.upgrades.Contains("healthcost") || action == "Sprint") { return false; }
 
         currentStamina = 0;
         staminaRegenCounter = -1.0f;

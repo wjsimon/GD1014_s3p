@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PotionRefillObject : MonoBehaviour {
@@ -39,6 +40,16 @@ public class PotionRefillObject : MonoBehaviour {
         //PlayerController p = GameManager.instance.player;
         //p.heals = p.maxHeals;
 
+        ParticleSystem sys = GameObject.Instantiate<ParticleSystem>(Resources.Load<ParticleSystem>("Particles/Prefabs/FX_HealDust"));
+        Debug.Log(sys.name);
+        sys.transform.position = Camera.main.transform.FindChild("Particles").position;
+        sys.transform.forward = Camera.main.transform.forward;
+        sys.transform.parent = Camera.main.transform.FindChild("Particles");
+        sys.loop = false;
+        sys.Play();
+        Destroy(sys.gameObject, sys.duration);
+
+        GameObject.Find("DeathScreen").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/placeholder/respawn_screen_white");
         GameManager.instance.StartRespawn();
     }
 }
