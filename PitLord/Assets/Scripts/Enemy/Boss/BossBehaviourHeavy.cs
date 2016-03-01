@@ -29,7 +29,16 @@ public class BossBehaviourHeavy : IBossBehaviour {
         attackTimer -= Time.deltaTime;
         attackTimerInv += Time.deltaTime;
 
-        if(boss.phase >= 2)
+        if (attackTimerInv >= boss.GetAnimation(3).colStart && attackTimerInv <= boss.GetAnimation(3).colEnd)
+        {
+            boss.weapon.GetComponent<Collider>().enabled = true; //umschreiben wenn eigener collider, am besten einfach lokal und dann im Start per Find() zuweisen
+        }
+        else
+        {
+            boss.weapon.GetComponent<Collider>().enabled = false;
+        }
+
+        if (boss.phase >= 2)
         {
             if (attackTimerInv >= 1.0f && !shockwaveSpawned) //Library;
             {

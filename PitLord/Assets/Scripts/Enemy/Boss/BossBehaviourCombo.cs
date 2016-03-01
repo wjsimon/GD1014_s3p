@@ -29,6 +29,16 @@ public class BossBehaviourCombo : IBossBehaviour
         }
 
         attackTimer -= Time.deltaTime;
+        attackTimerInv += Time.deltaTime;
+
+        if (attackTimerInv >= boss.GetAnimation(comboCounter).colStart && attackTimerInv <= boss.GetAnimation(comboCounter).colEnd)
+        {
+            boss.weapon.GetComponent<Collider>().enabled = true; //umschreiben wenn eigener collider, am besten einfach lokal und dann im Start per Find() zuweisen
+        }
+        else
+        {
+            boss.weapon.GetComponent<Collider>().enabled = false;
+        }
 
         if (attackTimer <= 0)
         {

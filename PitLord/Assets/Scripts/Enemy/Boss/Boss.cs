@@ -8,6 +8,7 @@ public class Boss : Attributes
     public Animator animator;
     public Transform target;
     public BossTurret turret;
+    public WeaponScript weapon;
 
     public BossShockwave shockwave;
 
@@ -27,7 +28,7 @@ public class Boss : Attributes
         "Projectile",
     };
 
-    void Start()
+    protected override void Start()
     {
         base.Start();
         Init();
@@ -37,6 +38,7 @@ public class Boss : Attributes
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        weapon = GameObject.Find("Weapon").GetComponent<WeaponScript>();
         target = GameObject.Find("Player").transform;
 
         animator.SetFloat("X", 0);
