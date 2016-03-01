@@ -29,20 +29,26 @@ public class BossShockwave : MonoBehaviour {
         transform.LookAt(boss.target);
 
         float dist = Vector3.Distance(transform.position, boss.target.transform.position);
-        lifeTime = dist / speed + 0.15f;
-
-        Destroy(gameObject, lifeTime);
+        lifeTime = (dist / speed + 0.15f) > 0.5f ? (dist / speed + 0.15f) : 0.5f;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (!active) { return; }
+
+        lifeTime -= Time.deltaTime;
+
+        if (lifeTime <= 0)
+        {
+            Destroy(gameObject);
+        }
 
         Move();
 
+        if (!active) { return; }
         fireTimer -= Time.deltaTime;
-        if (fireTimer <= 0 && lifeTime > particleDur) //.5f = ParticleEffect Duration
+        if (fireTimer <= 0) //.5f = ParticleEffect Duration
         {
+            if(lifeTime < particleDur) { lifeTime = particleDur; }
             Fire();
         }
 	}

@@ -7,7 +7,7 @@ public class BossBehaviourCombo : IBossBehaviour
     const float cancelRange = 8.0f;
     int comboCounter;
 
-    //0,1,2 im Animator
+    //0,1,2 im Animator - attackid
 
     public BossBehaviourCombo( Boss boss )
     {

@@ -15,12 +15,19 @@ public class BossBehaviourSpawnTurret : IBossBehaviour
     public State currentState;
     public float stateTimer;
 
+    public Transform[] spawns = new Transform[8];
+
     public BossBehaviourSpawnTurret( Boss boss )
     {
         this.boss = boss;
 
         currentState = State.START;
-        stateTimer = AnimationLibrary.Get().SearchByName("B_ProjectileSpawn").colStart;
+        stateTimer = AnimationLibrary.Get().SearchByName("B_Projectile").colStart;
+
+        for(int i = 0; i < spawns.Length; i++)
+        {
+            spawns[i] = GameObject.Find("Spawn" + i + 1).transform;
+        }
 
         boss.animator.SetInteger("AttackId", 5);
         boss.animator.SetTrigger("Attack");
@@ -37,8 +44,22 @@ public class BossBehaviourSpawnTurret : IBossBehaviour
             currentState = State.END;
             stateTimer = AnimationLibrary.Get().SearchByName("B_ProjectileSpawn").GetAnimationEnd();
 
-            Vector3 pos = boss.transform.GetRayCastTarget().position;
-            GameObject.Instantiate(boss.turret, pos, boss.transform.localRotation);
+            //Vector3 pos = boss.transform.GetRayCastTarget().position;
+            if(boss.phase == 1)
+            {
+                Vector3 pos = spawns[Random.Range(0, spawns.Length)].position;
+                GameObject.Instantiate(boss.turret, pos, boss.transform.localRotation);
+            }
+            if(boss.phase == 2)
+            {
+                Vector3 pos = spawns[Random.Range(0, spawns.Length)].position;
+                GameObject.Instantiate(boss.turret, pos, boss.transform.localRotation);
+            }
+            if(boss.phase == 3)
+            {
+                Vector3 pos = spawns[Random.Range(0, spawns.Length)].position;
+                GameObject.Instantiate(boss.turret, pos, boss.transform.localRotation);
+            }
 
             return true;
         }

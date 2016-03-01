@@ -43,7 +43,27 @@ public class AnimationLibrary
         AddAnimation(new AnimationWrapper("E_BowLight01", 2.1f, 4.0f, 4.0f, 4.0f));
         AddAnimation(new AnimationWrapper("E_MageSpell01", 2.1f, 4.0f, 4.0f, 4.0f));
 
-        AddAnimation(new AnimationWrapper("B_ProjectileSpawn", 1.0f, 1.5f, 2.5f, 2.5f)); //colEnd = duration - start
+        AddAnimation(new AnimationWrapper("B_Combo01_1", 1.0f, 1.5f, 2.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("B_Combo01_2", 1.0f, 1.5f, 2.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("B_Combo01_3", 1.0f, 1.5f, 2.5f, 2.5f));
+
+        AddAnimation(new AnimationWrapper("B_Combo02_1", 1.0f, 1.5f, 2.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("B_Combo02_2", 1.0f, 1.5f, 2.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("B_Combo02_3", 1.0f, 1.5f, 2.5f, 2.5f));
+
+        AddAnimation(new AnimationWrapper("B_Combo03_1", 1.0f, 1.5f, 2.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("B_Combo03_2", 1.0f, 1.5f, 2.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("B_Combo03_3", 1.0f, 1.5f, 2.5f, 2.5f));
+
+        AddAnimation(new AnimationWrapper("B_Heavy_1", 1.0f, 1.5f, 2.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("B_Heavy_2", 1.0f, 1.5f, 2.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("B_Heavy_3", 1.0f, 1.5f, 2.5f, 2.5f));
+
+        AddAnimation(new AnimationWrapper("B_AOE_1", 1.0f, 1.5f, 2.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("B_AOE_2", 1.0f, 1.5f, 2.5f, 2.5f));
+        AddAnimation(new AnimationWrapper("B_AOE_3", 1.0f, 1.5f, 2.5f, 2.5f));
+
+        AddAnimation(new AnimationWrapper("B_Projectile", 1.0f, 1.5f, 2.5f, 2.5f)); //colEnd = duration - start
     }
 
 

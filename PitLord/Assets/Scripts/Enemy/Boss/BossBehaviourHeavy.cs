@@ -29,10 +29,13 @@ public class BossBehaviourHeavy : IBossBehaviour {
         attackTimer -= Time.deltaTime;
         attackTimerInv += Time.deltaTime;
 
-        if(attackTimerInv >= 1.0f && !shockwaveSpawned) //Library;
+        if(boss.phase >= 2)
         {
-            GameObject.Instantiate(boss.shockwave);
-            shockwaveSpawned = true;
+            if (attackTimerInv >= 1.0f && !shockwaveSpawned) //Library;
+            {
+                GameObject.Instantiate(boss.shockwave);
+                shockwaveSpawned = true;
+            }
         }
 
         return attackTimer > 0;

@@ -19,12 +19,12 @@ public class Boss : Attributes
 
     public string[] attackNames = new string[]
     {
-        "combo01",
-        "combo02",
-        "combo03",
-        "heavy",
-        "aoe",
-        "projectile",
+        "Combo01",
+        "Combo02",
+        "Combo03",
+        "Heavy",
+        "Aoe",
+        "Projectile",
     };
 
     void Start()
@@ -69,7 +69,7 @@ public class Boss : Attributes
             float rng = Random.Range(0.0f, 4.0f);
             //Debug.Log(rng);
 
-            rng = 1.5f; //DEBUG to Force Behaviours
+            //rng = 1.5f; //DEBUG to Force Behaviours
 
             if (rng <= 0)
             {

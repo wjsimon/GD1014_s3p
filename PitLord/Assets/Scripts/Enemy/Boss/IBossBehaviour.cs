@@ -40,7 +40,7 @@ public class IBossBehaviour{
         boss.animator.SetFloat("Y", 0);
         boss.agent.Stop();
 
-        //attackTimer = boss.GetAnimation(comboCounter).duration;
+        //attackTimer = boss.GetAnimation(index).duration;
         attackTimer = 2.0f;
         attackTimerInv = 0;
         boss.animator.SetInteger("AttackId", index);
