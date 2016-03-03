@@ -12,7 +12,7 @@ public class MageEnemy : Enemy
     public int healthDmg = 9;
     public int staminaDmg = 9;
     bool aoe;
-
+    public ParticleSystem AOEAttack;
     // Use this for initialization
     protected override void Start()
     {
@@ -34,6 +34,7 @@ public class MageEnemy : Enemy
         }
 
         ChangeState(State.IDLE);
+        AOEAttack = Resources.Load<ParticleSystem>("Particles/Prefabs/FX_MageAOE");
     }
 
     // Update is called once per frame
@@ -151,6 +152,8 @@ public class MageEnemy : Enemy
         if(Vector3.Distance(transform.position, target.position) <= 5)
         {
             GameManager.instance.player.ApplyDamage(healthDmg, staminaDmg, this);
+            ParticleSystem sys = GameObject.Instantiate<ParticleSystem>(AOEAttack);
+            SpawnParticle(sys, transform.position,Vector3.up);
             aoe = false;
         }
     }
@@ -266,4 +269,12 @@ public class MageEnemy : Enemy
         }
     }
     /**/
+    void SpawnParticle(ParticleSystem sys, Vector3 pos, Vector3 dir)
+    {
+        sys.transform.position = pos;
+        sys.transform.forward = dir;
+        sys.loop = false;
+        sys.Play();
+        Destroy(sys.gameObject, sys.duration);
+    }
 }

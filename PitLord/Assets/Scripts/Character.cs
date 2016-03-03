@@ -140,7 +140,7 @@ public class Character : Attributes
                 //OnHit();
                 GetComponent<Animator>().SetInteger("HitInt", 0);
                 SetAnimTrigger("Hit");
-                stunned = 0.9f;
+                stunned = 0.3f;//0.9f
 
                 CancelAttack();
             }

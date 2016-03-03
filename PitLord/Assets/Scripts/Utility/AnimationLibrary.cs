@@ -41,7 +41,7 @@ public class AnimationLibrary
         AddAnimation(new AnimationWrapper("E_SpearHeavy01", 0.30f, 1.0f, 1.66f, 1.66f));
 
         AddAnimation(new AnimationWrapper("E_BowLight01", 2.1f, 4.0f, 4.0f, 4.0f));
-        AddAnimation(new AnimationWrapper("E_MageSpell01", 2.1f, 4.0f, 4.0f, 4.0f));
+        AddAnimation(new AnimationWrapper("E_MageSpell01", 0.5f, 0.6f, 4.0f, 4.0f));
 
         AddAnimation(new AnimationWrapper("B_Combo01_1", 1.0f, 1.5f, 2.5f, 2.5f));
         AddAnimation(new AnimationWrapper("B_Combo01_2", 1.0f, 1.5f, 2.5f, 2.5f));

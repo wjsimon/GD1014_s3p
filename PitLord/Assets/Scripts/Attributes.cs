@@ -117,4 +117,13 @@ public class Attributes : MonoBehaviour
     {
         return currentHealth <= 0;
     }
+    public void SpawnEffect(AnimationEvent aniEvent)
+    {
+        
+        
+         Vector3 pos = Vector3.zero;
+         if (aniEvent.stringParameter != "") { pos = transform.FindChildRecursive(aniEvent.stringParameter).position; }
+         GameObject FXTemp=  Instantiate(aniEvent.objectReferenceParameter, pos, Quaternion.identity) as GameObject;
+         Destroy(FXTemp, FXTemp.GetComponent<ParticleSystem>().duration);
+    }
 }
