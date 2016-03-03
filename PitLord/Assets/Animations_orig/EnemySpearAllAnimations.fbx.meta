@@ -297,79 +297,35 @@ ModelImporter:
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: 'MuscleClip ''EnemySpearAllAnimations'' conversion warning:
-      ''Base Human001Pelvis/Base Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base
-      Human001RCollarbone'' is between humanoid transforms and has rotation animation.
-      This might lower retargeting quality.
-
-
-      MuscleClip ''EnemySpearAllAnimations'' conversion warning: ''Base Human001Pelvis/Base
-      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001LArmCollarbone''
-      is between humanoid transforms and has rotation animation. This might lower
-      retargeting quality.
-
-
-      MuscleClip ''EnemySpearAllAnimations'' conversion warning: ''Base Human001Pelvis/Base
-      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001RCollarbone''
-      is between humanoid transforms and has rotation animation. This might lower
-      retargeting quality.
-
-
-      MuscleClip ''EnemySpearAllAnimations'' conversion warning: ''Base Human001Pelvis/Base
-      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001LArmCollarbone''
-      is between humanoid transforms and has rotation animation. This might lower
-      retargeting quality.
-
-
-      MuscleClip ''EnemySpearAllAnimations'' conversion warning: ''Base Human001Pelvis/Base
-      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001RCollarbone''
-      is between humanoid transforms and has rotation animation. This might lower
-      retargeting quality.
-
-
-      MuscleClip ''EnemySpearAllAnimations'' conversion warning: ''Base Human001Pelvis/Base
-      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001LArmCollarbone''
-      is between humanoid transforms and has rotation animation. This might lower
-      retargeting quality.
-
-
-      MuscleClip ''EnemySpearAllAnimations'' conversion warning: ''Base Human001Pelvis/Base
-      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001RCollarbone''
-      is between humanoid transforms and has rotation animation. This might lower
-      retargeting quality.
-
-
-      MuscleClip ''EnemySpearAllAnimations'' conversion warning: ''Base Human001Pelvis/Base
-      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001LArmCollarbone''
-      is between humanoid transforms and has rotation animation. This might lower
-      retargeting quality.
-
-
-      MuscleClip ''EnemySpearAllAnimations'' conversion warning: ''Base Human001Pelvis/Base
-      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001RCollarbone''
-      is between humanoid transforms and has rotation animation. This might lower
-      retargeting quality.
-
-
-      MuscleClip ''EnemySpearAllAnimations'' conversion warning: ''Base Human001Pelvis/Base
-      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001LArmCollarbone''
-      is between humanoid transforms and has rotation animation. This might lower
-      retargeting quality.
-
-
-      MuscleClip ''EnemySpearAllAnimations'' conversion warning: ''Base Human001Pelvis/Base
-      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001RCollarbone''
-      is between humanoid transforms and has rotation animation. This might lower
-      retargeting quality.
-
-
-      MuscleClip ''EnemySpearAllAnimations'' conversion warning: ''Base Human001Pelvis/Base
-      Human001Spine1/Base Human001Spine2/Base Human001Ribcage/Base Human001LArmCollarbone''
-      is between humanoid transforms and has rotation animation. This might lower
-      retargeting quality.
-
-
-'
+    animationImportWarnings: "\nClip 'Heavy' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'Base Human001RCollarbone' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'Base Human001LArmCollarbone'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
+      'Light01' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'Base
+      Human001RCollarbone' is inbetween humanoid transforms and has rotation animation
+      that will be discarded.\n\t'Base Human001LArmCollarbone' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\nClip 'Light02'
+      has import animation warnings that might lower retargeting quality:\nNote: Activate
+      translation DOF on avatar to improve retargeting quality.\n\t'Base Human001RCollarbone'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'Base
+      Human001LArmCollarbone' is inbetween humanoid transforms and has rotation animation
+      that will be discarded.\n\nClip 'Break' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'Base Human001RCollarbone' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'Base Human001LArmCollarbone'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
+      'Hit' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'Base
+      Human001RCollarbone' is inbetween humanoid transforms and has rotation animation
+      that will be discarded.\n\t'Base Human001LArmCollarbone' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\nClip 'Idle'
+      has import animation warnings that might lower retargeting quality:\nNote: Activate
+      translation DOF on avatar to improve retargeting quality.\n\t'Base Human001RCollarbone'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'Base
+      Human001LArmCollarbone' is inbetween humanoid transforms and has rotation animation
+      that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     animationCompression: 3
@@ -4069,8 +4025,10 @@ ModelImporter:
     legStretch: .0500000007
     feetSpacing: 0
     rootMotionBoneName: 
+    hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 3
+  humanoidOversampling: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

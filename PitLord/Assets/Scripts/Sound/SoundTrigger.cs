@@ -22,6 +22,7 @@ public class SoundTrigger : MonoBehaviour
         uniquePlayed = PlayerPrefs.GetInt("SoundTrigger/uniquePlayed") != 0;
 
         randomPlayed = false;
+        GetComponent<Renderer>().enabled = false;
     }
 
     // Update is called once per frame

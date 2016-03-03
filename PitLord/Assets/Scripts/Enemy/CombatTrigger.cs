@@ -15,6 +15,7 @@ public class CombatTrigger : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        GetComponent<Renderer>().enabled = false;
         GameManager.instance.AddCombatTrigger(this);
 
         for (int i = 0; i < enemies.Count; i++)

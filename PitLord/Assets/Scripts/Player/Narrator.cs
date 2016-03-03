@@ -17,6 +17,7 @@ public class Narrator : MonoBehaviour
     public int onIdleIndex;
 
     public List<AudioClip> onReset;
+    public int onResetIndex;
 
     public List<AudioClip> inCombat;
     public List<AudioClip> onCombatWin;
@@ -98,7 +99,12 @@ public class Narrator : MonoBehaviour
 
         PlayNextNew(GetNextClip(onIdle, ref onIdleIndex, "OnIdleIndex"));
     }
-    public void PlayDeath() { Debug.Log("Playing Revival Line..."); }
+    public void PlayDeath()
+    { 
+        Debug.Log("Playing Revival Line...");
+
+        PlayNextNew(GetNextClip(onReset, ref onResetIndex , "OnResetIndex"));
+    }
     public void PlayInCombat() { Debug.Log("Playing inCombat Line..."); }
     public void PlayOnCombatWin() { Debug.Log("Playing CombatWin Line..."); }
     public void PlayUniqueEncounter( Enemy.EnemyType type ) { Debug.Log("Playing Unique Encounter Line for..." + type.ToString()); }
